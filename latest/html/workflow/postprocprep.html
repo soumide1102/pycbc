@@ -334,6 +334,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -956,51 +961,21 @@ Thus if in the [workflow-postprocprep] section there is</p>
 <h4>pycbc_sqlite_simplify<a class="headerlink" href="#pycbc-sqlite-simplify" title="Permalink to this headline">¶</a></h4>
 <p>This code is responsible for combining together multiple xml or sql files into a single database. It also includes the code in dbsimplify for removing repeated entries to avoid the resulting database from getting too huge.</p>
 <div class="highlight-text"><div class="highlight"><pre>$ pycbc_sqlite_simplify --help
-
-usage: pycbc_sqlite_simplify [-h] [--version] -o OUTFILENAME [-p] [-t PATH]
-                             [-i FILE] [-s TAG] [--vacuum] [-v]
-                             INPUT_FILE [INPUT_FILE ...]
-
-Add xml files to a SQLite database and simplify the output to remove redundant
-or unused entries (basically a combination of ligolw_sqlite and
-ligolw_cbc_dbsimplify)
-
-positional arguments:
-  INPUT_FILE            List of files to add to SQLITE database.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program&#39;s version number and exit
-  -o OUTFILENAME, --output-file OUTFILENAME
-                        The name of the SQLite output file. If this exists it
-                        will be overwritten.
-  -p, --preserve-ids    Preserve row IDs from the XML in the database. The
-                        default is to assign new IDs to prevent collisisions.
-                        Inserts will fail if collisions occur.
-  -t PATH, --tmp-space PATH
-                        Path to a directory suitable for use as a work area
-                        while manipulating the database file. The database
-                        file will be worked on in this directory, and then
-                        moved to the final location when complete. This option
-                        is intended to improve performance when running in a
-                        networked environment, where there might be a local
-                        disk with higher bandwidth than is available to the
-                        filesystem on which the final output will reside.
-  -i FILE, --injection-file FILE
-                        Injection file to add to the database and add in the
-                        experiment tables.
-  -s TAG, --simulation-tag TAG
-                        Identifying string used to distinguish the injections
-                        provided here from injections provided elsewhere once
-                        they are combined. Required if injection-file is
-                        given.
-  --vacuum              If turned on, will vacuum the database before saving.
-                        This cleans any fragmentation and removes empty space
-                        left behind by all the DELETEs, making the output
-                        database smaller and more efficient. WARNING: Since
-                        this requires rebuilding the entire database, this can
-                        take awhile for larger files.
-  -v, --verbose         Be verbose.
+No module named lal
+Traceback (most recent call last):
+  File &quot;/home/soumi.de/pycbc-dev/bin/pycbc_sqlite_simplify&quot;, line 4, in &lt;module&gt;
+    __import__(&#39;pkg_resources&#39;).run_script(&#39;PyCBC===ecd952&#39;, &#39;pycbc_sqlite_simplify&#39;)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 735, in run_script
+    self.require(requires)[0].run_script(script_name, ns)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 1652, in run_script
+    exec(code, namespace, namespace)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/EGG-INFO/scripts/pycbc_sqlite_simplify&quot;, line 47, in &lt;module&gt;
+    from glue.ligolw import dbtables
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/glue/ligolw/dbtables.py&quot;, line 54, in &lt;module&gt;
+    from . import lsctables
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/glue/ligolw/lsctables.py&quot;, line 44, in &lt;module&gt;
+    from lal import LIGOTimeGPS
+ImportError: No module named lal
 </pre></div>
 </div>
 <p>Of these options the workflow module will automatically add the following, which are unique for each job. <strong>DO NOT ADD THESE OPTIONS IN THE CONFIGURATION FILE</strong>.</p>
@@ -1015,116 +990,16 @@ optional arguments:
 <h4>ligolw_cbc_cluster_coincs<a class="headerlink" href="#ligolw-cbc-cluster-coincs" title="Permalink to this headline">¶</a></h4>
 <p>This code is used to perform a clustering stage on a set of coincident triggers.</p>
 <div class="highlight-text"><div class="highlight"><pre>$ ligolw_cbc_cluster_coincs --help
-Usage: ligolw_cbc_cluster_coincs [options]
-
-Clusters coincident trigges in a database and writes result out to a new
-database.
-
-Options:
-  --version             show program&#39;s version number and exit
-  -h, --help            show this help message and exit
-  -i INPUT, --input=INPUT
-                        Input database to read. Can only input one at a time.
-  -o OUTPUT, --output=OUTPUT
-                        Name of output database to save to.
-  -t PATH, --tmp-space=PATH
-                        Requried. Location of local disk on which to do work.
-                        This is used to enhance performance in a networked
-                        environment, and to protect against accidently
-                        overwriting the input database.
-  -v, --verbose         Print progress information
-  -D, --debug           Print SQLite queries used and the approximate time
-                        taken to run each one.
-  --param-name=PARAMETER
-                        Can be any parameter in the param table (see --param-
-                        table). Specifying this and param-ranges will only
-                        cluster triggers that fall  within the parameter
-                        range. Not specifying will cause all triggers in the
-                        database to be clustered together.
-  --param-ranges= [ LOW1, HIGH1 ); ( LOW2, HIGH2]; etc.
-                        Requires --param-name. Specify the parameter ranges to
-                        cluster triggers in. A &#39;(&#39; or &#39;)&#39; implies an open
-                        boundary, a &#39;[&#39; or &#39;]&#39; a closed boundary. To specify
-                        multiple ranges, separate each range by a &#39;;&#39;. Any
-                        coincidences that fall outside of the union of all the
-                        specified ranges will be deleted.
-  --exclude-coincs= [COINC_INSTRUMENTS1 + COINC_INSTRUMENTS2 in INSTRUMENTS_ON1];[ALL in INSTRUMENTS_ON2]; etc.
-                        Exclude coincident types in specified detector times,
-                        e.g., &#39;[H2,L1 in H1,H2,L1]&#39;. Some rules: * Coinc-types
-                        and detector time must be separated by an &#39; in &#39;. When
-                        specifying a coinc_type or detector time, detectors
-                        and/or ifos must be separated by commas, e.g. &#39;H1,L1&#39;
-                        not &#39;H1L1&#39;. * To specify multiple coinc-types in one
-                        type of time, separate each coinc-type by a &#39;+&#39;, e.g.,
-                        &#39;[H1,H2 + H2,L1 in H1,H2,L1]&#39;. * To exclude all coincs
-                        in a specified detector time or specific coinc-type in
-                        all times, use &#39;ALL&#39;. E.g., to exclude all H1,H2
-                        triggers, use &#39;[H1,H2 in ALL]&#39; or to exclude all H2,L1
-                        time use &#39;[ALL in H2,L1]&#39;. * To specify multiple
-                        exclusions, separate each bracket by a &#39;;&#39;. * Order of
-                        the instruments nor case of the letters matter. So if
-                        your pinky is broken and you&#39;re dyslexic you can type
-                        &#39;[h2,h1 in all]&#39; without a problem.
-  --include-only-coincs= [COINC_INSTRUMENTS1 + COINC_INSTRUMENTS2 in INSTRUMENTS_ON1];[ALL in INSTRUMENTS_ON2]; etc.
-                        Opposite of --exclude-coincs: only the specified
-                        coincs will be clusterd (all other coincs will be
-                        deleted from the output database). To avoid confusing
-                        overlaps, cannot specify both --exclude-coincs and
-                        --include-only-coincs.
-  --vacuum              If turned on, will vacuum the database before saving.
-                        This cleans any fragmentation and removes empty space
-                        left behind by all the DELETEs, making the output
-                        database smaller and more efficient. WARNING: Since
-                        this requires rebuilding the entire database, this can
-                        take awhile for larger files.
-  --time-column=TIME_COLUMN
-                        Required. What column to use for the gps-time of
-                        triggers. Should be set to end_time for inspiral
-                        searches or start_time for ringdown searches. It is
-                        assumed the the column specified has a corresponding
-                        _ns column.
-  --ranking-table=RANKING_TABLE
-                        Required. What table to get the ranking-statsitic
-                        from. Can be any table with a coinc_event_id. Ex.
-                        coinc_inspiral.
-  --ifos-table=IFOS_TABLE
-                        What table to look in for the coincident ifos. Can be
-                        any table with a coinc_event_id and an ifos column.
-                        Default is to use whatever ranking-table is set to.
-                        If, however, the specified ranking-table does not have
-                        an ifos column (e.g., coinc_event), then this must be
-                        specified.
-  --param-table=PARAM_TABLE
-                        If specifying a param-name and ranges, what table to
-                        look in for the param values. Can be any table with a
-                        coinc_event_id. Default is to use whatever ranking-
-                        table is set to.
-  --time-table=TIME_TABLE
-                        What table to look in for the time column (see --time-
-                        column). Can be any table with a coinc_event_id and
-                        the specified time column. Default is to use whatever
-                        ranking-table is set to. If, however, the specified
-                        ranking-table does not have the time column (e.g., the
-                        coinc_event table), then this must be specified.
-  --cluster-window=CLUSTER_WINDOW
-                        Required. Time window, in ms, to cluster triggers in.
-  --ranking-stat=RANKING_STAT
-                        Requried. The statistic to cluster on. Can be any
-                        statistic in the coinc_inspiral table.
-  --rank-by=MAX or MIN  Requried. Options are MAX or MIN. This specifies
-                        whether to cluster triggers by maximum (MAX) or
-                        minimum (MIN) stat value. Use MIN if clustering on
-                        stats in which smaller is better (e.g., chisq, far).
-                        Otherwise, use MAX.
-  -G, --group-by-ifos   Turning on will cause triggers to be grouped by
-                        coincident ifos when clustering.
-  -M, --group-by-multiplicity
-                        Turning on will cause triggers to be grouped by the
-                        number of coincident ifos when clustering. For
-                        example, doubles will be grouped with doubles, triples
-                        with triples, etc. Note: if both --group-by-ifos and
-                        --group-by-multiplicity on, group-by-ifos takes
-                        precedence.
+Traceback (most recent call last):
+  File &quot;/home/soumi.de/pycbc-dev/bin/ligolw_cbc_cluster_coincs&quot;, line 20, in &lt;module&gt;
+    from pylal import ligolw_sqlutils as sqlutils
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pylal/ligolw_sqlutils.py&quot;, line 23, in &lt;module&gt;
+    from glue.ligolw import dbtables
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/glue/ligolw/dbtables.py&quot;, line 54, in &lt;module&gt;
+    from . import lsctables
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/glue/ligolw/lsctables.py&quot;, line 44, in &lt;module&gt;
+    from lal import LIGOTimeGPS
+ImportError: No module named lal
 </pre></div>
 </div>
 <p>Of these options the workflow module will automatically add the following, which are unique for each job. <strong>DO NOT ADD THESE OPTIONS IN THE CONFIGURATION FILE</strong>.</p>
@@ -1137,7 +1012,7 @@ Options:
 <h4>ligolw_dbinjfind<a class="headerlink" href="#ligolw-dbinjfind" title="Permalink to this headline">¶</a></h4>
 <p>This code is used to perform &#8220;injection finding&#8221; - it associates injection entries in the sim_inspiral table with coincident triggers in the coinc_inspiral table.</p>
 <div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/home/cbc/pycbc/pycbc/docs/workflow/postprocprep.rst</tt>, line 336)</p>
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/home/soumi.de/pycbc-dev/src/pycbc/docs/workflow/postprocprep.rst</tt>, line 336)</p>
 Command u&#8217;ligolw_dbinjfind &#8211;help&#8217; failed: [Errno 2] No such file or directory</div>
 <p>Of these options the workflow module will automatically add the following, which are unique for each job. <strong>DO NOT ADD THESE OPTIONS IN THE CONFIGURATION FILE</strong>.</p>
 <ul class="simple">
@@ -1149,7 +1024,7 @@ Command u&#8217;ligolw_dbinjfind &#8211;help&#8217; failed: [Errno 2] No such fi
 <h4>ligolw_cbc_repop_coinc<a class="headerlink" href="#ligolw-cbc-repop-coinc" title="Permalink to this headline">¶</a></h4>
 <p>This code is used to calculate a function of the single trigger parameters and populate a column in the coinc table with the result (typically for use as a ranking statistic).</p>
 <div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/home/cbc/pycbc/pycbc/docs/workflow/postprocprep.rst</tt>, line 349)</p>
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/home/soumi.de/pycbc-dev/src/pycbc/docs/workflow/postprocprep.rst</tt>, line 349)</p>
 Command u&#8217;ligolw_cbc_repop_coinc &#8211;help&#8217; failed: [Errno 2] No such file or directory</div>
 <p>Of these options the workflow module will automatically add the following, which are unique for each job. <strong>DO NOT ADD THESE OPTIONS IN THE CONFIGURATION FILE</strong>.</p>
 <ul class="simple">
@@ -1180,7 +1055,7 @@ Command u&#8217;ligolw_cbc_repop_coinc &#8211;help&#8217; failed: [Errno 2] No s
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Aug 27, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

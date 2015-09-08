@@ -332,6 +332,11 @@
 <li class="toctree-l2"><a class="reference internal" href="documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -684,6 +689,10 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%" valign="top"><dl>
       
+  <dt><a href="pycbc.events.html#pycbc.events.coinc.background_bin_from_string">background_bin_from_string() (in module pycbc.events.coinc)</a>
+  </dt>
+
+      
   <dt><a href="pycbc.psd.html#pycbc.psd.estimate.bandlimited_interpolate">bandlimited_interpolate() (in module pycbc.psd.estimate)</a>
   </dt>
 
@@ -831,6 +840,10 @@
 
       
   <dt><a href="pycbc.workflow.html#pycbc.workflow.core.check_output_error_and_retcode">check_output_error_and_retcode() (in module pycbc.workflow.core)</a>
+  </dt>
+
+      
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.check_status">check_status() (in module pycbc.fft.mkl)</a>
   </dt>
 
       
@@ -1046,6 +1059,10 @@
   </dt>
 
       
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.create_descriptor">create_descriptor() (in module pycbc.fft.mkl)</a>
+  </dt>
+
+      
   <dt><a href="pycbc.workflow.html#pycbc.workflow.jobsetup.PyCBCTmpltbankExecutable.create_nodata_node">create_nodata_node() (pycbc.workflow.jobsetup.PyCBCTmpltbankExecutable method)</a>
   </dt>
 
@@ -1054,6 +1071,14 @@
   </dt>
 
       <dd><dl>
+        
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCCombineStatmap.create_node">(pycbc.workflow.coincidence.PyCBCCombineStatmap method)</a>
+  </dt>
+
+        
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.create_node">(pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins method)</a>
+  </dt>
+
         
   <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCFindCoincExecutable.create_node">(pycbc.workflow.coincidence.PyCBCFindCoincExecutable method)</a>
   </dt>
@@ -1220,6 +1245,14 @@
 
         
   <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCBank2HDFExecutable.current_retention_level">(pycbc.workflow.coincidence.PyCBCBank2HDFExecutable attribute)</a>
+  </dt>
+
+        
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCCombineStatmap.current_retention_level">(pycbc.workflow.coincidence.PyCBCCombineStatmap attribute)</a>
+  </dt>
+
+        
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.current_retention_level">(pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins attribute)</a>
   </dt>
 
         
@@ -1628,6 +1661,14 @@
   <dt><a href="pycbc.fft.html#pycbc.fft.fftw.IFFT.execute">(pycbc.fft.fftw.IFFT method)</a>
   </dt>
 
+        
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.FFT.execute">(pycbc.fft.mkl.FFT method)</a>
+  </dt>
+
+        
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.IFFT.execute">(pycbc.fft.mkl.IFFT method)</a>
+  </dt>
+
       </dl></dd>
       
   <dt><a href="pycbc.workflow.html#pycbc.workflow.core.Workflow.execute_node">execute_node() (pycbc.workflow.core.Workflow method)</a>
@@ -1710,6 +1751,10 @@
   <dt><a href="pycbc.fft.html#pycbc.fft.fftw.FFT">(class in pycbc.fft.fftw)</a>
   </dt>
 
+        
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.FFT">(class in pycbc.fft.mkl)</a>
+  </dt>
+
       </dl></dd>
       
   <dt><a href="pycbc.fft.html#pycbc.fft.fftw.fft">fft() (in module pycbc.fft.fftw)</a>
@@ -1722,6 +1767,10 @@
 
         
   <dt><a href="pycbc.fft.html#pycbc.fft.lalfft.fft">(in module pycbc.fft.lalfft)</a>
+  </dt>
+
+        
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.fft">(in module pycbc.fft.mkl)</a>
   </dt>
 
         
@@ -2598,6 +2647,10 @@
   <dt><a href="pycbc.fft.html#pycbc.fft.fftw.IFFT">(class in pycbc.fft.fftw)</a>
   </dt>
 
+        
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.IFFT">(class in pycbc.fft.mkl)</a>
+  </dt>
+
       </dl></dd>
       
   <dt><a href="pycbc.fft.html#pycbc.fft.fftw.ifft">ifft() (in module pycbc.fft.fftw)</a>
@@ -2610,6 +2663,10 @@
 
         
   <dt><a href="pycbc.fft.html#pycbc.fft.lalfft.ifft">(in module pycbc.fft.lalfft)</a>
+  </dt>
+
+        
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.ifft">(in module pycbc.fft.mkl)</a>
   </dt>
 
         
@@ -3138,6 +3195,10 @@
   </dt>
 
       
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.plotting.make_template_plot">make_template_plot() (in module pycbc.workflow.plotting)</a>
+  </dt>
+
+      
   <dt><a href="pycbc.workflow.html#pycbc.workflow.core.makedir">makedir() (in module pycbc.workflow.core)</a>
   </dt>
 
@@ -3261,6 +3322,12 @@
   <dt><a href="pycbc.fft.html#pycbc.fft.fftw.memoize">memoize() (in module pycbc.fft.fftw)</a>
   </dt>
 
+      <dd><dl>
+        
+  <dt><a href="pycbc.fft.html#pycbc.fft.mkl.memoize">(in module pycbc.fft.mkl)</a>
+  </dt>
+
+      </dl></dd>
       
   <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.merge_single_detector_hdf_files">merge_single_detector_hdf_files() (in module pycbc.workflow.coincidence)</a>
   </dt>
@@ -3736,6 +3803,10 @@
   </dt>
 
       
+  <dt><a href="pycbc.fft.html#module-pycbc.fft.mkl">pycbc.fft.mkl (module)</a>
+  </dt>
+
+      
   <dt><a href="pycbc.fft.html#module-pycbc.fft.npfft">pycbc.fft.npfft (module)</a>
   </dt>
 
@@ -4091,6 +4162,14 @@
 
       
   <dt><a href="pycbc.workflow.html#pycbc.workflow.jobsetup.PycbcCombineLikelihoodExecutable">PycbcCombineLikelihoodExecutable (class in pycbc.workflow.jobsetup)</a>
+  </dt>
+
+      
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCCombineStatmap">PyCBCCombineStatmap (class in pycbc.workflow.coincidence)</a>
+  </dt>
+
+      
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins">PyCBCDistributeBackgroundBins (class in pycbc.workflow.coincidence)</a>
   </dt>
 
       
@@ -4484,6 +4563,14 @@
   </dt>
 
       
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.setup_background_bins">setup_background_bins() (in module pycbc.workflow.coincidence)</a>
+  </dt>
+
+      
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.setup_background_bins_inj">setup_background_bins_inj() (in module pycbc.workflow.coincidence)</a>
+  </dt>
+
+      
   <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.setup_coincidence_workflow">setup_coincidence_workflow() (in module pycbc.workflow.coincidence)</a>
   </dt>
 
@@ -4567,12 +4654,12 @@
   <dt><a href="pycbc.workflow.html#pycbc.workflow.postprocessing.setup_postprocessing">setup_postprocessing() (in module pycbc.workflow.postprocessing)</a>
   </dt>
 
-  </dl></td>
-  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="pycbc.workflow.html#pycbc.workflow.postprocessing_prep.setup_postprocessing_preparation">setup_postprocessing_preparation() (in module pycbc.workflow.postprocessing_prep)</a>
   </dt>
 
+  </dl></td>
+  <td style="width: 33%" valign="top"><dl>
       
   <dt><a href="pycbc.workflow.html#pycbc.workflow.postprocessing_prep.setup_postprocprep_gstlal_workflow">setup_postprocprep_gstlal_workflow() (in module pycbc.workflow.postprocessing_prep)</a>
   </dt>
@@ -4590,11 +4677,27 @@
   </dt>
 
       
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.setup_simple_statmap">setup_simple_statmap() (in module pycbc.workflow.coincidence)</a>
+  </dt>
+
+      
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.setup_simple_statmap_inj">setup_simple_statmap_inj() (in module pycbc.workflow.coincidence)</a>
+  </dt>
+
+      
   <dt><a href="pycbc.workflow.html#pycbc.workflow.splittable.setup_splittable_dax_generated">setup_splittable_dax_generated() (in module pycbc.workflow.splittable)</a>
   </dt>
 
       
   <dt><a href="pycbc.workflow.html#pycbc.workflow.splittable.setup_splittable_workflow">setup_splittable_workflow() (in module pycbc.workflow.splittable)</a>
+  </dt>
+
+      
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.setup_statmap">setup_statmap() (in module pycbc.workflow.coincidence)</a>
+  </dt>
+
+      
+  <dt><a href="pycbc.workflow.html#pycbc.workflow.coincidence.setup_statmap_inj">setup_statmap_inj() (in module pycbc.workflow.coincidence)</a>
   </dt>
 
       
@@ -5339,7 +5442,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Sep 03, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

@@ -334,6 +334,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -484,38 +489,19 @@ As with other modules tagged subsections [splittable-TAG] [workflow-splittable-T
 <h4>pycbc_splitbank<a class="headerlink" href="#pycbc-splitbank" title="Permalink to this headline">¶</a></h4>
 <p>pycbc_splitbank is a pycbc python code that can be used from splitting any table in an input xml file. Normally this splits the sngl_inspiral table that holds the template bank. The help message for pycbc_splitbank is as follows</p>
 <div class="highlight-text"><div class="highlight"><pre>$ pycbc_splitbank --help
-
-usage: pycbc_splitbank [-h] [--version]
-                       (--templates-per-bank SAMPLES | -n N | -O [OUTPUT_FILENAME [OUTPUT_FILENAME ...]])
-                       [-o OUTPUT_PREFIX] [-z] [-V] -t INPUT_FILE
-                       [--sort-mchirp] [--random-sort]
-                       [--random-seed RANDOM_SEED]
-
-Splits a table in an xml file into multiple pieces
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program&#39;s version number and exit
-  --templates-per-bank SAMPLES
-                        number of templates in the output banks
-  -n N, --number-of-banks N
-                        Split template bank into N files
-  -O [OUTPUT_FILENAME [OUTPUT_FILENAME ...]], --output-filenames [OUTPUT_FILENAME [OUTPUT_FILENAME ...]]
-                        Directly specify the names of the output files. The
-                        number of files specified here will dictate how to
-                        split the bank. It will be split equally between all
-                        specified files.
-  -o OUTPUT_PREFIX, --output-prefix OUTPUT_PREFIX
-                        Prefix to add to the template bank name (name becomes
-                        output#.xml[.gz])
-  -z, --write-compress  Write compressed xml.gz files.
-  -V, --verbose         Print extra debugging information
-  -t INPUT_FILE, --bank-file INPUT_FILE
-                        Template bank to split
-  --sort-mchirp         Sort templates by chirp mass before splitting
-  --random-sort         Sort templates randomly before splitting
-  --random-seed RANDOM_SEED
-                        Random seed to use when sorting randomly
+No module named lal
+Traceback (most recent call last):
+  File &quot;/home/soumi.de/pycbc-dev/bin/pycbc_splitbank&quot;, line 4, in &lt;module&gt;
+    __import__(&#39;pkg_resources&#39;).run_script(&#39;PyCBC===ecd952&#39;, &#39;pycbc_splitbank&#39;)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 735, in run_script
+    self.require(requires)[0].run_script(script_name, ns)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 1652, in run_script
+    exec(code, namespace, namespace)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/EGG-INFO/scripts/pycbc_splitbank&quot;, line 44, in &lt;module&gt;
+    from glue.ligolw import lsctables
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/glue/ligolw/lsctables.py&quot;, line 44, in &lt;module&gt;
+    from lal import LIGOTimeGPS
+ImportError: No module named lal
 </pre></div>
 </div>
 <p>An example of a pycbc_splitbank call is given below</p>
@@ -659,7 +645,7 @@ template bank xml files.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Aug 27, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

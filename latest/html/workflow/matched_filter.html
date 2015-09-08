@@ -334,6 +334,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -780,273 +785,29 @@ lalapps_inspiral [options]
 <h4>pycbc_inspiral<a class="headerlink" href="#pycbc-inspiral" title="Permalink to this headline">¶</a></h4>
 <p>pycbc_inspiral is pycbc&#8217;s inspiral matched-filtering program. Designed as a replacement and improvement of lalapps_inspiral. The help message of pycbc_inspiral follows:</p>
 <div class="highlight-text"><div class="highlight"><pre>$ pycbc_inspiral --help
-
-usage: 
-
-Find single detector gravitational-wave triggers.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program&#39;s version number and exit
-  -V, --verbose         print extra debugging information
-  --output OUTPUT       FIXME: ADD
-  --bank-file BANK_FILE
-                        FIXME: ADD
-  --snr-threshold SNR_THRESHOLD
-                        SNR threshold for trigger generation
-  --newsnr-threshold THRESHOLD
-                        Cut triggers with NewSNR less than THRESHOLD
-  --low-frequency-cutoff LOW_FREQUENCY_CUTOFF
-                        The low frequency cutoff to use for filtering (Hz)
-  --approximant APPROXIMANT
-                        The name of the approximant to use for filtering. One
-                        may choose a single approximant by simple assignment.
-                        Choose multiple approximants to use in different mass
-                        regions by using math functions and the params keys as
-                        follows : &quot;&#39;SPAtmplt&#39; if (params.mass1 + params.mass2)
-                        &lt; 10 else &#39;SEOBNRv2_ROM_DoubleSpin&#39;&quot;. Approximant
-                        names should be single quoted with the entire
-                        expression in double quotes.
-  --order {-1,0,1,2,3,4,5,6,7,8}
-                        The integer half-PN order at which to generate the
-                        approximant. Default is -1 which indicates to use
-                        approximant defined default.
-  --taper-template {start,end,startend}
-                        For time-domain approximants, taper the start and/or
-                        end of the waveform before FFTing.
-  --cluster-method {template,window}
-                        FIXME: ADD
-  --cluster-window CLUSTER_WINDOW
-                        Length of clustering window in seconds. Set to 0 to
-                        disable clustering.
-  --maximization-interval MAXIMIZATION_INTERVAL
-                        Maximize triggers over the template bank (ms)
-  --bank-veto-bank-file BANK_VETO_BANK_FILE
-                        FIXME: ADD
-  --chisq-snr-threshold CHISQ_SNR_THRESHOLD
-                        Minimum SNR to calculate the power chisq
-  --chisq-bins CHISQ_BINS
-                        Number of frequency bins to use for power chisq.
-                        Specify an integer for a constant number of bins, or a
-                        function of template attributes. Math functions are
-                        allowed, ex.
-                        &#39;10./math.sqrt((params.mass1+params.mass2)/100.)&#39;.
-                        Non-integer values will be rounded down.
-  --chisq-threshold CHISQ_THRESHOLD
-                        FIXME: ADD
-  --chisq-delta CHISQ_DELTA
-                        FIXME: ADD
-  --autochi-number-points AUTOCHI_NUMBER_POINTS
-                        The number of points to use, in both directions
-                        ifdoing a two-sided auto-chisq, to calculate theauto-
-                        chisq statistic.
-  --autochi-stride AUTOCHI_STRIDE
-                        The gap, in sample points, between the points atwhich
-                        to calculate auto-chisq.
-  --autochi-two-phase   If given auto-chisq will be calculated by testing
-                        against both phases of the SNR time-series. If not
-                        given, only the phase matching the trigger will be
-                        used.
-  --autochi-onesided {left,right}
-                        Decide whether to calculate auto-chisq usingpoints on
-                        both sides of the trigger or only on oneside. If not
-                        given points on both sides will beused. If given, with
-                        either &#39;left&#39; or &#39;right&#39;,only points on that side
-                        (right = forward in time,left = back in time) will be
-                        used.
-  --autochi-reverse-template
-                        If given, time-reverse the template beforecalculating
-                        the auto-chisq statistic. This willcome at additional
-                        computational cost as the SNRtime-series will need
-                        recomputing for the time-reversed template.
-  --autochi-max-valued  If given, store only the maximum value of the auto-
-                        chisq over all points tested. A disadvantage of this
-                        is that the mean value will not be known analytically.
-  --autochi-max-valued-dof INT
-                        If using --autochi-max-valued this value denotes the
-                        pre-calculated mean value that will be stored as the
-                        auto-chisq degrees-of-freedom value.
-  --downsample-factor DOWNSAMPLE_FACTOR
-                        Factor that determines the interval between the
-                        initial SNR sampling. If not set (or 1) no sparse
-                        sample is created, and the standard full SNR is
-                        calculated.
-  --upsample-threshold UPSAMPLE_THRESHOLD
-                        The fraction of the SNR threshold to check the sparse
-                        SNR sample.
-  --upsample-method {pruned_fft}
-                        The method to find the SNR points between the sparse
-                        SNR sample.
-  --user-tag TAG        This is used to identify FULL_DATA jobs for
-                        compatibility with pipedown post-processing. Option
-                        will be removed when no longer needed.
-  --psd-recalculate-segments PSD_RECALCULATE_SEGMENTS
-                        Number of segments to use before recalculating the PSD
-  --keep-loudest-interval KEEP_LOUDEST_INTERVAL
-                        Window in seconds to maximize triggers over bank
-  --keep-loudest-num KEEP_LOUDEST_NUM
-                        Number of triggers to keep from each maximization
-                        interval
-  --gpu-callback-method GPU_CALLBACK_METHOD
-
-Options to select the method of PSD generation:
-  The options --psd-model, --psd-file, --asd-file, and --psd-estimation are
-  mutually exclusive.
-
-  --psd-model {AdvVirgo,GEO,GEOHF,KAGRA,TAMA,Virgo,aLIGOBHBH20Deg,aLIGOHighFrequency,aLIGONSNSOpt,aLIGONoSRMHighPower,aLIGONoSRMLowPower,aLIGOQuantumBHBH20Deg,aLIGOQuantumHighFrequency,aLIGOQuantumNSNSOpt,aLIGOQuantumNoSRMHighPower,aLIGOQuantumNoSRMLowPower,aLIGOQuantumZeroDetHighPower,aLIGOQuantumZeroDetLowPower,aLIGOThermal,aLIGOZeroDetHighPower,aLIGOZeroDetLowPower,eLIGOModel,eLIGOShot,iLIGOModel,iLIGOSRD,iLIGOSeismic,iLIGOShot,iLIGOThermal}
-                        Get PSD from given analytical model.
-  --psd-file PSD_FILE   Get PSD using given PSD ASCII file
-  --asd-file ASD_FILE   Get PSD using given ASD ASCII file
-  --psd-estimation {mean,median,median-mean}
-                        Measure PSD from the data, using given average method.
-  --psd-segment-length PSD_SEGMENT_LENGTH
-                        (Required for --psd-estimation) The segment length for
-                        PSD estimation (s)
-  --psd-segment-stride PSD_SEGMENT_STRIDE
-                        (Required for --psd-estimation) The separation between
-                        consecutive segments (s)
-  --psd-inverse-length PSD_INVERSE_LENGTH
-                        (Optional) The maximum length of the impulse response
-                        of the overwhitening filter (s)
-  --psd-output PSD_OUTPUT
-                        (Optional) Write PSD to specified file
-
-Options for obtaining h(t):
-  These options are used for generating h(t) either by reading from a file
-  or by generating it. This is only needed if the PSD is to be estimated
-  from the data, ie. if the --psd-estimation option is given.
-
-  --gps-start-time GPS_START_TIME
-                        The gps start time of the data (integer seconds)
-  --gps-end-time GPS_END_TIME
-                        The gps end time of the data (integer seconds)
-  --strain-high-pass STRAIN_HIGH_PASS
-                        High pass frequency
-  --pad-data PAD_DATA   Extra padding to remove highpass corruption (integer
-                        seconds)
-  --sample-rate SAMPLE_RATE
-                        The sample rate to use for h(t) generation (integer
-                        Hz).
-  --channel-name CHANNEL_NAME
-                        The channel containing the gravitational strain data
-  --frame-cache FRAME_CACHE [FRAME_CACHE ...]
-                        Cache file containing the frame locations.
-  --frame-files FRAME_FILES [FRAME_FILES ...]
-                        list of frame files
-  --frame-type FRAME_TYPE
-                        (optional), replaces frame-files. Use datafind to get
-                        the needed frame file(s) of this type.
-  --fake-strain {AdvVirgo,GEO,GEOHF,KAGRA,TAMA,Virgo,aLIGOBHBH20Deg,aLIGOHighFrequency,aLIGONSNSOpt,aLIGONoSRMHighPower,aLIGONoSRMLowPower,aLIGOQuantumBHBH20Deg,aLIGOQuantumHighFrequency,aLIGOQuantumNSNSOpt,aLIGOQuantumNoSRMHighPower,aLIGOQuantumNoSRMLowPower,aLIGOQuantumZeroDetHighPower,aLIGOQuantumZeroDetLowPower,aLIGOThermal,aLIGOZeroDetHighPower,aLIGOZeroDetLowPower,eLIGOModel,eLIGOShot,iLIGOModel,iLIGOSRD,iLIGOSeismic,iLIGOShot,iLIGOThermal}
-                        Name of model PSD for generating fake gaussian noise.
-  --fake-strain-seed FAKE_STRAIN_SEED
-                        Seed value for the generation of fake colored gaussian
-                        noise
-  --injection-file INJECTION_FILE
-                        (optional) Injection file used to add waveforms into
-                        the strain
-  --sgburst-injection-file SGBURST_INJECTION_FILE
-                        (optional) Injection file used to add sine-Gaussian
-                        burst waveforms into the strain
-  --gating-file GATING_FILE
-                        (optional) Text file of gating segments to apply.
-                        Format of each line is (all times in secs): gps_time
-                        zeros_half_width pad_half_width
-  --normalize-strain NORMALIZE_STRAIN
-                        (optional) Divide frame data by constant.
-  --zpk-z ZPK_Z [ZPK_Z ...]
-                        (optional) Zero-pole-gain (zpk) filter strain. A list
-                        of zeros for transfer function
-  --zpk-p ZPK_P [ZPK_P ...]
-                        (optional) Zero-pole-gain (zpk) filter strain. A list
-                        of poles for transfer function
-  --zpk-k ZPK_K         (optional) Zero-pole-gain (zpk) filter strain.
-                        Transfer function gain
-
-Options for segmenting the strain:
-  These options are used to determine how to segment the strain into smaller
-  chunks, and for determining the portion of each to analyze for triggers.
-
-  --trig-start-time TRIG_START_TIME
-                        (optional) The gps time to start recording triggers
-  --trig-end-time TRIG_END_TIME
-                        (optional) The gps time to stop recording triggers
-  --segment-length SEGMENT_LENGTH
-                        The length of each strain segment in seconds.
-  --segment-start-pad SEGMENT_START_PAD
-                        The time in seconds to ignore of the beginning of each
-                        segment in seconds.
-  --segment-end-pad SEGMENT_END_PAD
-                        The time in seconds to ignore at the end of each
-                        segment in seconds.
-  --filter-inj-only     Analyze only segments that contain an injection.
-  --injection-window INJECTION_WINDOW
-                        If using --filter-inj-only then only search for
-                        injections within +/- injection window of the
-                        injections&#39;s end time. This is useful to speed up a
-                        coherent search or a search where we initially filter
-                        at lower sample rate, and then filter at full rate
-                        where needed. NOTE: Reverts to full analysis if two
-                        injections are in the same segment.
-
-Options for selecting the processing scheme in this program.:
-  --processing-scheme PROCESSING_SCHEME
-                        The choice of processing scheme. Choices are [&#39;mkl&#39;,
-                        &#39;cuda&#39;, &#39;cpu&#39;]. (optional for CPU scheme) The number
-                        of execution threads can be indicated by
-                        cpu:NUM_THREADS, where NUM_THREADS is an integer. The
-                        default is a single thread. If the scheme is provided
-                        as cpu:env, the number of threads can be provided by
-                        the PYCBC_NUM_THREADS environment variable. If the
-                        environment variable is not set, the number of threads
-                        matches the number of logical cores.
-  --processing-device-id PROCESSING_DEVICE_ID
-                        (optional) ID of GPU to use for accelerated processing
-
-Options for selecting the FFT backend and controlling its performance in this program.:
-  --fft-backends [FFT_BACKENDS [FFT_BACKENDS ...]]
-                        Preference list of the FFT backends. Choices are:
-                        [&#39;lal&#39;, &#39;fftw&#39;, &#39;numpy&#39;]
-  --lalfft-measure-level LALFFT_MEASURE_LEVEL
-                        Determines the measure level used in planning LAL-
-                        wrapped FFTs; allowed values are: [0, 1, 2, 3]
-  --fftw-measure-level FFTW_MEASURE_LEVEL
-                        Determines the measure level used in planning FFTW
-                        FFTs; allowed values are: [0, 1, 2, 3]
-  --fftw-threads-backend FFTW_THREADS_BACKEND
-                        Give &#39;openmp&#39;, &#39;pthreads&#39; or &#39;unthreaded&#39; to specify
-                        which threaded FFTW to use
-  --fftw-input-float-wisdom-file FFTW_INPUT_FLOAT_WISDOM_FILE
-                        Filename from which to read single-precision wisdom
-  --fftw-input-double-wisdom-file FFTW_INPUT_DOUBLE_WISDOM_FILE
-                        Filename from which to read double-precision wisdom
-  --fftw-output-float-wisdom-file FFTW_OUTPUT_FLOAT_WISDOM_FILE
-                        Filename to which to write single-precision wisdom
-  --fftw-output-double-wisdom-file FFTW_OUTPUT_DOUBLE_WISDOM_FILE
-                        Filename to which to write double-precision wisdom
-  --fftw-import-system-wisdom
-                        If given, call fftw[f]_import_system_wisdom()
-
-Options for selecting optimization-specific settings:
-  --cpu-affinity CPU_AFFINITY
-                        A set of CPUs on which to run, specified in a format
-                        suitable to pass to taskset.
-  --cpu-affinity-from-env CPU_AFFINITY_FROM_ENV
-                        The name of an enivornment variable containing a set
-                        of CPUs on which to run, specified in a format
-                        suitable to pass to taskset.
-
-Options for controlling scipy.weave:
-  --per-process-weave-cache
-                        If given, each process will use a separate directory
-                        for scipy.weave compilation. This is slower, but safer
-                        if several instances may be starting on the same
-                        machine at the same time.
-  --clear-weave-cache-at-start
-                        If given, delete the contents of the weave cache when
-                        the process starts
-  --clear-weave-cache-at-end
-                        If given, delete the contents of the weave cache when
-                        the process exits
+No module named lal
+Traceback (most recent call last):
+  File &quot;/home/soumi.de/pycbc-dev/bin/pycbc_inspiral&quot;, line 4, in &lt;module&gt;
+    __import__(&#39;pkg_resources&#39;).run_script(&#39;PyCBC===ecd952&#39;, &#39;pycbc_inspiral&#39;)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 735, in run_script
+    self.require(requires)[0].run_script(script_name, ns)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 1652, in run_script
+    exec(code, namespace, namespace)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/EGG-INFO/scripts/pycbc_inspiral&quot;, line 22, in &lt;module&gt;
+    from pycbc import vetoes, psd, waveform, events, strain, scheme, fft, DYN_RANGE_FAC
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/pycbc/vetoes/__init__.py&quot;, line 1, in &lt;module&gt;
+    from chisq import *
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/pycbc/vetoes/chisq.py&quot;, line 24, in &lt;module&gt;
+    import numpy, logging, math, pycbc.fft
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/pycbc/fft/__init__.py&quot;, line 18, in &lt;module&gt;
+    from .func_api import fft, ifft
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/pycbc/fft/func_api.py&quot;, line 29, in &lt;module&gt;
+    from pycbc.types import TimeSeries as _TimeSeries
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/pycbc/types/__init__.py&quot;, line 1, in &lt;module&gt;
+    from array import *
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/pycbc/types/array.py&quot;, line 36, in &lt;module&gt;
+    import lal as _lal
+ImportError: No module named lal
 </pre></div>
 </div>
 <p>Of these options the workflow module will automatically add the following, which are unique fo
@@ -1221,7 +982,7 @@ stage you can call the various sub-functions directly.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Aug 27, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

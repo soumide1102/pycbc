@@ -334,6 +334,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -620,39 +625,12 @@ thinca = ${which:ligolw_sstinca}</p>
 <h4>ligolw_add<a class="headerlink" href="#ligolw-add" title="Permalink to this headline">¶</a></h4>
 <p>This code simply adds together the input files in preparation for ligolw_sstinca. We plan to have a front end combining this functionality soon.</p>
 <div class="highlight-text"><div class="highlight"><pre>$ ligolw_add --help
-Usage: ligolw_add [options] [url ...]
-
-Combines one or more LIGO Light Weight XML files into a single output file.
-The output is written to stdout or to the filename specified by --output.  In
-addition to regular files, many common URL types can be read such as http://
-and ftp://.  Input documents that are gzip-compressed are automatically
-detected and decompressed.  If the output file&#39;s name ends in &quot;.gz&quot;, the
-output document will be gzip-compressed.  Table elements contained in the
-document will be merged so that there is not more than one table of any given
-name in the output.  To accomplish this, any tables in the input documents
-that share the same name must have compatible columns, meaning the same column
-names with matching types (but not necessarily in the same order).
-
-Options:
-  --version             show program&#39;s version number and exit
-  -h, --help            show this help message and exit
-  -i filename, --input-cache=filename
-                        Get input files from the LAL cache named filename.
-  --add-lfn-table       Add an lfn entry for each process.
-  --lfn-start-time=GPS seconds
-                        Set lfn start_time (optional).
-  --lfn-end-time=GPS seconds
-                        Set lfn end_time (optional).
-  --lfn-comment=string  Set lfn comment (optional).
-  --non-lsc-tables-ok   OK to merge documents containing non-LSC tables.
-  -o filename, --output=filename
-                        Write output to filename (default = stdout).
-  -v, --verbose         Be verbose.
-  --remove-input        Remove input files after writing output (an attempt is
-                        made to not delete the output file in the event that
-                        it overwrote one of the input files).
-  --remove-input-except=filename
-                        When deleting input files, do not delete this file.
+Traceback (most recent call last):
+  File &quot;/home/soumi.de/pycbc-dev/bin/ligolw_add&quot;, line 43, in &lt;module&gt;
+    from glue.ligolw import lsctables
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/glue/ligolw/lsctables.py&quot;, line 44, in &lt;module&gt;
+    from lal import LIGOTimeGPS
+ImportError: No module named lal
 </pre></div>
 </div>
 <p>Of these options the workflow module will automatically add the following, which are unique for each job. <strong>DO NOT ADD THESE OPTIONS IN THE CONFIGURATION FILE</strong>.</p>
@@ -666,7 +644,7 @@ Options:
 <h4>ligolw_sstinca<a class="headerlink" href="#ligolw-sstinca" title="Permalink to this headline">¶</a></h4>
 <p>This code is responsible for identifying coincidences and applying and vetoes that are present and supplied.</p>
 <div class="system-message">
-<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/home/cbc/pycbc/pycbc/docs/workflow/coincidence.rst</tt>, line 130)</p>
+<p class="system-message-title">System Message: ERROR/3 (<tt class="docutils">/home/soumi.de/pycbc-dev/src/pycbc/docs/workflow/coincidence.rst</tt>, line 130)</p>
 Command u&#8217;ligolw_sstinca &#8211;help&#8217; failed: [Errno 2] No such file or directory</div>
 <p>Of these options the workflow will automatically add the following, which are unique for each job. <strong>DO NOT ADD THESE OPTIONS IN THE CONFIGURATION FILE</strong>.</p>
 <ul class="simple">
@@ -698,7 +676,7 @@ Command u&#8217;ligolw_sstinca &#8211;help&#8217; failed: [Errno 2] No such file
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Aug 27, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

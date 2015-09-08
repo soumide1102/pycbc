@@ -333,6 +333,11 @@
 <li class="toctree-l2"><a class="reference internal" href="documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -591,6 +596,87 @@ workflows. For details about this module and its capabilities see here:
 </dd></dl>
 
 <dl class="class">
+<dt id="pycbc.workflow.coincidence.PyCBCCombineStatmap">
+<em class="property">class </em><code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">PyCBCCombineStatmap</code><span class="sig-paren">(</span><em>cp</em>, <em>name</em>, <em>universe=None</em>, <em>ifos=None</em>, <em>out_dir=None</em>, <em>tags=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#PyCBCCombineStatmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.PyCBCCombineStatmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycbc.workflow.core.Executable" title="pycbc.workflow.core.Executable"><code class="xref py py-class docutils literal"><span class="pre">pycbc.workflow.core.Executable</span></code></a></p>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ifo</span></code></td>
+<td>If only one ifo in the ifo list this will be that ifo.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pycbc.workflow.coincidence.PyCBCCombineStatmap.create_node" title="pycbc.workflow.coincidence.PyCBCCombineStatmap.create_node"><code class="xref py py-obj docutils literal"><span class="pre">create_node</span></code></a>(stat_files[,&nbsp;tags])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pycbc.workflow.coincidence.PyCBCCombineStatmap.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>stat_files</em>, <em>tags=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#PyCBCCombineStatmap.create_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.PyCBCCombineStatmap.create_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.workflow.coincidence.PyCBCCombineStatmap.current_retention_level">
+<code class="descname">current_retention_level</code><em class="property"> = 3</em><a class="headerlink" href="#pycbc.workflow.coincidence.PyCBCCombineStatmap.current_retention_level" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins">
+<em class="property">class </em><code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">PyCBCDistributeBackgroundBins</code><span class="sig-paren">(</span><em>cp</em>, <em>name</em>, <em>universe=None</em>, <em>ifos=None</em>, <em>out_dir=None</em>, <em>tags=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#PyCBCDistributeBackgroundBins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#pycbc.workflow.core.Executable" title="pycbc.workflow.core.Executable"><code class="xref py py-class docutils literal"><span class="pre">pycbc.workflow.core.Executable</span></code></a></p>
+<p>Distribute coinc files amoung different background bins</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">ifo</span></code></td>
+<td>If only one ifo in the ifo list this will be that ifo.</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="#pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.create_node" title="pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.create_node"><code class="xref py py-obj docutils literal"><span class="pre">create_node</span></code></a>(coinc_files,&nbsp;bank_file,&nbsp;...[,&nbsp;tags])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.create_node">
+<code class="descname">create_node</code><span class="sig-paren">(</span><em>coinc_files</em>, <em>bank_file</em>, <em>background_bins</em>, <em>tags=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#PyCBCDistributeBackgroundBins.create_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.create_node" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.current_retention_level">
+<code class="descname">current_retention_level</code><em class="property"> = 3</em><a class="headerlink" href="#pycbc.workflow.coincidence.PyCBCDistributeBackgroundBins.current_retention_level" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="pycbc.workflow.coincidence.PyCBCFindCoincExecutable">
 <em class="property">class </em><code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">PyCBCFindCoincExecutable</code><span class="sig-paren">(</span><em>cp</em>, <em>name</em>, <em>universe=None</em>, <em>ifos=None</em>, <em>out_dir=None</em>, <em>tags=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#PyCBCFindCoincExecutable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.PyCBCFindCoincExecutable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#pycbc.workflow.core.Executable" title="pycbc.workflow.core.Executable"><code class="xref py py-class docutils literal"><span class="pre">pycbc.workflow.core.Executable</span></code></a></p>
@@ -828,6 +914,16 @@ workflows. For details about this module and its capabilities see here:
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="pycbc.workflow.coincidence.setup_background_bins">
+<code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">setup_background_bins</code><span class="sig-paren">(</span><em>workflow</em>, <em>coinc_files</em>, <em>bank_file</em>, <em>out_dir</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#setup_background_bins"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.setup_background_bins" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pycbc.workflow.coincidence.setup_background_bins_inj">
+<code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">setup_background_bins_inj</code><span class="sig-paren">(</span><em>workflow</em>, <em>coinc_files</em>, <em>background_file</em>, <em>bank_file</em>, <em>out_dir</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#setup_background_bins_inj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.setup_background_bins_inj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="pycbc.workflow.coincidence.setup_coincidence_workflow">
 <code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">setup_coincidence_workflow</code><span class="sig-paren">(</span><em>workflow, segsList, timeSlideFiles, inspiral_outs, output_dir, veto_cats=[2, 3, 4], tags=[], timeSlideTags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#setup_coincidence_workflow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.setup_coincidence_workflow" title="Permalink to this definition">¶</a></dt>
 <dd><p>This function aims to be the gateway for setting up a set of coincidence
@@ -987,6 +1083,26 @@ using a folded interval technique.</p>
 <dd><p>This function sets up exact match coincidence and background estimation
 using a folded interval technique.</p>
 </dd></dl>
+
+<dl class="function">
+<dt id="pycbc.workflow.coincidence.setup_simple_statmap">
+<code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">setup_simple_statmap</code><span class="sig-paren">(</span><em>workflow</em>, <em>coinc_files</em>, <em>out_dir</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#setup_simple_statmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.setup_simple_statmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pycbc.workflow.coincidence.setup_simple_statmap_inj">
+<code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">setup_simple_statmap_inj</code><span class="sig-paren">(</span><em>workflow</em>, <em>coinc_files</em>, <em>background_file</em>, <em>out_dir</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#setup_simple_statmap_inj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.setup_simple_statmap_inj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pycbc.workflow.coincidence.setup_statmap">
+<code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">setup_statmap</code><span class="sig-paren">(</span><em>workflow</em>, <em>coinc_files</em>, <em>bank_file</em>, <em>out_dir</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#setup_statmap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.setup_statmap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pycbc.workflow.coincidence.setup_statmap_inj">
+<code class="descclassname">pycbc.workflow.coincidence.</code><code class="descname">setup_statmap_inj</code><span class="sig-paren">(</span><em>workflow</em>, <em>coinc_files</em>, <em>background_file</em>, <em>bank_file</em>, <em>out_dir</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/coincidence.html#setup_statmap_inj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.coincidence.setup_statmap_inj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </div>
 <div class="section" id="module-pycbc.workflow.configparser_test">
@@ -5661,6 +5777,11 @@ table. Returns a File instances for the output file.</p>
 <dd></dd></dl>
 
 <dl class="function">
+<dt id="pycbc.workflow.plotting.make_template_plot">
+<code class="descclassname">pycbc.workflow.plotting.</code><code class="descname">make_template_plot</code><span class="sig-paren">(</span><em>workflow</em>, <em>bank_file</em>, <em>out_dir</em>, <em>tags=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/plotting.html#make_template_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.plotting.make_template_plot" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
 <dt id="pycbc.workflow.plotting.requirestr">
 <code class="descclassname">pycbc.workflow.plotting.</code><code class="descname">requirestr</code><span class="sig-paren">(</span><em>tags</em>, <em>substr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/workflow/plotting.html#requirestr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.workflow.plotting.requirestr" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -7379,7 +7500,7 @@ interferometer data</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Sep 03, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

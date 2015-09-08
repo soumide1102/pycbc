@@ -334,6 +334,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -504,69 +509,18 @@ executable being used to generate the file.</p>
 <h4>pycbc_timeslides<a class="headerlink" href="#pycbc-timeslides" title="Permalink to this headline">¶</a></h4>
 <p>pycbc_timeslides is the pycbc python code that is almost identical to the code used for making time slide tables in ihope. The help message for pycbc_timeslides follows</p>
 <div class="highlight-text"><div class="highlight"><pre>$ pycbc_timeslides --help
-
-usage: pycbc_timeslides [-h] [--version] [-a filename] [--comment text] [-v]
-                        [-i [name=first:last:step [name=first:last:step ...]]]
-                        [--inspiral-num-slides [count:instrument=offset[,instrument=offset...]
-                        [count:instrument=offset[,instrument=offset...] ...]]]
-                        [-n [name=offset [name=offset ...]]]
-                        [--remove-zero-lag] --output-files FILE [FILE ...]
-
-pycbc_timeslides constructs time_slide tables, writing the result to one or
-more files. Inspiral-style slides are specified by multiples of a fixed offset
-vector, with equal numbers of +ve and -ve multiples: the total number of time
-slide entries including zerolag is 2*nslides+1. Tisi-style slides are
-specified via one or more ranges of offsets for each instrument. If more than
-one instrument and set of offsets is given, the time slide table will contain
-entries corresponding to all combinations of offsets, one each from the
-different instruments. If no file names are given on the command line, output
-is written to stdout. If more than one file name is given on the command line,
-the time slides are distributed uniformly between files with each file being
-given a disjoint subset. Output files whose names end in &#39;.gz&#39; will be gzip
-compressed. Example: pycbc_timeslides --verbose --tisi-slides H1=-100:+100:10
-L1=-100:+100:+10 time_slides.xml.gz
-
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program&#39;s version number and exit
-  -a filename, --add-to filename
-                        Add the time slides from this file to the newly-
-                        generated time slides If the name ends in &#39;.gz&#39; it
-                        will be gzip-decompressed on input.
-  --comment text        Set comment string in process table (default = None).
-  -v, --verbose         Be verbose.
-  -i [name=first:last:step [name=first:last:step ...]], --tisi-slides [name=first:last:step [name=first:last:step ...]]
-                        Generate tisi-style (i.e. &#39;new-style&#39;) slides by
-                        giving a space-separated list of instrument-specific
-                        sets of offsets. The set of offsets is (first + &quot;n *
-                        step) where n is an integer such that first &lt;= offset
-                        &lt;= last. More than one set of offsets can be given for
-                        the same instrument, in which case the union is used.
-  --inspiral-num-slides [count:instrument=offset[,instrument=offset...] [count:instrument=offset[,instrument=offset...] ...]]
-                        Generate a set of lalapps-thinca-style time slides.
-                        The collection of instrument/offset pairs defines an
-                        offset vector, the time slides produced are integer
-                        multiples n * {offsets} where n is a non-zero integer
-                        in [-count, +count]. To generate multiple set of
-                        slides, give the option multiple times separated by
-                        spaces, e.g. --inspiral-num-slides &#39;50:H1=0,L1=5
-                        25:H1=10,V1=0&#39;
-  -n [name=offset [name=offset ...]], --normalize [name=offset [name=offset ...]]
-                        Normalize the time slides so that a given instrument
-                        has the specified offset in all slides. The other
-                        offsets in each time slide are adjusted so that the
-                        relative offsets are preserved. Time slides that do
-                        not involve this instrument are unaffected. If
-                        multiple instrument/offset pairs are given, then for
-                        each time slide they are considered in alphabetical
-                        order by instrument until the first is found that
-                        affects the offsets of that time slide. YMMV.
-  --remove-zero-lag     Remove the time slide with offsets of 0 for all
-                        instruments.
-  --output-files FILE [FILE ...]
-                        The path to the file(s) in which to write the
-                        resulting time slides. If more than one file is
-                        present, split the time slides equally over the files.
+Traceback (most recent call last):
+  File &quot;/home/soumi.de/pycbc-dev/bin/pycbc_timeslides&quot;, line 4, in &lt;module&gt;
+    __import__(&#39;pkg_resources&#39;).run_script(&#39;PyCBC===ecd952&#39;, &#39;pycbc_timeslides&#39;)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 735, in run_script
+    self.require(requires)[0].run_script(script_name, ns)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/pkg_resources/__init__.py&quot;, line 1652, in run_script
+    exec(code, namespace, namespace)
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/PyCBC-ecd952-py2.6.egg/EGG-INFO/scripts/pycbc_timeslides&quot;, line 41, in &lt;module&gt;
+    from glue.ligolw import lsctables
+  File &quot;/home/soumi.de/pycbc-dev/lib/python2.6/site-packages/glue/ligolw/lsctables.py&quot;, line 44, in &lt;module&gt;
+    from lal import LIGOTimeGPS
+ImportError: No module named lal
 </pre></div>
 </div>
 <p>An example of a pycbc_timeslides call, for time slides, is given below</p>
@@ -655,7 +609,7 @@ the code at run time.</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Aug 27, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

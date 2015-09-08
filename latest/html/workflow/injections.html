@@ -334,6 +334,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -574,7 +579,6 @@ Source distribution information:
  [--snr-distr]             use a distribution over expected (optimal) network SNR
                            uniform: uniform in SNR, log10: uniform in log10(SNR)
                            volume: uniform in 1/SNR^3
-                           ( Setting max-snr == min-snr will allow you to choose a fixed SNR )
  [--ninja-snr]             use a NINJA waveform SNR calculation (if not set, use LALSimulation)
  [--min-snr] SMIN          set the minimum network snr
  [--max-snr] SMAX          set the maximum network snr
@@ -648,8 +652,7 @@ Spin distribution information:
                            One of these is required.
   [--spin-gaussian]        enable gaussian spin distribution
   --aligned                enforces the spins to be along the direction
-                           of orbital angular momentum. Spin z-components are the only non-vanishing (unless &#39;--axis-choice view&#39; convention is chosen)
-  [--axis-choice] choice   frame axis choice: &#39;angmomentum&#39; (default) or &#39;view&#39; to define convention for spin aligned case
+                           of orbital angular momentum.
   [--min-spin1] spin1min   Set the minimum spin1 to spin1min (0.0)
   [--max-spin1] spin1max   Set the maximum spin1 to spin1max (0.0)
   [--mean-spin1] spin1mean Set the mean for |spin1| distribution
@@ -714,7 +717,7 @@ Output:
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Sep 03, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

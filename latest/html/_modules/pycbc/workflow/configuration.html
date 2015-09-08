@@ -332,6 +332,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -425,7 +430,7 @@
 <span class="kn">import</span> <span class="nn">pycbc.workflow</span>
 
 
-<div class="viewcode-block" id="add_workflow_command_line_group"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.add_workflow_command_line_group">[docs]</a><span class="k">def</span> <span class="nf">add_workflow_command_line_group</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+<div class="viewcode-block" id="add_workflow_command_line_group"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.add_workflow_command_line_group">[docs]</a><span class="k">def</span> <span class="nf">add_workflow_command_line_group</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    The standard way of initializing a ConfigParser object in workflow will be</span>
 <span class="sd">    to do it from the command line. This is done by giving a</span>
@@ -468,7 +473,7 @@
                            <span class="n">help</span><span class="o">=</span><span class="s">&quot;List of section,option,value combinations to add into the configuration file. Normally the gps start and end times might be provided this way, and user specific locations (ie. output directories). This can also be provided as SECTION:OPTION or SECTION:OPTION: both of which indicate that the corresponding value is left blank.&quot;</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser">[docs]</a><span class="k">class</span> <span class="nc">WorkflowConfigParser</span><span class="p">(</span><span class="n">glue</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">DeepCopyableConfigParser</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser">[docs]</a><span class="k">class</span> <span class="nc">WorkflowConfigParser</span><span class="p">(</span><span class="n">glue</span><span class="o">.</span><span class="n">pipeline</span><span class="o">.</span><span class="n">DeepCopyableConfigParser</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This is a sub-class of glue.pipeline.DeepCopyableConfigParser, which lets</span>
 <span class="sd">    us add a few additional helper features that are useful in workflows.</span>
@@ -549,7 +554,7 @@
 
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="WorkflowConfigParser.from_args"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.from_args">[docs]</a>    <span class="k">def</span> <span class="nf">from_args</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.from_args"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.from_args">[docs]</a>    <span class="k">def</span> <span class="nf">from_args</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize a WorkflowConfigParser instance using the command line values</span>
 <span class="sd">        parsed in args. args must contain the values provided by the</span>
@@ -595,7 +600,7 @@
         <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">confFiles</span><span class="p">,</span> <span class="n">parsedOverrides</span><span class="p">)</span> 
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.read_ini_file"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.read_ini_file">[docs]</a>    <span class="k">def</span> <span class="nf">read_ini_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cpFile</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.read_ini_file"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.read_ini_file">[docs]</a>    <span class="k">def</span> <span class="nf">read_ini_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cpFile</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Read a .ini file and return it as a ConfigParser class.</span>
 <span class="sd">        This function does none of the parsing/combining of sections. It simply</span>
@@ -617,7 +622,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">cpFile</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.perform_exe_expansion"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.perform_exe_expansion">[docs]</a>    <span class="k">def</span> <span class="nf">perform_exe_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.perform_exe_expansion"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.perform_exe_expansion">[docs]</a>    <span class="k">def</span> <span class="nf">perform_exe_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function will look through the executables section of the</span>
 <span class="sd">        ConfigParser object and replace any values using macros with full paths.</span>
@@ -639,7 +644,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s">&#39;executables&#39;</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">newStr</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.interpolate_exe"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.interpolate_exe">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate_exe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testString</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.interpolate_exe"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.interpolate_exe">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate_exe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testString</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Replace testString with a path to an executable based on the format.</span>
 
@@ -686,7 +691,7 @@
 
         <span class="k">return</span> <span class="n">newString</span>
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.get_subsections"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.get_subsections">[docs]</a>    <span class="k">def</span> <span class="nf">get_subsections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_name</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.get_subsections"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.get_subsections">[docs]</a>    <span class="k">def</span> <span class="nf">get_subsections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a list of subsections for the given section name</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">subsections</span> <span class="o">=</span> <span class="p">[</span><span class="n">sec</span> <span class="k">for</span> <span class="n">sec</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">sections</span><span class="p">()</span> <span class="k">if</span> <span class="n">sec</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="n">section_name</span> <span class="o">+</span> <span class="s">&#39;-&#39;</span><span class="p">)]</span>   
@@ -714,7 +719,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.perform_extended_interpolation"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.perform_extended_interpolation">[docs]</a>    <span class="k">def</span> <span class="nf">perform_extended_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.perform_extended_interpolation"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.perform_extended_interpolation">[docs]</a>    <span class="k">def</span> <span class="nf">perform_extended_interpolation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filter through an ini file and replace all examples of </span>
 <span class="sd">        ExtendedInterpolation formatting with the exact value. For values like</span>
@@ -743,7 +748,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span><span class="n">option</span><span class="p">,</span><span class="n">newStr</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.interpolate_string"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.interpolate_string">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testString</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.interpolate_string"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.interpolate_string">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate_string</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testString</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Take a string and replace all example of ExtendedInterpolation</span>
 <span class="sd">        formatting within the string with the exact value. </span>
@@ -798,7 +803,7 @@
         <span class="k">return</span> <span class="n">testString</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.split_multi_sections"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.split_multi_sections">[docs]</a>    <span class="k">def</span> <span class="nf">split_multi_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.split_multi_sections"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.split_multi_sections">[docs]</a>    <span class="k">def</span> <span class="nf">split_multi_sections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Parse through the WorkflowConfigParser instance and splits any sections</span>
 <span class="sd">        labelled with an &quot;&amp;&quot; sign (for e.g. [inspiral&amp;tmpltbank]) into</span>
@@ -821,7 +826,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">remove_section</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.add_options_to_section"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.add_options_to_section">[docs]</a>    <span class="k">def</span> <span class="nf">add_options_to_section</span><span class="p">(</span><span class="bp">self</span> <span class="p">,</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">overwrite_options</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.add_options_to_section"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.add_options_to_section">[docs]</a>    <span class="k">def</span> <span class="nf">add_options_to_section</span><span class="p">(</span><span class="bp">self</span> <span class="p">,</span><span class="n">section</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">overwrite_options</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add a set of options and values to a section of a ConfigParser object.</span>
 <span class="sd">        Will throw an error if any of the options being added already exist,</span>
@@ -857,7 +862,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">section</span><span class="p">,</span><span class="n">option</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.sanity_check_subsections"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.sanity_check_subsections">[docs]</a>    <span class="k">def</span> <span class="nf">sanity_check_subsections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.sanity_check_subsections"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.sanity_check_subsections">[docs]</a>    <span class="k">def</span> <span class="nf">sanity_check_subsections</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        This function goes through the ConfigParset and checks that any options</span>
 <span class="sd">        given in the [SECTION_NAME] section are not also given in any </span>
@@ -875,7 +880,7 @@
                                                  <span class="n">raise_error</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.check_duplicate_options"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.check_duplicate_options">[docs]</a>    <span class="k">def</span> <span class="nf">check_duplicate_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section1</span><span class="p">,</span> <span class="n">section2</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.check_duplicate_options"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.check_duplicate_options">[docs]</a>    <span class="k">def</span> <span class="nf">check_duplicate_options</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section1</span><span class="p">,</span> <span class="n">section2</span><span class="p">,</span> <span class="n">raise_error</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Check for duplicate options in two sections, section1 and section2.</span>
 <span class="sd">        Will return a list of the duplicate options.</span>
@@ -916,7 +921,7 @@
         <span class="k">return</span> <span class="n">duplicates</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.get_opt_tag"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.get_opt_tag">[docs]</a>    <span class="k">def</span> <span class="nf">get_opt_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.get_opt_tag"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.get_opt_tag">[docs]</a>    <span class="k">def</span> <span class="nf">get_opt_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convenience function accessing get_opt_tags() for a single tag: see </span>
 <span class="sd">        documentation for that function.</span>
@@ -942,7 +947,7 @@
         <span class="k">return</span> <span class="n">get_opt_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="p">[</span><span class="n">tag</span><span class="p">])</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.get_opt_tags"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.get_opt_tags">[docs]</a>    <span class="k">def</span> <span class="nf">get_opt_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.get_opt_tags"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.get_opt_tags">[docs]</a>    <span class="k">def</span> <span class="nf">get_opt_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Supplement to ConfigParser.ConfigParser.get(). This will search for an</span>
 <span class="sd">        option in [section] and if it doesn&#39;t find it will also try in</span>
@@ -993,7 +998,7 @@
             <span class="k">return</span> <span class="n">returnVals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.has_option_tag"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.has_option_tag">[docs]</a>    <span class="k">def</span> <span class="nf">has_option_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.has_option_tag"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.has_option_tag">[docs]</a>    <span class="k">def</span> <span class="nf">has_option_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convenience function accessing has_option_tags() for a single tag: see</span>
 <span class="sd">        documentation for that function.</span>
@@ -1019,7 +1024,7 @@
         <span class="k">return</span> <span class="n">has_option_tags</span><span class="p">(</span><span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="p">[</span><span class="n">tag</span><span class="p">])</span>
 
 </div>
-<div class="viewcode-block" id="WorkflowConfigParser.has_option_tags"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.configuration.WorkflowConfigParser.has_option_tags">[docs]</a>    <span class="k">def</span> <span class="nf">has_option_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
+<div class="viewcode-block" id="WorkflowConfigParser.has_option_tags"><a class="viewcode-back" href="../../../workflow/initialization.html#pycbc.workflow.configuration.WorkflowConfigParser.has_option_tags">[docs]</a>    <span class="k">def</span> <span class="nf">has_option_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">option</span><span class="p">,</span> <span class="n">tags</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Supplement to ConfigParser.ConfigParser.has_option().</span>
 <span class="sd">        This will search for an option in [section] and if it doesn&#39;t find it</span>
@@ -1059,7 +1064,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Sep 03, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

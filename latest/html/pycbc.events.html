@@ -331,6 +331,11 @@
 <li class="toctree-l2"><a class="reference internal" href="documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -393,6 +398,36 @@
 <span id="pycbc-events-coinc-module"></span><h2>pycbc.events.coinc module<a class="headerlink" href="#module-pycbc.events.coinc" title="Permalink to this headline">¶</a></h2>
 <p>This modules contains functions for calculating and manipulating
 coincident triggers.</p>
+<dl class="function">
+<dt id="pycbc.events.coinc.background_bin_from_string">
+<code class="descclassname">pycbc.events.coinc.</code><code class="descname">background_bin_from_string</code><span class="sig-paren">(</span><em>background_bins</em>, <em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/events/coinc.html#background_bin_from_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.events.coinc.background_bin_from_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return template ids for each bin as defined by the format string</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>bins: list of strings</strong></p>
+<blockquote>
+<div><p>List of strings which define how a background bin is taken from the
+list of templates.</p>
+</div></blockquote>
+<p><strong>data: dict of numpy.ndarrays</strong></p>
+<blockquote>
+<div><p>Dict with parameter key values and numpy.ndarray values which define
+the parameters of the template bank to bin up.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">bins: dict</p>
+<blockquote class="last">
+<div><p>Dictionary of location indices indexed by a bin name</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="function">
 <dt id="pycbc.events.coinc.calculate_n_louder">
 <code class="descclassname">pycbc.events.coinc.</code><code class="descname">calculate_n_louder</code><span class="sig-paren">(</span><em>bstat</em>, <em>fstat</em>, <em>dec</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/events/coinc.html#calculate_n_louder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.events.coinc.calculate_n_louder" title="Permalink to this definition">¶</a></dt>
@@ -944,7 +979,7 @@ opt structure the process_params table will not be correct.</p>
 
 <dl class="class">
 <dt id="pycbc.events.simd_threshold.ThreshClusterObject">
-<em class="property">class </em><code class="descclassname">pycbc.events.simd_threshold.</code><code class="descname">ThreshClusterObject</code><span class="sig-paren">(</span><em>series</em>, <em>window</em>, <em>segsize=32768</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/events/simd_threshold.html#ThreshClusterObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.events.simd_threshold.ThreshClusterObject" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">pycbc.events.simd_threshold.</code><code class="descname">ThreshClusterObject</code><span class="sig-paren">(</span><em>series</em>, <em>window</em>, <em>segsize=131072</em>, <em>verbose=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pycbc/events/simd_threshold.html#ThreshClusterObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pycbc.events.simd_threshold.ThreshClusterObject" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><code class="xref py py-class docutils literal"><span class="pre">object</span></code></a></p>
 <p>This class takes a complex SNR time series, a real threshold value, and a window size
 (expressed as a number of complex sample points), and optionally a segment size and
@@ -1337,7 +1372,7 @@ durations defined by the start and end arrays</p>
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Sep 03, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.

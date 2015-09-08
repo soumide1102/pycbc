@@ -332,6 +332,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../documentation.html#documenting-pycbc-scripts">Documenting PyCBC scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release.html">Creating Releases of PyCBC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../release.html#creating-the-release-on-github">Creating the release on GitHub</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../release.html#uploading-to-the-python-package-index">Uploading to the Python Package Index</a></li>
+</ul>
+</li>
 </ul>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../formats/hdf_format.html">HDF files within the PyCBC workflow</a><ul>
@@ -411,11 +416,9 @@
 <span class="sd">&quot;&quot;&quot;This module contains functions for generating common SPA template precalculated</span>
 <span class="sd">   vectors.</span>
 <span class="sd">&quot;&quot;&quot;</span>
-<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">import</span> <span class="nn">lal</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">sqrt</span><span class="p">,</span> <span class="n">log</span>
+<span class="kn">import</span> <span class="nn">numpy</span><span class="o">,</span> <span class="nn">lal</span><span class="o">,</span> <span class="nn">lalsimulation</span><span class="o">,</span> <span class="nn">pycbc.pnutils</span>
 <span class="kn">from</span> <span class="nn">pycbc.scheme</span> <span class="kn">import</span> <span class="n">schemed</span>
-<span class="kn">import</span> <span class="nn">pycbc.pnutils</span>
 <span class="kn">from</span> <span class="nn">pycbc.types</span> <span class="kn">import</span> <span class="n">FrequencySeries</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">complex64</span><span class="p">,</span> <span class="n">float32</span><span class="p">,</span> <span class="n">zeros</span>
 <span class="kn">from</span> <span class="nn">pycbc.waveform.utils</span> <span class="kn">import</span> <span class="n">ceilpow2</span>
 
@@ -553,46 +556,35 @@
     <span class="n">distance</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;distance&#39;</span><span class="p">]</span>
     <span class="n">mass1</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;mass1&#39;</span><span class="p">]</span>
     <span class="n">mass2</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;mass2&#39;</span><span class="p">]</span>
+    <span class="n">s1z</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;spin1z&#39;</span><span class="p">]</span>
+    <span class="n">s2z</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;spin2z&#39;</span><span class="p">]</span>
     <span class="n">phase_order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">kwds</span><span class="p">[</span><span class="s">&#39;phase_order&#39;</span><span class="p">])</span>
     <span class="n">amplitude_order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">kwds</span><span class="p">[</span><span class="s">&#39;amplitude_order&#39;</span><span class="p">])</span>
+    <span class="n">spin_order</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">kwds</span><span class="p">[</span><span class="s">&#39;spin_order&#39;</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="s">&#39;out&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;out&#39;</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">out</span> <span class="o">=</span> <span class="bp">None</span>
 
-    <span class="n">tC</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">delta_f</span>
-
     <span class="n">amp_factor</span> <span class="o">=</span> <span class="n">spa_amplitude_factor</span><span class="p">(</span><span class="n">mass1</span><span class="o">=</span><span class="n">mass1</span><span class="p">,</span> <span class="n">mass2</span><span class="o">=</span><span class="n">mass2</span><span class="p">)</span> <span class="o">/</span> <span class="n">distance</span>
 
-    <span class="c">#Calculate the spin corrections</span>
-    <span class="n">beta</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">gamma</span> <span class="o">=</span> <span class="n">pycbc</span><span class="o">.</span><span class="n">pnutils</span><span class="o">.</span><span class="n">mass1_mass2_spin1z_spin2z_to_beta_sigma_gamma</span><span class="p">(</span>
-                                    <span class="n">mass1</span><span class="p">,</span> <span class="n">mass2</span><span class="p">,</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;spin1z&#39;</span><span class="p">],</span> <span class="n">kwds</span><span class="p">[</span><span class="s">&#39;spin2z&#39;</span><span class="p">])</span>
+    <span class="c">#Calculate the PN terms </span>
+    <span class="n">phasing</span> <span class="o">=</span> <span class="n">lalsimulation</span><span class="o">.</span><span class="n">SimInspiralTaylorF2AlignedPhasing</span><span class="p">(</span><span class="n">mass1</span><span class="p">,</span> 
+                                        <span class="n">mass2</span><span class="p">,</span> <span class="n">s1z</span><span class="p">,</span> <span class="n">s2z</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">spin_order</span><span class="p">)</span>
+                                           
+    <span class="n">pfaN</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">pfa2</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="n">pfaN</span>
+    <span class="n">pfa3</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">/</span> <span class="n">pfaN</span>
+    <span class="n">pfa4</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">/</span> <span class="n">pfaN</span>
+    <span class="n">pfa5</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">/</span> <span class="n">pfaN</span>
+    <span class="n">pfa6</span> <span class="o">=</span> <span class="p">(</span><span class="n">phasing</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">-</span> <span class="n">phasing</span><span class="o">.</span><span class="n">vlogv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">*</span> <span class="n">log</span><span class="p">(</span><span class="mi">4</span><span class="p">))</span> <span class="o">/</span> <span class="n">pfaN</span>
+    <span class="n">pfa7</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">v</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">/</span> <span class="n">pfaN</span>
+    
+    <span class="n">pfl5</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">vlogv</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">/</span> <span class="n">pfaN</span>
+    <span class="n">pfl6</span> <span class="o">=</span> <span class="n">phasing</span><span class="o">.</span><span class="n">vlogv</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">/</span> <span class="n">pfaN</span>
 
-    <span class="c">#Calculate the PN terms #TODO: replace with functions in lalsimulation!###</span>
-    <span class="n">M</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">mass1</span><span class="p">)</span> <span class="o">+</span> <span class="nb">float</span><span class="p">(</span><span class="n">mass2</span><span class="p">)</span>
-    <span class="n">eta</span> <span class="o">=</span> <span class="n">mass1</span> <span class="o">*</span> <span class="n">mass2</span> <span class="o">/</span> <span class="p">(</span><span class="n">M</span> <span class="o">*</span> <span class="n">M</span><span class="p">)</span>
-    <span class="n">theta</span> <span class="o">=</span> <span class="o">-</span><span class="mf">11831.</span><span class="o">/</span><span class="mf">9240.</span>
-    <span class="n">lambdaa</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1987.</span><span class="o">/</span><span class="mf">3080.0</span>
-    <span class="n">pfaN</span> <span class="o">=</span> <span class="mf">3.0</span><span class="o">/</span><span class="p">(</span><span class="mf">128.0</span> <span class="o">*</span> <span class="n">eta</span><span class="p">)</span>
-    <span class="n">pfa2</span> <span class="o">=</span> <span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="mf">743.0</span><span class="o">/</span><span class="mi">84</span> <span class="o">+</span> <span class="mf">11.0</span> <span class="o">*</span> <span class="n">eta</span><span class="p">)</span><span class="o">/</span><span class="mf">9.0</span>
-    <span class="n">pfa3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">16.0</span><span class="o">*</span><span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">+</span> <span class="mf">4.0</span><span class="o">*</span><span class="n">beta</span>
-    <span class="n">pfa4</span> <span class="o">=</span> <span class="mf">5.0</span><span class="o">*</span><span class="p">(</span><span class="mf">3058.673</span><span class="o">/</span><span class="mf">7.056</span> <span class="o">+</span> <span class="mf">5429.0</span><span class="o">/</span><span class="mf">7.0</span> <span class="o">*</span> <span class="n">eta</span> <span class="o">+</span> <span class="mf">617.0</span> <span class="o">*</span> <span class="n">eta</span><span class="o">*</span><span class="n">eta</span><span class="p">)</span><span class="o">/</span><span class="mf">72.0</span> <span class="o">-</span> \
-            <span class="mf">10.0</span><span class="o">*</span><span class="n">sigma</span>
-    <span class="n">pfa5</span> <span class="o">=</span> <span class="mf">5.0</span><span class="o">/</span><span class="mf">9.0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">7729.0</span><span class="o">/</span><span class="mf">84.0</span> <span class="o">-</span> <span class="mf">13.0</span> <span class="o">*</span> <span class="n">eta</span><span class="p">)</span> <span class="o">*</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">-</span> <span class="n">gamma</span>
-    <span class="n">pfl5</span> <span class="o">=</span> <span class="mf">5.0</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">7729.0</span><span class="o">/</span><span class="mf">84.0</span> <span class="o">-</span> <span class="mf">13.0</span> <span class="o">*</span> <span class="n">eta</span><span class="p">)</span> <span class="o">*</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">-</span> <span class="n">gamma</span> <span class="o">*</span> <span class="mi">3</span>
-    <span class="n">pfa6</span> <span class="o">=</span> <span class="p">(</span><span class="mf">11583.231236531</span><span class="o">/</span><span class="mf">4.694215680</span> <span class="o">-</span> <span class="mf">640.0</span><span class="o">/</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">*</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span><span class="o">-</span> \
-            <span class="mf">6848.0</span><span class="o">/</span><span class="mf">21.0</span><span class="o">*</span><span class="n">lal</span><span class="o">.</span><span class="n">GAMMA</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="n">eta</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mf">15335.597827</span><span class="o">/</span><span class="mf">3.048192</span> <span class="o">+</span> <span class="mf">2255.</span><span class="o">/</span><span class="mf">12.</span> <span class="o">*</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">*</span> \
-            <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">-</span> <span class="mf">1760.</span><span class="o">/</span><span class="mf">3.</span><span class="o">*</span><span class="n">theta</span> <span class="o">+</span><span class="mf">12320.</span><span class="o">/</span><span class="mf">9.</span><span class="o">*</span><span class="n">lambdaa</span><span class="p">)</span> <span class="o">+</span> \
-            <span class="n">eta</span><span class="o">*</span><span class="n">eta</span> <span class="o">*</span> <span class="mf">76055.0</span><span class="o">/</span><span class="mf">1728.0</span> <span class="o">-</span> \
-            <span class="n">eta</span><span class="o">*</span><span class="n">eta</span><span class="o">*</span><span class="n">eta</span><span class="o">*</span>  <span class="mf">127825.0</span><span class="o">/</span><span class="mf">1296.0</span> 
-    <span class="n">pfl6</span> <span class="o">=</span> <span class="o">-</span><span class="mf">6848.0</span><span class="o">/</span><span class="mf">21.0</span>
-    <span class="n">pfa7</span> <span class="o">=</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">*</span> <span class="mf">5.0</span><span class="o">/</span><span class="mf">756.0</span> <span class="o">*</span> <span class="p">(</span> <span class="mf">15419335.0</span><span class="o">/</span><span class="mf">336.0</span> <span class="o">+</span> <span class="mf">75703.0</span><span class="o">/</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">eta</span> <span class="o">-</span> \
-            <span class="mf">14809.0</span> <span class="o">*</span> <span class="n">eta</span><span class="o">*</span><span class="n">eta</span><span class="p">)</span>
-
-    <span class="n">m_sec</span> <span class="o">=</span> <span class="n">M</span> <span class="o">*</span> <span class="n">lal</span><span class="o">.</span><span class="n">MTSUN_SI</span>
-    <span class="n">piM</span> <span class="o">=</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">*</span> <span class="n">m_sec</span>
+    <span class="n">piM</span> <span class="o">=</span> <span class="n">lal</span><span class="o">.</span><span class="n">PI</span> <span class="o">*</span> <span class="p">(</span><span class="n">mass1</span> <span class="o">+</span> <span class="n">mass2</span><span class="p">)</span> <span class="o">*</span> <span class="n">lal</span><span class="o">.</span><span class="n">MTSUN_SI</span>
 
     <span class="n">kmin</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">f_lower</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">delta_f</span><span class="p">))</span>
 
@@ -628,7 +620,7 @@
   <div role="contentinfo">
     <p>
         &copy; Copyright 2014, Alexander Nitz.
-      Last updated on Sep 03, 2015.
+      Last updated on Sep 08, 2015.
     </p>
   </div>
   Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
