@@ -432,12 +432,12 @@
 <span class="kn">from</span> <span class="nn">pycbc.workflow.core</span> <span class="kn">import</span> <span class="n">OutSegFile</span><span class="p">,</span> <span class="n">File</span><span class="p">,</span> <span class="n">FileList</span><span class="p">,</span> <span class="n">make_analysis_dir</span>
 <span class="kn">from</span> <span class="nn">pycbc.frame</span> <span class="kn">import</span> <span class="n">datafind_connection</span>
 
-<div class="viewcode-block" id="ContentHandler"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.ContentHandler">[docs]</a><span class="k">class</span> <span class="nc">ContentHandler</span><span class="p">(</span><span class="n">ligolw</span><span class="o">.</span><span class="n">LIGOLWContentHandler</span><span class="p">):</span>
+<div class="viewcode-block" id="ContentHandler"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.ContentHandler">[docs]</a><span class="k">class</span> <span class="nc">ContentHandler</span><span class="p">(</span><span class="n">ligolw</span><span class="o">.</span><span class="n">LIGOLWContentHandler</span><span class="p">):</span>
         <span class="k">pass</span>
 </div>
 <span class="n">lsctables</span><span class="o">.</span><span class="n">use_in</span><span class="p">(</span><span class="n">ContentHandler</span><span class="p">)</span>
 
-<div class="viewcode-block" id="setup_datafind_workflow"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.setup_datafind_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span>  <span class="n">outputDir</span><span class="p">,</span> <span class="n">segFilesList</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_datafind_workflow"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.setup_datafind_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span>  <span class="n">outputDir</span><span class="p">,</span> <span class="n">segFilesList</span><span class="p">,</span>
                             <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Setup datafind section of the workflow. This section is responsible for</span>
@@ -735,7 +735,7 @@
     <span class="k">return</span> <span class="n">FileList</span><span class="p">(</span><span class="n">datafindouts</span><span class="p">),</span> <span class="n">scienceSegs</span>
     
 </div>
-<div class="viewcode-block" id="setup_datafind_runtime_cache_multi_calls_perifo"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.setup_datafind_runtime_cache_multi_calls_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_cache_multi_calls_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span> 
+<div class="viewcode-block" id="setup_datafind_runtime_cache_multi_calls_perifo"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.setup_datafind_runtime_cache_multi_calls_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_cache_multi_calls_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span> 
                                                     <span class="n">outputDir</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function uses the glue.datafind library to obtain the location of all</span>
@@ -813,7 +813,7 @@
             <span class="n">datafindcaches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">datafindcaches</span><span class="p">,</span> <span class="n">datafindouts</span>
 </div>
-<div class="viewcode-block" id="setup_datafind_runtime_cache_single_call_perifo"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.setup_datafind_runtime_cache_single_call_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_cache_single_call_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_datafind_runtime_cache_single_call_perifo"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.setup_datafind_runtime_cache_single_call_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_cache_single_call_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span>
                                               <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function uses the glue.datafind library to obtain the location of all</span>
@@ -891,7 +891,7 @@
         <span class="n">datafindcaches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">datafindcaches</span><span class="p">,</span> <span class="n">datafindouts</span>
 </div>
-<div class="viewcode-block" id="setup_datafind_runtime_frames_single_call_perifo"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.setup_datafind_runtime_frames_single_call_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_frames_single_call_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_datafind_runtime_frames_single_call_perifo"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.setup_datafind_runtime_frames_single_call_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_frames_single_call_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span>
                                               <span class="n">outputDir</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function uses the glue.datafind library to obtain the location of all</span>
@@ -941,7 +941,7 @@
 
     <span class="k">return</span> <span class="n">datafindcaches</span><span class="p">,</span> <span class="n">datafindouts</span>
 </div>
-<div class="viewcode-block" id="setup_datafind_runtime_frames_multi_calls_perifo"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.setup_datafind_runtime_frames_multi_calls_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_frames_multi_calls_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_datafind_runtime_frames_multi_calls_perifo"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.setup_datafind_runtime_frames_multi_calls_perifo">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_runtime_frames_multi_calls_perifo</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">scienceSegs</span><span class="p">,</span>
                                                      <span class="n">outputDir</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function uses the glue.datafind library to obtain the location of all</span>
@@ -991,7 +991,7 @@
 
     <span class="k">return</span> <span class="n">datafindcaches</span><span class="p">,</span> <span class="n">datafindouts</span>
 </div>
-<div class="viewcode-block" id="setup_datafind_from_pregenerated_lcf_files"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.setup_datafind_from_pregenerated_lcf_files">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_from_pregenerated_lcf_files</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">ifos</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="setup_datafind_from_pregenerated_lcf_files"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.setup_datafind_from_pregenerated_lcf_files">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_from_pregenerated_lcf_files</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">ifos</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function is used if you want to run with pregenerated lcf frame</span>
 <span class="sd">    cache files. </span>
@@ -1034,7 +1034,7 @@
 
     <span class="k">return</span> <span class="n">datafindcaches</span><span class="p">,</span> <span class="n">datafindouts</span>
 </div>
-<div class="viewcode-block" id="convert_cachelist_to_filelist"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.convert_cachelist_to_filelist">[docs]</a><span class="k">def</span> <span class="nf">convert_cachelist_to_filelist</span><span class="p">(</span><span class="n">datafindcache_list</span><span class="p">):</span>
+<div class="viewcode-block" id="convert_cachelist_to_filelist"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.convert_cachelist_to_filelist">[docs]</a><span class="k">def</span> <span class="nf">convert_cachelist_to_filelist</span><span class="p">(</span><span class="n">datafindcache_list</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Take as input a list of glue.lal.Cache objects and return a pycbc FileList</span>
 <span class="sd">    containing all frames within those caches.</span>
@@ -1074,7 +1074,7 @@
     <span class="k">return</span> <span class="n">datafind_filelist</span>
 
 </div>
-<div class="viewcode-block" id="get_science_segs_from_datafind_outs"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.get_science_segs_from_datafind_outs">[docs]</a><span class="k">def</span> <span class="nf">get_science_segs_from_datafind_outs</span><span class="p">(</span><span class="n">datafindcaches</span><span class="p">):</span>
+<div class="viewcode-block" id="get_science_segs_from_datafind_outs"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.get_science_segs_from_datafind_outs">[docs]</a><span class="k">def</span> <span class="nf">get_science_segs_from_datafind_outs</span><span class="p">(</span><span class="n">datafindcaches</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function will calculate the science segments that are covered in</span>
 <span class="sd">    the OutGroupList containing the frame files returned by various</span>
@@ -1103,7 +1103,7 @@
                 <span class="n">newScienceSegs</span><span class="p">[</span><span class="n">ifo</span><span class="p">]</span><span class="o">.</span><span class="n">coalesce</span><span class="p">()</span>
     <span class="k">return</span> <span class="n">newScienceSegs</span>
 </div>
-<div class="viewcode-block" id="get_missing_segs_from_frame_file_cache"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.get_missing_segs_from_frame_file_cache">[docs]</a><span class="k">def</span> <span class="nf">get_missing_segs_from_frame_file_cache</span><span class="p">(</span><span class="n">datafindcaches</span><span class="p">):</span>
+<div class="viewcode-block" id="get_missing_segs_from_frame_file_cache"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.get_missing_segs_from_frame_file_cache">[docs]</a><span class="k">def</span> <span class="nf">get_missing_segs_from_frame_file_cache</span><span class="p">(</span><span class="n">datafindcaches</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function will use os.path.isfile to determine if all the frame files</span>
 <span class="sd">    returned by the local datafind server actually exist on the disk. This can</span>
@@ -1147,7 +1147,7 @@
                 <span class="n">missingFrames</span><span class="p">[</span><span class="n">ifo</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">currMissingFrames</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">missingFrameSegs</span><span class="p">,</span> <span class="n">missingFrames</span>
 </div>
-<div class="viewcode-block" id="setup_datafind_server_connection"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.setup_datafind_server_connection">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_server_connection</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="setup_datafind_server_connection"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.setup_datafind_server_connection">[docs]</a><span class="k">def</span> <span class="nf">setup_datafind_server_connection</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function is resposible for setting up the connection with the datafind</span>
 <span class="sd">    server.</span>
@@ -1170,7 +1170,7 @@
         
     <span class="k">return</span> <span class="n">datafind_connection</span><span class="p">(</span><span class="n">datafind_server</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="get_segment_summary_times"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.get_segment_summary_times">[docs]</a><span class="k">def</span> <span class="nf">get_segment_summary_times</span><span class="p">(</span><span class="n">scienceFile</span><span class="p">,</span> <span class="n">segmentName</span><span class="p">):</span>
+<div class="viewcode-block" id="get_segment_summary_times"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.get_segment_summary_times">[docs]</a><span class="k">def</span> <span class="nf">get_segment_summary_times</span><span class="p">(</span><span class="n">scienceFile</span><span class="p">,</span> <span class="n">segmentName</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function will find the times for which the segment_summary is set</span>
 <span class="sd">    for the flag given by segmentName.</span>
@@ -1224,7 +1224,7 @@
    
     <span class="k">return</span> <span class="n">summSegList</span>
 </div>
-<div class="viewcode-block" id="run_datafind_instance"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.run_datafind_instance">[docs]</a><span class="k">def</span> <span class="nf">run_datafind_instance</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">observatory</span><span class="p">,</span> <span class="n">frameType</span><span class="p">,</span>
+<div class="viewcode-block" id="run_datafind_instance"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.run_datafind_instance">[docs]</a><span class="k">def</span> <span class="nf">run_datafind_instance</span><span class="p">(</span><span class="n">cp</span><span class="p">,</span> <span class="n">outputDir</span><span class="p">,</span> <span class="n">connection</span><span class="p">,</span> <span class="n">observatory</span><span class="p">,</span> <span class="n">frameType</span><span class="p">,</span>
                           <span class="n">startTime</span><span class="p">,</span> <span class="n">endTime</span><span class="p">,</span> <span class="n">ifo</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function will query the datafind server once to find frames between</span>
@@ -1319,7 +1319,7 @@
     <span class="k">return</span> <span class="n">dfCache</span><span class="p">,</span> <span class="n">cache_file</span>
 
 </div>
-<div class="viewcode-block" id="log_datafind_command"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.log_datafind_command">[docs]</a><span class="k">def</span> <span class="nf">log_datafind_command</span><span class="p">(</span><span class="n">observatory</span><span class="p">,</span> <span class="n">frameType</span><span class="p">,</span> <span class="n">startTime</span><span class="p">,</span> <span class="n">endTime</span><span class="p">,</span>
+<div class="viewcode-block" id="log_datafind_command"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.log_datafind_command">[docs]</a><span class="k">def</span> <span class="nf">log_datafind_command</span><span class="p">(</span><span class="n">observatory</span><span class="p">,</span> <span class="n">frameType</span><span class="p">,</span> <span class="n">startTime</span><span class="p">,</span> <span class="n">endTime</span><span class="p">,</span>
                          <span class="n">outputDir</span><span class="p">,</span> <span class="o">**</span><span class="n">dfKwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This command will print an equivalent gw_data_find command to disk that</span>
@@ -1354,7 +1354,7 @@
     <span class="n">fP</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gw_command</span><span class="p">))</span>
     <span class="n">fP</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="datafind_keep_unique_backups"><a class="viewcode-back" href="../../../workflow/datafind.html#pycbc.workflow.datafind.datafind_keep_unique_backups">[docs]</a><span class="k">def</span> <span class="nf">datafind_keep_unique_backups</span><span class="p">(</span><span class="n">backup_outs</span><span class="p">,</span> <span class="n">orig_outs</span><span class="p">):</span>
+<div class="viewcode-block" id="datafind_keep_unique_backups"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.datafind.datafind_keep_unique_backups">[docs]</a><span class="k">def</span> <span class="nf">datafind_keep_unique_backups</span><span class="p">(</span><span class="n">backup_outs</span><span class="p">,</span> <span class="n">orig_outs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;This function will take a list of backup datafind files, presumably</span>
 <span class="sd">    obtained by querying a remote datafind server, e.g. CIT, and compares</span>
 <span class="sd">    these against a list of original datafind files, presumably obtained by</span>

@@ -431,7 +431,7 @@
 <span class="kn">from</span> <span class="nn">pycbc.workflow.jobsetup</span> <span class="kn">import</span> <span class="n">select_generic_executable</span>
 <span class="kn">from</span> <span class="nn">pycbc.workflow.core</span> <span class="kn">import</span> <span class="n">get_random_label</span>
 
-<div class="viewcode-block" id="setup_postprocessing"><a class="viewcode-back" href="../../../workflow/postproc.html#pycbc.workflow.postprocessing.setup_postprocessing">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocessing</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">trigger_files</span><span class="p">,</span> <span class="n">summary_xml_files</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_postprocessing"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.postprocessing.setup_postprocessing">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocessing</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">trigger_files</span><span class="p">,</span> <span class="n">summary_xml_files</span><span class="p">,</span>
                          <span class="n">output_dir</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function aims to be the gateway for running postprocessing in CBC</span>
@@ -486,7 +486,7 @@
 
     <span class="k">return</span> <span class="n">post_proc_files</span>
 </div>
-<div class="viewcode-block" id="setup_postproc_pipedown_workflow"><a class="viewcode-back" href="../../../workflow/postproc.html#pycbc.workflow.postprocessing.setup_postproc_pipedown_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_postproc_pipedown_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">trigger_files</span><span class="p">,</span> <span class="n">summary_xml_files</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_postproc_pipedown_workflow"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.postprocessing.setup_postproc_pipedown_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_postproc_pipedown_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">trigger_files</span><span class="p">,</span> <span class="n">summary_xml_files</span><span class="p">,</span>
                                   <span class="n">output_dir</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">[],</span> <span class="n">veto_cats</span><span class="o">=</span><span class="p">[]):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This module sets up the post-processing stage in the workflow, using a pipedown</span>

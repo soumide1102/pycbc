@@ -430,7 +430,7 @@
 <span class="kn">from</span> <span class="nn">pycbc.workflow.jobsetup</span> <span class="kn">import</span> <span class="n">select_generic_executable</span>
 <span class="kn">from</span> <span class="nn">pycbc.workflow.core</span> <span class="kn">import</span> <span class="n">get_random_label</span>
 
-<div class="viewcode-block" id="setup_postprocessing_preparation"><a class="viewcode-back" href="../../../workflow/postprocprep.html#pycbc.workflow.postprocessing_prep.setup_postprocessing_preparation">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocessing_preparation</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">triggerFiles</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_postprocessing_preparation"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.postprocessing_prep.setup_postprocessing_preparation">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocessing_preparation</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">triggerFiles</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
                                      <span class="n">tags</span><span class="o">=</span><span class="p">[],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    This function aims to be the gateway for preparing the output of the</span>
@@ -491,7 +491,7 @@
 
     <span class="k">return</span> <span class="n">postPostPreppedFiles</span>
 </div>
-<div class="viewcode-block" id="setup_postprocprep_pipedown_workflow"><a class="viewcode-back" href="../../../workflow/postprocprep.html#pycbc.workflow.postprocessing_prep.setup_postprocprep_pipedown_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocprep_pipedown_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">coincFiles</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_postprocprep_pipedown_workflow"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.postprocessing_prep.setup_postprocprep_pipedown_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocprep_pipedown_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">coincFiles</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
                                       <span class="n">tags</span><span class="o">=</span><span class="p">[],</span> <span class="n">do_repop</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
                                       <span class="n">injectionFiles</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                       <span class="n">vetoFiles</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">injLessTag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
@@ -741,7 +741,7 @@
            <span class="n">sqliteCombine2Outs</span>
 
 </div>
-<div class="viewcode-block" id="setup_postprocprep_gstlal_workflow"><a class="viewcode-back" href="../../../workflow/postprocprep.html#pycbc.workflow.postprocessing_prep.setup_postprocprep_gstlal_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocprep_gstlal_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">coinc_files</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
+<div class="viewcode-block" id="setup_postprocprep_gstlal_workflow"><a class="viewcode-back" href="../../../pycbc.workflow.html#pycbc.workflow.postprocessing_prep.setup_postprocprep_gstlal_workflow">[docs]</a><span class="k">def</span> <span class="nf">setup_postprocprep_gstlal_workflow</span><span class="p">(</span><span class="n">workflow</span><span class="p">,</span> <span class="n">coinc_files</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
                                        <span class="n">tags</span><span class="o">=</span><span class="p">[],</span> <span class="n">injection_files</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                        <span class="n">veto_files</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">inj_less_tag</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
                                        <span class="n">injection_tags</span><span class="o">=</span><span class="p">[],</span> <span class="n">veto_cat</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
