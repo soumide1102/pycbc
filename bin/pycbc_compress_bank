@@ -168,9 +168,8 @@ for ii in range(imin, imax):
     # compress
 
     if args.approximant == 'SEOBNRv2_ROM_DoubleSpin':
-        hcompressed = compress.partial_decompress_rom( tmplt.mass1, tmplt.mass2,        tmplt.spin1z, tmplt.spin2z, df, f_lower, fmax, args.tolerance, 
-        args.interpolation, decomp_scratch=decomp_scratch )
-
+      hcompressed = compress.partial_decompress_rom( tmplt.mass1, tmplt.mass2,        tmplt.spin1z, tmplt.spin2z, df, f_lower, fmax, args.interpolation)
+      # hcompressed = compress.partial_decompress_rom( tmplt.mass1, tmplt.mass2,        tmplt.spin1z, tmplt.spin2z, 4096.0/1048576.0, args.low_frequency_cutoff, fmax, args.interpolation)
     else:
         hcompressed = compress.compress_waveform( htilde, sample_points, 
         args.tolerance, args.interpolation, decomp_scratch=decomp_scratch)

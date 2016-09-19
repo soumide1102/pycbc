@@ -291,13 +291,19 @@ def partial_compress_rom(mass1, mass2, chi1, chi2, deltaF, fLow, fHigh,
     inclination = 0
     m1SI = mass1 * lal.MTSUN_SI
     m2SI = mass2 * lal.MTSUN_SI
-    amp_interp_points, phase_interp_points, amp_freq_points, phase_interp_points
-    = lalsimulation.SimIMRSEOBNRv2ROMDoubleSpinAmpPhaseInterpolants( phiRef,
-      deltaF, fLow, fHigh, fRef, distance, inclination, m1SI, m2SI, chi1, chi2 )
+    amp_interp_points, phase_interp_points, amp_freq_points, phase_interp_points = lalsimulation.SimIMRSEOBNRv2ROMDoubleSpinAmpPhaseInterpolants( phiRef, deltaF, fLow, fHigh, fRef, distance, inclination, m1SI, m2SI, chi1, chi2 )
+    # amp_freq_points = Array(amp_freq_points.data[:])
+    # phase_freq_points = Array(phase_freq_points.data[:])
+    # amp_interp_points = Array(amp_interp_points.data[:])
+    # phase_interp_points = Array(phase_interp_points.data[:])
+    amp_freq_points = numpy.array(amp_freq_points.data)
+    phase_freq_points = numpy.array(phase_freq_points.data)
+    amp_interp_points = numpy.array(amp_interp_points.data)
+    phase_interp_points = numpy.array(phase_interp_points.data)
     return CompressedWaveform(amp_freq_points, phase_freq_points,
                  amp_interp_points, phase_interp_points, 
-                 interpolation=interpolation, tolerance=tolerance, 
-                 mismatch=mismatch)
+                 interpolation=interpolation, tolerance=None, 
+                 mismatch=None)
  
 
 
@@ -540,11 +546,11 @@ def fd_decompress(amp, phase, amp_freq, phase_freq, out=None, df=None,
     else:
         # use scipy for fancier interpolation
         outfreq = out.sample_frequencies.numpy()
-        amp_interp = interpolate.interp1d(amp_freq.numpy(),
-            amp.numpy(), kind=cubic, bounds_error=False, fill_value=0.,
+        amp_interp = interpolate.interp1d(amp_freq,
+            amp, kind=interpolation, bounds_error=False, fill_value=0.,
             assume_sorted=True)
-        phase_interp = interpolate.interp1d(phase_freq.numpy(),
-            phase.numpy(), kind=cubic, bounds_error=False,
+        phase_interp = interpolate.interp1d(phase_freq,
+            phase, kind=interpolation, bounds_error=False,
             fill_value=0., assume_sorted=True)
         A = amp_interp(outfreq)
         phi = phase_interp(outfreq)
@@ -634,7 +640,7 @@ class CompressedWaveform(object):
     
     def __init__(self, 
             amplitude_freq_points, phase_freq_points, amplitude, phase,
-            interpolation=None, tolerance=None, mismatch=None,
+            interpolation, tolerance=None, mismatch=None,
             load_to_memory=True):
         self._amplitude_freq_points = amplitude_freq_points
         self._phase_freq_points = phase_freq_points
@@ -695,7 +701,7 @@ class CompressedWaveform(object):
             be less than the minimum frequency of either
             `amplitude_freq_points` or `phase_freq_points`. If `None`
             provided, will default to the minimum frequency available.
-        interpolation : {None, str}
+        interpolation : {interpolation, str}
             The interpolation to use for decompressing the waveform. If `None`
             provided, will default to `self.interpolation`.
 
