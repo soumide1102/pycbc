@@ -549,6 +549,10 @@ def fd_decompress(amp, phase, amp_freq, phase_freq, out=None, df=None,
         amp_interp = interpolate.interp1d(amp_freq,
             amp, kind=interpolation, bounds_error=False, fill_value=0.,
             assume_sorted=True)
+        #amp_interp = interpolate.splrep(amp_freq,
+        #    amp, w=None, xb=None, xe=None, k=3, task=0, s=None, t=None, full_output=0, per=0, quiet=1)
+        #phase_interp = interpolate.interp1d(phase_freq,
+        #    phase, w=None, xb=None, xe=None, k=3, task=0, s=None, t=None, full_output=0, per=0, quiet=1)
         phase_interp = interpolate.interp1d(phase_freq,
             phase, kind=interpolation, bounds_error=False,
             fill_value=0., assume_sorted=True)
