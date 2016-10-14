@@ -298,8 +298,10 @@ def partial_compress_rom(htilde, mass1, mass2, chi1, chi2, deltaF, fLow, fHigh,
     distance = float((1.0e6 * lal.PC_SI)/DYN_RANGE_FAC)
     # distance = 1.0*(10**6)*3.0856775807*(10**16)
     inclination = 0
-    m1SI = double(mass1) * lal.MSUN_SI
-    m2SI = double(mass2) * lal.MSUN_SI
+    #m1SI = double(mass1) * lal.MSUN_SI
+    #m2SI = double(mass2) * lal.MSUN_SI
+    m1SI = mass1 * lal.MSUN_SI
+    m2SI = mass2 * lal.MSUN_SI
     amp_interp_points, amp_freq_points, phase_interp_points, phase_freq_points = lalsimulation.SimIMRSEOBNRv2ROMDoubleSpinAmpPhaseInterpolants( phiRef, deltaF, fLow, fHigh, fRef, distance, inclination, m1SI, m2SI, float(chi1), float(chi2) )
     # amp_interp_points, phase_interp_points, amp_freq_points, phase_interp_points = lalsimulation.SimIMRSEOBNRv2ROMDoubleSpinAmpPhaseInterpolants( 0, 4096.0/1048576.0, 30.0, 2048.0, 0, distance, 0, m1SI, m2SI, float(chi1), float(chi2) )
     # amp_freq_points = Array(amp_freq_points.data[:])
@@ -753,6 +755,7 @@ class CompressedWaveform(object):
                        self.phase_freq_points.min()]).max()
         if interpolation is None:
             interpolation = self.interpolation
+        #amplitude_freq_points = None
         return fd_decompress(self.amplitude, self.phase, 
             self.amplitude_freq_points, self.phase_freq_points,
             out=out, df=df, f_lower=f_lower, interpolation=interpolation)

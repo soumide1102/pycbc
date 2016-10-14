@@ -149,8 +149,8 @@ for ii in range(imin, imax):
     # scratch space
     decomp_scratch = FrequencySeries(numpy.zeros(N, dtype=dtype), delta_f=df)
     # generate the waveform
-    htilde = bank[ii]
-    tmplt = bank.table[ii]
+    htilde = bank[ii-imin]
+    tmplt = bank.table[ii-imin]
     kmax = htilde.end_idx
     
     # get the compressed sample points
@@ -165,15 +165,18 @@ for ii in range(imin, imax):
         raise ValueError("unrecognized compression algorithm %s" %(
             args.compression_algorithm))
 
-    mtotal = tmplt.mass1 + tmplt.mass2
-    if mtotal >= 4:
-        hcompressed = compress.partial_compress_rom( htilde, tmplt.mass1, 
-	       	tmplt.mass2, tmplt.spin1z, tmplt.spin2z, df, bank.f_lower, 
-		fmax, args.interpolation)
-    else:
-        hcompressed = compress.compress_waveform( htilde, sample_points, 
-                args.tolerance, args.interpolation, decomp_scratch=decomp_scratch)	    	
-            
+    #mtotal = tmplt.mass1 + tmplt.mass2
+    #if mtotal >= 4:
+    #    hcompressed = compress.partial_compress_rom( htilde, tmplt.mass1, 
+    #	       	tmplt.mass2, tmplt.spin1z, tmplt.spin2z, df, bank.f_lower, 
+    #		fmax, args.interpolation)
+    #else:
+    #    hcompressed = compress.compress_waveform( htilde, sample_points, 
+    #            args.tolerance, args.interpolation, decomp_scratch=decomp_scratch)	    	
+    
+    hcompressed = compress.compress_waveform( htilde, sample_points, 
+                args.tolerance, args.interpolation, decomp_scratch=decomp_scratch)
+        
     # save results
     hcompressed.write_to_hdf(output, tmplt.template_hash)
 
