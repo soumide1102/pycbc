@@ -238,10 +238,10 @@ def compress_waveform(htilde, sample_points, tolerance, interpolation,
         out=decomp_scratch, df=outdf, f_lower=fmin,
         interpolation=interpolation)
     mismatch = 1. - filter.overlap(hdecomp, htilde, low_frequency_cutoff=fmin)
+    logging.info("mismatch: %f, N points: %i " %(mismatch, len(comp_amp)))
     if mismatch > tolerance:
         # we'll need the difference in the waveforms as a function of frequency
         vecdiffs = vecdiff(htilde, hdecomp, sample_points)
-
     # We will find where in the frequency series the interpolated waveform
     # has the smallest overlap with the full waveform, add a sample point
     # there, and re-interpolate. We repeat this until the overall mismatch
@@ -280,7 +280,7 @@ def compress_waveform(htilde, sample_points, tolerance, interpolation,
         added_points.append(addidx)
     logging.info("mismatch: %f, N points: %i (%i added)" %(mismatch,
         len(comp_amp), len(added_points)))
-
+    
     # Check later
     amp_sample_points = phase_sample_points
     # return CompressedWaveform(amp_sample_points, phase_sample_points,
@@ -312,13 +312,55 @@ def partial_compress_rom(htilde, mass1, mass2, chi1, chi2, deltaF, fLow, fHigh,
     phase_freq_points = numpy.asarray(phase_freq_points.data, dtype=numpy.float32)
     amp_interp_points = numpy.asarray(amp_interp_points.data, dtype=numpy.float32)
     phase_interp_points = numpy.asarray(phase_interp_points.data, dtype=numpy.float32)
+    
+    Mtot = mass1+mass2
+    Mtot_sec = float(Mtot*lal.MTSUN_SI)
+    amp_freq_points = amp_freq_points/Mtot_sec
+    phase_freq_points = phase_freq_points/Mtot_sec
     fmin = max(amp_freq_points.min(), phase_freq_points.min())
     fmax = min(amp_freq_points.max(), phase_freq_points.max())
     hdecomp = fd_decompress(amp_interp_points, phase_interp_points, 
 			    amp_freq_points, phase_freq_points, out=None,
 			    df=deltaF, f_lower=fmin, interpolation=interpolation)
-    # mismatch = 1. - filter.overlap(hdecomp, htilde, low_frequency_cutoff=fmin, high_frequency_cutoff=fmax)
-    # logging.info("mismatch: %f" %mismatch)
+    #low_frequency_cutoff = max(numpy.amin(hdecomp.sample_frequencies.numpy()), numpy.amin(htilde.sample_frequencies.numpy()))
+    #high_frequency_cutoff = min(numpy.amax(hdecomp.sample_frequencies.numpy()), numpy.amax(htilde.sample_frequencies.numpy()) )
+    #low_frequency_cutoff = max(fmin, fLow)
+    #high_frequency_cutoff = min(fmax,fHigh)
+    #fmin2 = numpy.amin(htilde.sample_frequencies.numpy())
+    #fmin1 = numpy.amin(hdecomp, axis=0)
+    #fmin2 = numpy.amin(htilde, axis=0)
+    #fmin1 = numpy.amin(hdecomp[:,0])
+    #fmin2 = numpy.amin(htilde[:,0])
+    fmin1 = numpy.amin(hdecomp.sample_frequencies.numpy())
+    fmin2 = numpy.amin(htilde.sample_frequencies.numpy())
+    fmax1 = numpy.amax(hdecomp.sample_frequencies.numpy())
+    fmax2 = numpy.amax(htilde.sample_frequencies.numpy())
+    logging.info("fmin: %f fLow:%f" %(fmin, fLow))
+    logging.info("fmax: %f fHigh:%f" %(fmax, fHigh))
+    logging.info("fminhdecomp: %f fminhtilde:%f" %(fmin1, fmin2))
+    logging.info("fmaxhdecomp: %f fmaxhtilde:%f" %(fmax1, fmax2))
+    high_frequency_cutoff = min(fmax1, fmax2)
+    print htilde.sample_frequencies.numpy()
+    print hdecomp.sample_frequencies.numpy()
+    kmax = high_frequency_cutoff/htilde.delta_f
+    kmin = fLow/htilde.delta_f
+    htilde_new = abs(htilde[kmin:kmax])
+    hdecomp_new = abs(hdecomp[kmin:kmax])
+    print htilde_new[:]
+    print hdecomp_new[:]
+    #fmax1 = numpy.amax(hdecomp, axis=0)
+    #fmax2 = numpy.amax(htilde, axis=0)
+    #fmax2 = numpy.amax(htilde.sample_frequencies.numpy())
+    #fmax1 = numpy.amax(hdecomp[:,0])
+    #fmax2 = numpy.amax(htilde[:,0])
+    #logging.info("fmaxdecomp: %f fmaxhtilde:%f" %(fmax1, fmax2)) 
+    #high_frequency_cutoff = min(fmax, numpy.amax(htilde.sample_frequencies.numpy()) )
+    #mismatch = 1. - filter.overlap(hdecomp, htilde, low_frequency_cutoff=fmin, high_frequency_cutoff=high_frequency_cutoff)
+    #mismatch = 1. - filter.overlap(hdecomp, htilde, low_frequency_cutoff=low_frequency_cutoff, high_frequency_cutoff=high_frequency_cutoff)
+    #logging.info("mismatch: %f, N points: %i" %(mismatch, len(amp_interp_points)))
+    mismatch = 1. - filter.overlap(abs(hdecomp), abs(htilde), low_frequency_cutoff=fLow, high_frequency_cutoff=high_frequency_cutoff)
+    #print '{0:.10f}'.format(mismatch)
+    logging.info("mismatch: %.10f" %mismatch)
     # return CompressedWaveform(amp_freq_points, phase_freq_points,
     #             amp_interp_points, phase_interp_points, 
     #             interpolation=interpolation, tolerance=None, 
@@ -539,6 +581,7 @@ def fd_decompress(amp, phase, amp_freq, phase_freq, out=None, df=None,
         if df is None:
             raise ValueError("Either provide output memory or a df")
         hlen = int(numpy.ceil(f_max/df+1))
+        #hlen = int(numpy.ceil((f_max-f_min)/df+1))
         out = FrequencySeries(numpy.zeros(hlen,
             dtype=_complex_dtypes[precision]), copy=False,
             delta_f=df)
@@ -581,6 +624,8 @@ def fd_decompress(amp, phase, amp_freq, phase_freq, out=None, df=None,
         	amp_freq = phase_freq
         # use scipy for fancier interpolation
         outfreq = out.sample_frequencies.numpy()
+        print(len(amp_freq))
+        print(len(amp))
         amp_interp = interpolate.interp1d(amp_freq,
             amp, kind=interpolation, bounds_error=False, fill_value=0.,
             assume_sorted=True)
