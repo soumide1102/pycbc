@@ -376,9 +376,12 @@ def partial_rom_compression(htilde, mass1, mass2, chi1, chi2, deltaF, fLow,
     # htilde and hdecomp is provided and is calculated as described above.
     # The mismatch is calculated for the length of the waveforms between
     # the low_frequency_cutoff and high_frequency_cutoff.
-    mismatch = 1. - filter.overlap(abs(hdecomp), abs(htilde),
-                                   low_frequency_cutoff=fLow,
-                                   high_frequency_cutoff=high_frequency_cutoff)
+    #mismatch = 1. - filter.overlap(abs(hdecomp), abs(htilde),
+    #                               low_frequency_cutoff=fLow,
+    #                               high_frequency_cutoff=high_frequency_cutoff)
+    f = filter.overlap(abs(hdecomp), abs(htilde), low_frequency_cutoff=fLow, high_frequency_cutoff=high_frequency_cutoff)
+    mismatch = 1-f
+    logging.info("f=%.10f"%f)
     logging.info("mismatch: %.10f, for low_frequency_cutoff = %.1f and high_frequency_cutoff = %.1f", \
                  mismatch, fLow, high_frequency_cutoff)
     return CompressedWaveform(amp_interp_points, phase_interp_points,
