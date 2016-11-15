@@ -205,7 +205,7 @@ for ii in range(imin, imax):
 
             hcompressed.write_to_hdf(output, tmplt.template_hash)
     # if template is a SPAtmplt waveform perform linear_compression
-    """else:
+    else:
         if args.compression_algorithm == 'mchirp':
             sample_points = compress.mchirp_compression(
                 tmplt.mass1, tmplt.mass2, fmin, (kmax-1)*df,
@@ -222,7 +222,6 @@ for ii in range(imin, imax):
         hcompressed = compress.compress_waveform(
                     htilde, sample_points, args.tolerance,
                     args.interpolation, decomp_scratch=decomp_scratch)
-    """
 
     # save results
     #hcompressed.write_to_hdf(output, tmplt.template_hash)
