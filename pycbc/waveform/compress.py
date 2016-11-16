@@ -375,8 +375,8 @@ def partial_compress_rom(htilde, mass1, mass2, chi1, chi2, deltaF, fLow,
     # htilde and hdecomp is provided and is calculated as described above.
     # The mismatch is calculated for the length of the waveforms between
     # the low_frequency_cutoff and high_frequency_cutoff.
-    print(abs(hdecomp[:]))
-    print(abs(htilde[:]))
+    print(hdecomp)
+    print(htilde)
     m = filter.overlap(abs(hdecomp), abs(htilde), low_frequency_cutoff=fLow, high_frequency_cutoff=high_frequency_cutoff)
     mismatch = 1-m
     logging.info("m=%.10f"%m)
