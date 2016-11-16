@@ -337,13 +337,13 @@ def partial_rom_compression(htilde, mass1, mass2, chi1, chi2, deltaF, fLow,
             phiRef, deltaF, fLow, fHigh, fRef, distance, inclination,
             m1SI, m2SI, float(chi1), float(chi2) )
     amp_freq_points = numpy.asarray(amp_freq_points.data,
-                                    dtype=numpy.float32)
+                                    dtype=numpy.float64)
     phase_freq_points = numpy.asarray(phase_freq_points.data,
-                                      dtype=numpy.float32)
+                                      dtype=numpy.float64)
     amp_interp_points = numpy.asarray(amp_interp_points.data,
-                                      dtype=numpy.float32)
+                                      dtype=numpy.float64)
     phase_interp_points = numpy.asarray(phase_interp_points.data,
-                                        dtype=numpy.float32)
+                                        dtype=numpy.float64)
 
     Mtot = mass1+mass2
     Mtot_sec = float(Mtot*lal.MTSUN_SI)
@@ -379,9 +379,11 @@ def partial_rom_compression(htilde, mass1, mass2, chi1, chi2, deltaF, fLow,
     #mismatch = 1. - filter.overlap(abs(hdecomp), abs(htilde),
     #                               low_frequency_cutoff=fLow,
     #                               high_frequency_cutoff=high_frequency_cutoff)
-    f = filter.overlap(abs(hdecomp), abs(htilde), low_frequency_cutoff=fLow, high_frequency_cutoff=high_frequency_cutoff)
-    mismatch = 1-f
-    logging.info("f=%.10f"%f)
+    print(hdecomp)
+    print(htilde)
+    m = filter.overlap(abs(hdecomp), abs(htilde), low_frequency_cutoff=fLow, high_frequency_cutoff=high_frequency_cutoff)
+    mismatch = 1-m
+    logging.info("m=%.10f"%m)
     logging.info("mismatch: %.10f, for low_frequency_cutoff = %.1f and high_frequency_cutoff = %.1f", \
                  mismatch, fLow, high_frequency_cutoff)
     return CompressedWaveform(amp_interp_points, phase_interp_points,
