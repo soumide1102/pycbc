@@ -155,7 +155,11 @@ precalc_psd_files = wf.setup_psd_workflow(workflow, analyzable_segs,
 bank_files = wf.setup_tmpltbank_workflow(workflow, analyzable_segs,
                                          datafind_files, output_dir="bank",
                                          psd_files=precalc_psd_files)
-hdfbank = wf.convert_bank_to_hdf(workflow, bank_files, "bank")
+ext = os.path.basename(bank_files)
+if ext.endswith('.hdf') or ext.endswith('.h5') :
+    hdfbank = bank_files
+else :
+    hdfbank = wf.convert_bank_to_hdf(workflow, bank_files, "bank")
 splitbank_files_fd = wf.setup_splittable_workflow(workflow, hdfbank,
                                                   out_dir="bank",
                                                   tags=['full_data'])
