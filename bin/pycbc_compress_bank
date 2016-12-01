@@ -88,6 +88,8 @@ parser.add_argument("--interpolation", type=str,
                     "allows the frequency interpolant samples to be "
                     "different for the amplitude and phase. "
                     "Default is inline_linear.")
+parser.add_argument("--output-file", type=str,
+                    help="Out file to store mismatch,m1,m2,spin1z,spin2z,low_fre_cutoff,high_fre_cutoff")
 parser.add_argument("--precision", type=str, choices=["double", "single"],
                     default="double",
                     help="What precision to generate and store the"
@@ -101,7 +103,7 @@ parser.add_argument("--verbose", action="store_true", default=False)
 args = parser.parse_args()
 
 pycbc.init_logging(args.verbose)
-
+"""
 num_compression_algorithms = len(args.compression_algorithm)
 
 if num_compression_algorithms == 1:
@@ -125,7 +127,7 @@ elif num_compression_algorithms == 2:
         raise ValueError("""The approximant corressponding to
                          partial_compress_rom algorithm should always be
                          SEOBNRv2_ROM_DoubleSpin""")
-
+"""
 fmin = args.low_frequency_cutoff
 fmax = args.sample_rate/2.
 
@@ -181,7 +183,19 @@ for ii in range(imin, imax):
     tmplt = bank.table[ii-imin]
     kmax = htilde.end_idx
     tmplt_approximant = htilde.approximant
-    if num_compression_algorithms == 2:
+    
+    if args.compression_algorithm == 'partial_compress_rom':
+        hcompressed = compress.partial_rom_compression(
+            htilde, tmplt.mass1, tmplt.mass2, tmplt.spin1z, tmplt.spin2z,
+            df, fmin, (kmax-1)*df, args.interpolation)
+    else:
+        raise ValueError("unrecognized compression algorithm %s" %(
+                         args.compression_algorithm))
+
+    # save results
+    hcompressed.write_to_hdf(output, tmplt.template_hash)
+
+    """if num_compression_algorithms == 2:
         if tmplt_approximant == approximant1:
             compression_type = compression_type1
         if tmplt_approximant == approximant2:
@@ -211,12 +225,15 @@ for ii in range(imin, imax):
         hcompressed = compress.partial_rom_compression( 
             htilde, tmplt.mass1, tmplt.mass2, tmplt.spin1z, tmplt.spin2z,
             df, fmin, (kmax-1)*df, args.interpolation)
+            #df, fmin, (kmax-1)*df, args.interpolation, args.output_file)
     else:
         raise ValueError("unrecognized compression algorithm %s" %(
                          args.compression_algorithm))
 
     # save results
     hcompressed.write_to_hdf(output, tmplt.template_hash)
+    print(hcompressed.mismatch)
+"""
 
 logging.info("finished")
 bank.filehandler.close()
