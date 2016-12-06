@@ -144,8 +144,8 @@ parser.add_argument("--keep-loudest-interval", type=float,
 parser.add_argument("--keep-loudest-num", type=int,
                     help="Number of triggers to keep from each maximization interval")
 parser.add_argument("--gpu-callback-method", default='none')
-parser.add_argument("--use-compressed-waveforms", action="store_true", default=False,
-                    help='Use compressed waveforms from the bank file')
+parser.add_argument("--use-compressed-waveforms", action='store_true',
+                    help="Use compressed waveforms from the bank file")
 
 # Add options groups
 psd.insert_psd_option_group(parser)
@@ -276,7 +276,7 @@ with ctx:
         dtype=complex64, phase_order=opt.order,
         taper=opt.taper_template, approximant=opt.approximant,
         out=template_mem, max_template_length=opt.max_template_length, 
-        load_compressed=True if opt.use_compressed_waveforms)
+        load_compressed=True if opt.use_compressed_waveforms else False)
 
     ntemplates = len(bank)
     nfilters = 0
