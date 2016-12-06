@@ -104,8 +104,9 @@ if args.precision == "single":
 else:
     dtype = numpy.complex128
 # we'll just use dummy values for N, df for now
-bank = waveform.FilterBank(args.bank_file, 5, 0.25, fmin, dtype,
-    approximant=args.approximant)
+bank = waveform.FilterBank(args.bank_file, 5, 0.25, dtype,
+                           low_frequency_cutoff=fmin,
+                           approximant=args.approximant)
 templates = bank.table
 if args.tmplt_index is not None:
     imin, imax = args.tmplt_index
