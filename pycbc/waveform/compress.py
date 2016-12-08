@@ -535,7 +535,7 @@ class CompressedWaveform(object):
     mismatch : {None, float}
         The actual mismatch between the decompressed waveform (using the given
         `interpolation`) and the full waveform.
-    load_to_memory : {True, bool}
+    load_to_memory : {False, bool}
         If `sample_points`, `amplitude`, and/or `phase` is an hdf dataset, they
         will be cached in memory the first time they are accessed. Default is
         True.
@@ -589,7 +589,7 @@ class CompressedWaveform(object):
     
     def __init__(self, sample_points, amplitude, phase,
             interpolation=None, tolerance=None, mismatch=None,
-            load_to_memory=True):
+            load_to_memory=False):
         self._sample_points = sample_points
         self._amplitude = amplitude
         self._phase = phase
@@ -712,7 +712,7 @@ class CompressedWaveform(object):
         fp[group].attrs['tolerance'] = self.tolerance
 
     @classmethod
-    def from_hdf(cls, fp, template_hash, root=None, load_to_memory=True,
+    def from_hdf(cls, fp, template_hash, root=None, load_to_memory=False,
             load_now=False):
         """Load a compressed waveform from the given hdf file handler.
 
@@ -730,7 +730,7 @@ class CompressedWaveform(object):
             Retrieve the `compressed_waveforms` group from the given string.
             If `None`, `compressed_waveforms` will be assumed to be in the
             top level.
-        load_to_memory : {True, bool}
+        load_to_memory : {False, bool}
             Set the `load_to_memory` attribute to the given value in the
             returned instance.
         load_now : {False, bool}
