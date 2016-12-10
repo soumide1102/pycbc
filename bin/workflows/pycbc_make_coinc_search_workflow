@@ -152,10 +152,11 @@ precalc_psd_files = wf.setup_psd_workflow(workflow, analyzable_segs,
                                             datafind_files, "psdfiles")
 
 # Template bank stuff
-bank_files = wf.setup_tmpltbank_workflow(workflow, analyzable_segs,
-                                         datafind_files, output_dir="bank",
-                                         psd_files=precalc_psd_files)
-hdfbank = wf.convert_bank_to_hdf(workflow, bank_files, "bank")
+hdfbank = wf.setup_tmpltbank_workflow(workflow, analyzable_segs,
+                                      datafind_files, output_dir="bank",
+                                      psd_files=precalc_psd_files,
+                                      return_format='hdf')
+
 splitbank_files_fd = wf.setup_splittable_workflow(workflow, hdfbank,
                                                   out_dir="bank",
                                                   tags=['full_data'])
