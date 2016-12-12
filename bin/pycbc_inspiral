@@ -271,6 +271,13 @@ with ctx:
         seg /= seg.psd
   
     logging.info("Read in template bank")
+    #print("flen=%f",flen)
+    #print("delta_f=%f",delta_f)
+    #print("flow=%f",flow)
+    #print("phase_order=%d",opt.order)
+    #print("approximant=%s",opt.approximant)
+    #print("max_template_length=%f",opt.max_template_length)
+
     bank = waveform.FilterBank(opt.bank_file, flen, delta_f,
         low_frequency_cutoff=None if opt.enable_bank_start_frequency else flow,
         dtype=complex64, phase_order=opt.order,
