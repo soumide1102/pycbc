@@ -37,7 +37,8 @@ import pycbc.waveform
 import pycbc.pnutils
 import pycbc.waveform.compress
 from pycbc import DYN_RANGE_FAC
-from pycbc.types import zeros
+from pycbc.types import FrequencySeries, zeros
+
 import pycbc.io
 
 def sigma_cached(self, psd):
