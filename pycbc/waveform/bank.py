@@ -672,14 +672,9 @@ class FilterBank(TemplateBank):
         distance = 1.0 / DYN_RANGE_FAC
  
         if self.compressed_waveforms is not None :
-            htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(df=self.delta_f, f_lower=f_low)
-            
-            #print("I am here")
-            #bank = h5py.File(self.filename,'r')
-            #htilde.params = bank[bank.attrs['parameters']][index]
-            #htilde.params = bank['parameters'][index]
-            #print("self.table['parameters'][index]", self.table['parameters'][index])
-            #print("bank.attrs['parameters'][index]", bank.attrs['parameters'][index])
+            # Create memory space for writing the decompressed waveform
+            decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
+            htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low)
             
         else :
             htilde = pycbc.waveform.get_waveform_filter(
@@ -701,25 +696,16 @@ class FilterBank(TemplateBank):
 
         htilde = htilde.astype(self.dtype)
         htilde.f_lower = f_low
-        #print("htilde.f_lower", htilde.f_lower)
         htilde.min_f_lower = self.min_f_lower
-        #print("htilde.min_f_lower", htilde.min_f_lower)
         htilde.end_idx = int(f_end / htilde.delta_f)
-        #print("htilde.end_idx", htilde.end_idx)
         htilde.params = self.table[index]
-        #print("htilde.params", htilde.params)
         htilde.chirp_length = template_duration
-        #print("htilde.chirp_length",htilde.chirp_length)
         htilde.length_in_time = ttotal
-        #print("htilde.length_in_time", htilde.length_in_time)
         htilde.approximant = approximant
-        #print("htilde.approximant", htilde.approximant)
         htilde.end_frequency = f_end
-        #print("htilde.end_frequency", htilde.end_frequency)
 
         # Add sigmasq as a method of this instance
         htilde.sigmasq = types.MethodType(sigma_cached, htilde)
-        #print("htilde.sigmasq", htilde.sigmasq)
         htilde._sigmasq = {}
         return htilde
 
