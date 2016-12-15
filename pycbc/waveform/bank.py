@@ -670,11 +670,17 @@ class FilterBank(TemplateBank):
 
         # Get the waveform filter
         distance = 1.0 / DYN_RANGE_FAC
-        htilde = pycbc.waveform.get_waveform_filter(
-            tempout[0:self.filter_length], self.table[index],
-            approximant=approximant, f_lower=f_low, f_final=f_end,
-            delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
-            **self.extra_args)
+        if self.compressed_waveforms is not None :
+            htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(df=self.delta_f, f_lower=f_low)
+
+            print("I am here for compressed")
+        else :
+            htilde = pycbc.waveform.get_waveform_filter(
+                tempout[0:self.filter_length], self.table[index],
+                approximant=approximant, f_lower=f_low, f_final=f_end,
+                delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
+                **self.extra_args)
+            print("I am here for uncompressed")
 
         # If available, record the total duration (which may
         # include ringdown) and the duration up to merger since they will be
