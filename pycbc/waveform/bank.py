@@ -66,9 +66,9 @@ def sigma_cached(self, psd):
                 amp_norm = 1 if amp_norm is None else amp_norm
                 self.sigma_scale = (DYN_RANGE_FAC * amp_norm) ** 2.0
 
-
+            print("waveform_norm_exists, self._sigmasq[key] =", self._sigmasq[key], type(self._sigmasq[key])) 
             self._sigmasq[key] = psd.sigmasq_vec[self.approximant][self.end_idx] * self.sigma_scale
-
+            
         else:
             if not hasattr(self, 'sigma_view'):
                 from pycbc.filter.matchedfilter import get_cutoff_indices
@@ -81,8 +81,9 @@ def sigma_cached(self, psd):
 
             if not hasattr(psd, 'invsqrt'):
                 psd.invsqrt = 1.0 / psd[self.sslice]
-
+            print("waveform_norm_exists is not true, self.sigma_view.inner(psd.invsqrt) = ", self.sigma_view.inner(psd.invsqrt), type(self.sigma_view.inner(psd.invsqrt)))
             return self.sigma_view.inner(psd.invsqrt)
+        print("self._sigmasq[key] = ", self._sigmasq[key], type(self._sigmasq[key]))
     return self._sigmasq[key]
 
 # dummy class needed for loading LIGOLW files
