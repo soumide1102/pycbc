@@ -233,8 +233,13 @@ def compress_waveform(htilde, sample_points, tolerance, interpolation,
     hdecomp = fd_decompress(comp_amp, comp_phase, sample_points,
         out=decomp_scratch, df=outdf, f_lower=fmin,
         interpolation=interpolation)
+    max_freq = numpy.amax(hdecomp.sample_frequencies.numpy())
+    print("max_freq", max_freq)
     mismatch = 1. - filter.overlap(hdecomp, htilde, low_frequency_cutoff=fmin)
-    if mismatch > tolerance:
+    return CompressedWaveform(sample_points, comp_amp, comp_phase,
+                interpolation=interpolation, tolerance=tolerance,
+                mismatch=mismatch)
+    """if mismatch > tolerance:
         # we'll need the difference in the waveforms as a function of frequency
         vecdiffs = vecdiff(htilde, hdecomp, sample_points)
 
@@ -273,10 +278,10 @@ def compress_waveform(htilde, sample_points, tolerance, interpolation,
         added_points.append(addidx)
     logging.info("mismatch: %f, N points: %i (%i added)" %(mismatch,
         len(comp_amp), len(added_points)))
-    
     return CompressedWaveform(sample_points, comp_amp, comp_phase,
                 interpolation=interpolation, tolerance=tolerance,
                 mismatch=mismatch)
+"""
 
 
 _linear_decompress_code = r"""
@@ -357,8 +362,8 @@ _linear_decompress_code = r"""
 
         // cycle over the interpolated points between this and the next
         // compressed sample
-        while (findex < next_sfindex){
-            // for the first step, compute the value of h from the interpolated
+        while ((findex < next_sfindex) & (findex < 2*hlen)){
+             // for the first step, compute the value of h from the interpolated
             // amplitude and phase
             f = findex*df;
             interp_amp = m_amp * f + b_amp;
@@ -396,6 +401,9 @@ _linear_decompress_code = r"""
                 *(outptr+1) = h_im;
                 outptr += 2;
                 findex++;
+            }
+            if (next_sf >= hlen*df){
+                break;
             }
         }
     }
@@ -511,8 +519,22 @@ def fd_decompress(amp, phase, sample_frequencies, out=None, df=None,
             fill_value=0., assume_sorted=True)
         A = amp_interp(outfreq)
         phi = phase_interp(outfreq)
+        #freq_idx_max = int(1000/df)
+        #freq_idx_min = int((numpy.amin(out.sample_frequencies.numpy()))/df)
+        #logging.info("freq_idx_max", freq_idx_max)
+        #logging.info("freq_idx_min", freq_idx_min)
+        #out = out[freq_idx_min:freq_idx_max]
         out.data[:] = A*numpy.cos(phi) + (1j)*A*numpy.sin(phi)
     return out
+        #freq_idx_1000 = numpy.argmax(out.sample_frequencies.numpy() > 1000)
+        #freq_idx_max = int(freq_idx_1000 - 1)
+        #freq_idx_min = int(numpy.argmin(out.sample_frequencies.numpy()))
+        #freq_idx_max = int(1000/df)
+        #freq_idx_min = int((numpy.amin(out.sample_frequencies.numpy()))/df)
+        #print("freq_idx_max", freq_idx_max)
+        #print("freq_idx_min", freq_idx_min)
+        #out = out[freq_idx_min:freq_idx_max]
+    #return out
 
 
 class CompressedWaveform(object):
