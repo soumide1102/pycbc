@@ -37,7 +37,8 @@ import pycbc.waveform
 import pycbc.pnutils
 import pycbc.waveform.compress
 from pycbc import DYN_RANGE_FAC
-from pycbc.types import zeros
+from pycbc.types import FrequencySeries, zeros
+
 import pycbc.io
 
 def sigma_cached(self, psd):
@@ -670,17 +671,21 @@ class FilterBank(TemplateBank):
 
         # Get the waveform filter
         distance = 1.0 / DYN_RANGE_FAC
+ 
         if self.compressed_waveforms is not None :
-            htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(df=self.delta_f, f_lower=f_low)
-
-            print("I am here for compressed")
+            # Create memory space for writing the decompressed waveform
+            print("I am here for compressed waveforms")
+            print("self.filter_length", self.filter_length)
+            decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
+            tmplt_hash = self.table.template_hash[index]
+            print("tmplt_hash", tmplt_hash)
+            htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low)
         else :
             htilde = pycbc.waveform.get_waveform_filter(
                 tempout[0:self.filter_length], self.table[index],
                 approximant=approximant, f_lower=f_low, f_final=f_end,
                 delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
                 **self.extra_args)
-            print("I am here for uncompressed")
 
         # If available, record the total duration (which may
         # include ringdown) and the duration up to merger since they will be
@@ -695,17 +700,26 @@ class FilterBank(TemplateBank):
 
         htilde = htilde.astype(self.dtype)
         htilde.f_lower = f_low
+        #print("htilde.f_lower", htilde.f_lower)
         htilde.min_f_lower = self.min_f_lower
+        #print("htilde.min_f_lower", htilde.min_f_lower)
         htilde.end_idx = int(f_end / htilde.delta_f)
+        #print("htilde.end_idx", htilde.end_idx)
         htilde.params = self.table[index]
+        #print("htilde.params", htilde.params)
         htilde.chirp_length = template_duration
+        #print("htilde.chirp_length", htilde.chirp_length)
         htilde.length_in_time = ttotal
+        #print("htilde.length_in_time", htilde.length_in_time)
         htilde.approximant = approximant
+        #print("htilde.approximant", htilde.approximant)
         htilde.end_frequency = f_end
+        #print("htilde.end_frequency", htilde.end_frequency)
 
         # Add sigmasq as a method of this instance
         htilde.sigmasq = types.MethodType(sigma_cached, htilde)
         htilde._sigmasq = {}
+        print("Returning htilde")
         return htilde
 
 def find_variable_start_frequency(approximant, parameters, f_start, max_length,
