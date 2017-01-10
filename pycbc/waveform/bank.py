@@ -66,9 +66,8 @@ def sigma_cached(self, psd):
                 amp_norm = 1 if amp_norm is None else amp_norm
                 self.sigma_scale = (DYN_RANGE_FAC * amp_norm) ** 2.0
 
-
             self._sigmasq[key] = psd.sigmasq_vec[self.approximant][self.end_idx] * self.sigma_scale
-
+            
         else:
             if not hasattr(self, 'sigma_view'):
                 from pycbc.filter.matchedfilter import get_cutoff_indices
@@ -81,8 +80,8 @@ def sigma_cached(self, psd):
 
             if not hasattr(psd, 'invsqrt'):
                 psd.invsqrt = 1.0 / psd[self.sslice]
-
-            return self.sigma_view.inner(psd.invsqrt)
+            
+            self._sigmasq[key] = self.sigma_view.inner(psd.invsqrt)
     return self._sigmasq[key]
 
 # dummy class needed for loading LIGOLW files
@@ -675,8 +674,8 @@ class FilterBank(TemplateBank):
         if self.compressed_waveforms is not None :
             # Create memory space for writing the decompressed waveform
             decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
+            tmplt_hash = self.table.template_hash[index]
             htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low)
-            
         else :
             htilde = pycbc.waveform.get_waveform_filter(
                 tempout[0:self.filter_length], self.table[index],

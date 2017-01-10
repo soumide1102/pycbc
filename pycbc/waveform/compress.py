@@ -345,6 +345,8 @@ _linear_decompress_code = r"""
         sf = next_sf;
         next_sf = (double) sample_frequencies[ii+1];
         next_sfindex = (int) ceil(next_sf * inv_df);
+        if (next_sfindex > hlen)
+            next_sfindex = hlen;
         inv_sdf = 1./(next_sf - sf);
         this_amp = next_amp;
         next_amp = (double) amp[ii+1];
@@ -358,7 +360,7 @@ _linear_decompress_code = r"""
         // cycle over the interpolated points between this and the next
         // compressed sample
         while (findex < next_sfindex){
-            // for the first step, compute the value of h from the interpolated
+             // for the first step, compute the value of h from the interpolated
             // amplitude and phase
             f = findex*df;
             interp_amp = m_amp * f + b_amp;
@@ -396,6 +398,9 @@ _linear_decompress_code = r"""
                 *(outptr+1) = h_im;
                 outptr += 2;
                 findex++;
+            }
+            if (next_sfindex == hlen){
+            break;
             }
         }
     }
@@ -485,6 +490,8 @@ def fd_decompress(amp, phase, sample_frequencies, out=None, df=None,
             raise ValueError("f_lower is > than the maximum sample frequency")
         imin = int(numpy.searchsorted(sample_frequencies, f_lower))
     start_index = int(numpy.floor(f_lower/df))
+    if start_index >= hlen:
+        raise ValueError('requested f_lower >= largest frequency in out')
     # interpolate the amplitude and the phase
     if interpolation == "linear":
         if precision == 'single':
@@ -535,7 +542,7 @@ class CompressedWaveform(object):
     mismatch : {None, float}
         The actual mismatch between the decompressed waveform (using the given
         `interpolation`) and the full waveform.
-    load_to_memory : {False, bool}
+    load_to_memory : {True, bool}
         If `sample_points`, `amplitude`, and/or `phase` is an hdf dataset, they
         will be cached in memory the first time they are accessed. Default is
         True.
@@ -589,7 +596,7 @@ class CompressedWaveform(object):
     
     def __init__(self, sample_points, amplitude, phase,
             interpolation=None, tolerance=None, mismatch=None,
-            load_to_memory=False):
+            load_to_memory=True):
         self._sample_points = sample_points
         self._amplitude = amplitude
         self._phase = phase
@@ -712,7 +719,7 @@ class CompressedWaveform(object):
         fp[group].attrs['tolerance'] = self.tolerance
 
     @classmethod
-    def from_hdf(cls, fp, template_hash, root=None, load_to_memory=False,
+    def from_hdf(cls, fp, template_hash, root=None, load_to_memory=True,
             load_now=False):
         """Load a compressed waveform from the given hdf file handler.
 
@@ -730,7 +737,7 @@ class CompressedWaveform(object):
             Retrieve the `compressed_waveforms` group from the given string.
             If `None`, `compressed_waveforms` will be assumed to be in the
             top level.
-        load_to_memory : {False, bool}
+        load_to_memory : {True, bool}
             Set the `load_to_memory` attribute to the given value in the
             returned instance.
         load_now : {False, bool}
