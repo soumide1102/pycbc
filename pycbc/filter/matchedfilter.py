@@ -252,8 +252,6 @@ class MatchedFilterControl(object):
         snrv : Array
             The snr values at the trigger locations.
         """
-        print("self.delta_f", self.delta_f)
-        print("template_norm, type(template_norm)", template_norm, type(template_norm))
         norm = (4.0 * self.delta_f) / sqrt(template_norm)
         self.correlators[segnum].correlate()
         self.ifft.execute()

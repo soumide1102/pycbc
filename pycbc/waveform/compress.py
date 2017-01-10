@@ -337,7 +337,6 @@ _linear_decompress_code = r"""
 
     // move to the start position
     outptr += 2*start_index;
-    std::cout << "start_index=" << start_index << std::endl;
     findex = start_index;
 
     // cycle over the compressed samples
@@ -407,8 +406,6 @@ _linear_decompress_code = r"""
     }
 
     // zero out the rest of the array
-    std::cout << "hlen=" << hlen << std::endl;
-    std::cout << "findex=" << findex << std::endl;
     memset(outptr, 0, sizeof(*outptr)*2*(hlen-findex));
 """
 # for single precision
@@ -510,7 +507,6 @@ def fd_decompress(amp, phase, sample_frequencies, out=None, df=None,
                extra_compile_args=[WEAVE_FLAGS + '-march=native -O3 -w'] +\
                                   omp_flags,
                libraries=omp_libs)
-        print("Terminated here")
     else:
         # use scipy for fancier interpolation
         outfreq = out.sample_frequencies.numpy()

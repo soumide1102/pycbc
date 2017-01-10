@@ -44,8 +44,6 @@ import pycbc.io
 def sigma_cached(self, psd):
     """ Cache sigma calculate for use in tandem with the FilterBank class
     """
-    print("self.dtype", self.dtype)
-    print("type(self)", type(self))
     key = id(psd)
     if not hasattr(psd, '_sigma_cached_key'):
         psd._sigma_cached_key = {}
@@ -68,7 +66,6 @@ def sigma_cached(self, psd):
                 amp_norm = 1 if amp_norm is None else amp_norm
                 self.sigma_scale = (DYN_RANGE_FAC * amp_norm) ** 2.0
 
-            print("waveform_norm_exists, self._sigmasq[key] =", self._sigmasq[key], type(self._sigmasq[key])) 
             self._sigmasq[key] = psd.sigmasq_vec[self.approximant][self.end_idx] * self.sigma_scale
             
         else:
@@ -83,12 +80,8 @@ def sigma_cached(self, psd):
 
             if not hasattr(psd, 'invsqrt'):
                 psd.invsqrt = 1.0 / psd[self.sslice]
-            #print("dtype(self.sigma_view), type(self.sigma_view)", dtype(self.sigma_view), type(self.sigma_view))
-            #print("dtype(psd.invsqrt), type(psd.invsqrt)", dtype(psd.invsqrt), type(psd.invsqrt))
-            print("waveform_norm_exists is not true, self.sigma_view.inner(psd.invsqrt) = ", self.sigma_view.inner(psd.invsqrt), type(self.sigma_view.inner(psd.invsqrt)))
-            #return self.sigma_view.inner(psd.invsqrt)
+            
             self._sigmasq[key] = self.sigma_view.inner(psd.invsqrt)
-        print("self._sigmasq[key] = ", self._sigmasq[key], type(self._sigmasq[key]))
     return self._sigmasq[key]
 
 # dummy class needed for loading LIGOLW files
@@ -680,12 +673,8 @@ class FilterBank(TemplateBank):
  
         if self.compressed_waveforms is not None :
             # Create memory space for writing the decompressed waveform
-            print("I am here for compressed waveforms")
-            print("self.filter_length", self.filter_length)
             decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
             tmplt_hash = self.table.template_hash[index]
-            print("tmplt_hash", tmplt_hash)
-            print("htilde.params", self.table[index])
             htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low)
         else :
             htilde = pycbc.waveform.get_waveform_filter(
@@ -707,26 +696,17 @@ class FilterBank(TemplateBank):
 
         htilde = htilde.astype(self.dtype)
         htilde.f_lower = f_low
-        #print("htilde.f_lower", htilde.f_lower)
         htilde.min_f_lower = self.min_f_lower
-        #print("htilde.min_f_lower", htilde.min_f_lower)
         htilde.end_idx = int(f_end / htilde.delta_f)
-        #print("htilde.end_idx", htilde.end_idx)
         htilde.params = self.table[index]
-        #print("htilde.params", htilde.params)
         htilde.chirp_length = template_duration
-        #print("htilde.chirp_length", htilde.chirp_length)
         htilde.length_in_time = ttotal
-        #print("htilde.length_in_time", htilde.length_in_time)
         htilde.approximant = approximant
-        #print("htilde.approximant", htilde.approximant)
         htilde.end_frequency = f_end
-        #print("htilde.end_frequency", htilde.end_frequency)
 
         # Add sigmasq as a method of this instance
         htilde.sigmasq = types.MethodType(sigma_cached, htilde)
         htilde._sigmasq = {}
-        print("Returning htilde")
         return htilde
 
 def find_variable_start_frequency(approximant, parameters, f_start, max_length,
