@@ -44,6 +44,8 @@ import pycbc.io
 def sigma_cached(self, psd):
     """ Cache sigma calculate for use in tandem with the FilterBank class
     """
+    print("self.dtype", self.dtype)
+    print("type(self)", type(self))
     key = id(psd)
     if not hasattr(psd, '_sigma_cached_key'):
         psd._sigma_cached_key = {}
@@ -81,8 +83,11 @@ def sigma_cached(self, psd):
 
             if not hasattr(psd, 'invsqrt'):
                 psd.invsqrt = 1.0 / psd[self.sslice]
+            #print("dtype(self.sigma_view), type(self.sigma_view)", dtype(self.sigma_view), type(self.sigma_view))
+            #print("dtype(psd.invsqrt), type(psd.invsqrt)", dtype(psd.invsqrt), type(psd.invsqrt))
             print("waveform_norm_exists is not true, self.sigma_view.inner(psd.invsqrt) = ", self.sigma_view.inner(psd.invsqrt), type(self.sigma_view.inner(psd.invsqrt)))
-            return self.sigma_view.inner(psd.invsqrt)
+            #return self.sigma_view.inner(psd.invsqrt)
+            self._sigmasq[key] = self.sigma_view.inner(psd.invsqrt)
         print("self._sigmasq[key] = ", self._sigmasq[key], type(self._sigmasq[key]))
     return self._sigmasq[key]
 
@@ -680,6 +685,7 @@ class FilterBank(TemplateBank):
             decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
             tmplt_hash = self.table.template_hash[index]
             print("tmplt_hash", tmplt_hash)
+            print("htilde.params", self.table[index])
             htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low)
         else :
             htilde = pycbc.waveform.get_waveform_filter(
