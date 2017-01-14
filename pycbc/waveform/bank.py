@@ -640,6 +640,8 @@ class FilterBank(TemplateBank):
             raise ValueError('Invalid low-frequency cutoff settings')
 
     def __getitem__(self, index):
+        from pycbc.waveform.waveform import props
+        from pycbc.waveform import get_waveform_filter_length_in_time
         # Make new memory for templates if we aren't given output memory
         if self.out is None:
             tempout = zeros(self.filter_length, dtype=self.dtype)
@@ -674,8 +676,11 @@ class FilterBank(TemplateBank):
         if self.compressed_waveforms is not None :
             # Create memory space for writing the decompressed waveform
             decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
-            tmplt_hash = self.table.template_hash[index]
             htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low)
+            p = props(self.table[index])
+            p.pop('approximant')
+            htilde.chirp_length = get_waveform_filter_length_in_time(approximant, **p)
+            htilde.length_in_time = htilde.chirp_length
         else :
             htilde = pycbc.waveform.get_waveform_filter(
                 tempout[0:self.filter_length], self.table[index],
