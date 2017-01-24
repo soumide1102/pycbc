@@ -676,17 +676,34 @@ class FilterBank(TemplateBank):
         if self.compressed_waveforms is not None :
             # Create memory space for writing the decompressed waveform
             decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
-            htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low)
+            htilde = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_low, interpolation='inline_linear')
             p = props(self.table[index])
             p.pop('approximant')
             htilde.chirp_length = get_waveform_filter_length_in_time(approximant, **p)
             htilde.length_in_time = htilde.chirp_length
+            #numpy.savetxt('comp_waveform-v4ROM-0001-SciLin.txt', numpy.real(htilde), delimiter=',')
+            #numpy.savetxt('freq_comp-0001-v2ROM-df.txt', htilde.sample_frequencies, delimiter=',') 
+            #numpy.savetxt('comp_waveform_amp-v4ROM-0001-SciLin.txt', numpy.abs(htilde), delimiter=',')
+            #phase=numpy.angle(htilde)
+            #phase=numpy.unwrap(phase)
+            #numpy.savetxt('comp_waveform_phase-0001-v2ROM-df.txt', phase, delimiter=',')
+            #numpy.savetxt('phase_points.txt', self.compressed_waveforms[self.table.template_hash[index]].phase, delimiter=',')
+            #numpy.savetxt('sample_points.txt', self.compressed_waveforms[self.table.template_hash[index]].sample_points, delimiter=',')
         else :
+            f_low1=f_low-0.25
+            #print("f_low1",f_low1)
             htilde = pycbc.waveform.get_waveform_filter(
                 tempout[0:self.filter_length], self.table[index],
-                approximant=approximant, f_lower=f_low, f_final=f_end,
+                approximant=approximant, f_lower=f_low1, f_final=f_end,
                 delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
                 **self.extra_args)
+            #print("self.delta_f", self.delta_f)
+            #numpy.savetxt('uncomp_waveform-df.txt', numpy.real(htilde), delimiter=',')
+            #numpy.savetxt('freq_uncomp-v2ROM-df.txt', htilde.sample_frequencies, delimiter=',')
+            #numpy.savetxt('uncomp_waveform_amp-df.txt', numpy.abs(htilde), delimiter=',')
+            #phase=numpy.angle(htilde)
+            #phase=numpy.unwrap(phase)
+            #numpy.savetxt('uncomp_waveform_phase-v2ROM-df.txt', phase, delimiter=',')
 
         # If available, record the total duration (which may
         # include ringdown) and the duration up to merger since they will be

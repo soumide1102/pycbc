@@ -429,7 +429,7 @@ _real_dtypes = {
 }
 
 def fd_decompress(amp, phase, sample_frequencies, out=None, df=None,
-        f_lower=None, interpolation='linear'):
+        f_lower=None, interpolation='inline_linear'):
     """Decompresses an FD waveform using the given amplitude, phase, and the
     frequencies at which they are sampled at.
 
@@ -469,6 +469,9 @@ def fd_decompress(amp, phase, sample_frequencies, out=None, df=None,
             _precision_map[phase.dtype.name] != precision:
         raise ValueError("amp, phase, and sample_points must all have the "
             "same precision")
+    sample_frequencies = numpy.array(sample_frequencies)
+    amp = numpy.array(amp)
+    phase = numpy.array(phase)
     if out is None:
         if df is None:
             raise ValueError("Either provide output memory or a df")
@@ -493,7 +496,7 @@ def fd_decompress(amp, phase, sample_frequencies, out=None, df=None,
     if start_index >= hlen:
         raise ValueError('requested f_lower >= largest frequency in out')
     # interpolate the amplitude and the phase
-    if interpolation == "linear":
+    if interpolation == "inline_linear":
         if precision == 'single':
             code = _linear_decompress_code32
         else:
@@ -508,16 +511,19 @@ def fd_decompress(amp, phase, sample_frequencies, out=None, df=None,
                                   omp_flags,
                libraries=omp_libs)
     else:
+        print("LINEAR")
         # use scipy for fancier interpolation
         outfreq = out.sample_frequencies.numpy()
-        amp_interp = interpolate.interp1d(sample_frequencies.numpy(),
-            amp.numpy(), kind=interpolation, bounds_error=False, fill_value=0.,
+        amp_interp = interpolate.interp1d(sample_frequencies,
+            amp, kind=interpolation, bounds_error=False, fill_value=0.,
             assume_sorted=True)
-        phase_interp = interpolate.interp1d(sample_frequencies.numpy(),
-            phase.numpy(), kind=interpolation, bounds_error=False,
+        phase_interp = interpolate.interp1d(sample_frequencies,
+            phase, kind=interpolation, bounds_error=False,
             fill_value=0., assume_sorted=True)
         A = amp_interp(outfreq)
         phi = phase_interp(outfreq)
+        #print("saving phi")
+        #numpy.savetxt('comp_waveform_phase-H1-0001-SciLin.txt', phi, delimiter=',')
         out.data[:] = A*numpy.cos(phi) + (1j)*A*numpy.sin(phi)
     return out
 
