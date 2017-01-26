@@ -151,10 +151,6 @@ def spa_compression(htilde, fmin, fmax, min_seglen=0.02,
         sample_points.append(fmax)
     return numpy.array(sample_points)
 
-compression_algorithms = {
-        'mchirp': mchirp_compression,
-        'spa': spa_compression
-        }
 
 def _vecdiff(htilde, hinterp, fmin, fmax):
     return abs(filter.overlap_cplx(htilde, htilde,
