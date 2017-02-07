@@ -173,7 +173,7 @@ def vecdiff(htilde, hinterp, sample_points):
     return vecdiffs
 
 def compress_waveform(htilde, sample_points, tolerance, interpolation,
-        decomp_scratch=None):
+        decomp_scratch=None, psd=None):
     """Retrieves the amplitude and phase at the desired sample points, and adds
     frequency points in order to ensure that the interpolated waveform
     has a mismatch with the full waveform that is <= the desired tolerance. The
@@ -229,7 +229,7 @@ def compress_waveform(htilde, sample_points, tolerance, interpolation,
     hdecomp = fd_decompress(comp_amp, comp_phase, sample_points,
         out=decomp_scratch, df=outdf, f_lower=fmin,
         interpolation=interpolation)
-    mismatch = 1. - filter.overlap(hdecomp, htilde, low_frequency_cutoff=fmin)
+    mismatch = 1. - filter.overlap(hdecomp, htilde, psd=psd, low_frequency_cutoff=fmin)
     if mismatch > tolerance:
         # we'll need the difference in the waveforms as a function of frequency
         vecdiffs = vecdiff(htilde, hdecomp, sample_points)

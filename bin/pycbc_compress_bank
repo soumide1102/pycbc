@@ -40,50 +40,63 @@ from pycbc import filter
 
 parser = argparse.ArgumentParser(description=__description__)
 parser.add_argument("--bank-file", type=str,
-                help="Bank hdf file to load.")
+                    help="Bank hdf file to load.")
 parser.add_argument("--output", type=str,
-                help="The hdf file to save the templates and compressed "
-                     "waveforms to.")
-parser.add_argument("--low-frequency-cutoff", type=float, required=True,
-                help="The low frequency cutoff to use for generating "
-                     "the waveforms (Hz)")
+                    help="The hdf file to save the templates and "
+                    "compressed waveforms to.")
+parser.add_argument("--template-low-frequency-cutoff", type=float, required=True,
+                    help="The low frequency cutoff to use for generating "
+                    "the waveforms (Hz).")
 # add approximant arg
 pycbc.waveform.bank.add_approximant_arg(parser)
-parser.add_argument("--sample-rate", type=int, required=True,
-                help="Half this value sets the maximum frequency of the "
-                     "compressed waveforms.")
+parser.add_argument("--template-sample-rate", type=int, required=True,
+                    help="Half this value sets the maximum frequency of the "
+                    "compressed waveforms.")
 parser.add_argument("--tmplt-index", nargs=2, type=int, default=None,
-                help="Only generate compressed waveforms for the given "
-                     "indices in the bank file. Must provide both a start "
-                     "and a stop index. Default is to compress all of the "
-                     "templates in the bank file.")
+                    help="Only generate compressed waveforms for the given "
+                    "indices in the bank file. Must provide both a start "
+                    "and a stop index. Default is to compress all of the "
+                    "templates in the bank file.")
 parser.add_argument("--compression-algorithm", type=str, required=True,
-                choices=compress.compression_algorithms.keys(),
-                help="The compression algorithm to use for selecting "
-                     "frequency points.")
+                    choices=compress.compression_algorithms.keys(),
+                    help="The compression algorithm to use for selecting "
+                    "frequency points.")
 parser.add_argument("--t-pad", type=float, default=0.001,
-                help="The minimum duration used for t(f) in seconds. The "
-                     "inverse of this gives the maximum frequency step that "
-                     "will be used in the compressed waveforms. Default is "
-                     "0.001.")
+                    help="The minimum duration used for t(f) in seconds. "
+                    "The inverse of this gives the maximum frequency "
+                    "step that will be used in the compressed waveforms. "
+                    "Default is 0.001.")
 parser.add_argument("--tolerance", type=float, default=0.001,
-                help="The maximum mismatch to allow between the interpolated "
-                     "waveform must and the full waveform. Points will be "
-                     "added to the compressed waveform until its "
-                     "interpolation has a mismatch <= this value. Default is "
-                     "0.001.")
+                    help="The maximum mismatch to allow between the "
+                    "interpolated waveform must and the full waveform. "
+                    "Points will be added to the compressed waveform "
+                    "until its interpolation has a mismatch <= this value. "
+                    "Default is 0.001.")
 parser.add_argument("--interpolation", type=str, default="linear",
-                help="The interpolation to use for decompressing the "
-                     "waveforms for checking tolerance. Options are 'linear', "
-                     "or any interpolation recognized by scipy's interp1d "
-                     "kind argument. Default is linear.")
+                    help="The interpolation to use for decompressing the "
+                    "waveforms for checking tolerance. Options are "
+                    "'linear', or any interpolation recognized by scipy's "
+                    "interp1d kind argument. Default is linear.")
 parser.add_argument("--precision", type=str, choices=["double", "single"],
-                default="double",
-                help="What precision to generate and store the waveforms with;"
-                     " default is double.")
+                    default="double",
+                    help="What precision to generate and store the "
+                    "waveforms with; default is double.")
+parser.add_argument("--psd-from-file", type=str,
+                    help="File from which psd would be read in to used "
+                    "in compress.py for calculating the overlap/match "
+                    "between the compressed and full waveforms. ")
+parser.add_argument("--psd-delta-f", type=float,
+                    help="Frequency step to calculate psd. ")
+parser.add_argument("--psd-sample-rate", type=int,
+                    help="Sample rate to calculate the length in samples "
+                    "of the psd. ")
+parser.add_argument("--psd-low-frequency-cutoff", type=float,
+                    help="Low frequency cutoff to calculate the psd. ") 
+parser.add_argument("--dyn-range-factor", type=float, default=1.0,
+                    help="The psd is multiplied by `dyn_range_fac` ** 2. ")
 parser.add_argument("--force", action="store_true", default=False,
                     help="Overwrite the given hdf file if it exists. "
-                         "Otherwise, an error is raised.")
+                    "Otherwise, an error is raised.")
 parser.add_argument("--verbose", action="store_true", default=False)
 
 
@@ -91,8 +104,25 @@ args = parser.parse_args()
 
 pycbc.init_logging(args.verbose)
 
-fmin = args.low_frequency_cutoff
-fmax = args.sample_rate/2.
+if args.psd_from_file :
+    logging.info("Generating psd.")
+    psd_length = int(args.psd_sample_rate / args.psd_delta_f) / 2  + 1
+    psd = pycbc.psd.from_txt(args.psd_from_file, psd_length,
+                             args.psd_delta_f,
+                             args.psd_low_frequency_cutoff,
+                             is_asd_file=False)
+    psd_kmin = int(args.psd_low_frequency_cutoff / psd.delta_f)
+    psd[0:psd_kmin] = psd[psd_kmin]
+    psd *= args.dyn_range_factor ** 2
+    if args.precision == 'single' :
+        psd = psd.astype(float32)
+    elif args.precision == 'double' :
+        psd = psd.astype(float64)
+else :
+    psd = None
+
+fmin = args.template_low_frequency_cutoff
+fmax = args.template_sample_rate/2.
 
 # load the bank
 logging.info("loading bank")
@@ -118,7 +148,7 @@ else:
 # figure out the dfs needed for each waveform
 logging.info("getting needed dfs")
 # we'll ensure that the there are atleast 2 samples in a waveform
-seg_lens = 4*numpy.array([max(4./args.sample_rate,
+seg_lens = 4*numpy.array([max(4./args.template_sample_rate,
     2**numpy.ceil(numpy.log2(compress.rough_time_estimate(m1, m2, fmin))))
     for m1,m2 in zip(templates.mass1, templates.mass2)])
 
@@ -132,7 +162,7 @@ logging.info("getting compressed amplitude and phase")
 mismatches = numpy.zeros(imax-imin, dtype=float)
 for ii in range(imin, imax):
     # update the N, df to use based on this waveform
-    N = int(args.sample_rate*seg_lens[ii-imin])
+    N = int(args.template_sample_rate*seg_lens[ii-imin])
     df = 1./seg_lens[ii-imin]
     bank.delta_f = df
     bank.N = N
@@ -145,8 +175,8 @@ for ii in range(imin, imax):
     htilde = bank[ii-imin]
     if numpy.abs(htilde[bank.kmin]) == 0:
         raise ValueError("""The amplitude of the waveform at the 
-                         low_frequency_cutoff is zero. A non-zero value
-                         is required""")
+                         template_low_frequency_cutoff is zero. A non-zero value
+                         is required.""")
     tmplt = bank.table[ii-imin]
     kmax = htilde.end_idx
     
@@ -165,7 +195,7 @@ for ii in range(imin, imax):
     # compress
     hcompressed = compress.compress_waveform(
         htilde, sample_points, args.tolerance, args.interpolation,
-        decomp_scratch=decomp_scratch)
+        decomp_scratch=decomp_scratch, psd=psd)
 
     # save results
     hcompressed.write_to_hdf(output, tmplt.template_hash)
