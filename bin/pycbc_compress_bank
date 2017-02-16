@@ -72,7 +72,7 @@ parser.add_argument("--tolerance", type=float, default=0.001,
                      "added to the compressed waveform until its "
                      "interpolation has a mismatch <= this value. Default is "
                      "0.001.")
-parser.add_argument("--interpolation", type=str, default="linear",
+parser.add_argument("--interpolation", type=str, default="inline_linear",
                 help="The interpolation to use for decompressing the "
                      "waveforms for checking tolerance. Options are 'linear', "
                      "or any interpolation recognized by scipy's interp1d "
@@ -104,7 +104,7 @@ if args.precision == "single":
 else:
     dtype = numpy.complex128
 # we'll just use dummy values for N, df for now
-bank = waveform.FilterBank(args.bank_file, 5, 0.25, fmin, dtype,
+bank = waveform.FilterBank(args.bank_file, 5, 0.25, dtype, low_frequency_cutoff=fmin,
     approximant=args.approximant)
 templates = bank.table
 if args.tmplt_index is not None:
