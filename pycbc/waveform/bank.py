@@ -37,7 +37,7 @@ import pycbc.waveform
 import pycbc.pnutils
 import pycbc.waveform.compress
 from pycbc import DYN_RANGE_FAC
-from pycbc.types import zeros
+from pycbc.types import FrequencySeries, zeros
 import pycbc.io
 
 def sigma_cached(self, psd):
@@ -258,7 +258,7 @@ class TemplateBank(object):
 
             # inclination stored in xml alpha3 column
             names = list(self.table.dtype.names)
-            names = tuple([n if n != 'alpha3' else 'inclination' for n in names]) 
+            names = tuple([n if n != 'alpha3' else 'inclination' for n in names])
 
             # low frequency cutoff in xml alpha6 column
             names = tuple([n if n!= 'alpha6' else 'f_lower' for n in names])
@@ -463,30 +463,30 @@ class TemplateBank(object):
             indices_combined = np.concatenate(indices)
 
         indices_unique= np.unique(indices_combined)
-        self.table = self.table[indices_unique]   
+        self.table = self.table[indices_unique]
 
 
     def ensure_standard_filter_columns(self, low_frequency_cutoff=None):
         """ Initialize FilterBank common fields
-        
+
         Parameters
         ----------
         low_frequency_cutoff: {float, None}, Optional
             A low frequency cutoff which overrides any given within the
             template bank file.
         """
-        
+
         # Make sure we have a template duration field
         if not hasattr(self.table, 'template_duration'):
             self.table = self.table.add_fields(numpy.zeros(len(self.table),
-                                     dtype=numpy.float32), 'template_duration') 
+                                     dtype=numpy.float32), 'template_duration')
 
         # Make sure we have a f_lower field
         if low_frequency_cutoff is not None:
             if not hasattr(self.table, 'f_lower'):
                 vec = numpy.zeros(len(self.table), dtype=numpy.float32)
                 self.table = self.table.add_fields(vec, 'f_lower')
-            self.table['f_lower'][:] = low_frequency_cutoff        
+            self.table['f_lower'][:] = low_frequency_cutoff
 
         self.min_f_lower = min(self.table['f_lower'])
         if self.f_lower is None and self.min_f_lower == 0.:
@@ -495,7 +495,7 @@ class TemplateBank(object):
 class LiveFilterBank(TemplateBank):
     def __init__(self, filename, sample_rate, minimum_buffer,
                        approximant=None, increment=8, parameters=None,
-                       load_compressed=True, load_compressed_now=False, 
+                       load_compressed=True, load_compressed_now=False,
                        low_frequency_cutoff=None,
                        **kwds):
 
@@ -560,7 +560,7 @@ class LiveFilterBank(TemplateBank):
 
         approximant = self.approximant(index)
         f_end = self.end_frequency(index)
-        flow = self.table[index].f_lower        
+        flow = self.table[index].f_lower
 
         # Determine the length of time of the filter, rounded up to
         # nearest power of two
@@ -570,7 +570,7 @@ class LiveFilterBank(TemplateBank):
         p = props(self.table[index])
         p.pop('approximant')
         buff_size = pycbc.waveform.get_waveform_filter_length_in_time(approximant, **p)
-        
+
         tlen = self.round_up((buff_size + min_buffer) * self.sample_rate)
         flen = int(tlen / 2 + 1)
 
@@ -628,6 +628,7 @@ class FilterBank(TemplateBank):
                  load_compressed=True,
                  load_compressed_now=False,
                  low_frequency_cutoff=None,
+                 waveform_decompression_method=None,
                  **kwds):
         self.out = out
         self.dtype = dtype
@@ -638,12 +639,59 @@ class FilterBank(TemplateBank):
         self.delta_t = 1.0 / (self.N * self.delta_f)
         self.filter_length = filter_length
         self.max_template_length = max_template_length
+        self.waveform_decompression_method = waveform_decompression_method
 
         super(FilterBank, self).__init__(filename, approximant=approximant,
             parameters=parameters, load_compressed=load_compressed,
             load_compressed_now=load_compressed_now,
             **kwds)
         self.ensure_standard_filter_columns(low_frequency_cutoff=low_frequency_cutoff)
+
+    def get_decompressed_waveform(self, tempout, index, f_lower=None,
+                                  approximant=None):
+        """Returns a frequency domain decompressed waveform for the template
+        in the bank corresponding to the index taken in as an argument. The
+        decompressed waveform is obtained by interpolating in frequency space,
+        the amplitude and phase points for the compressed template that are
+        read in from the bank."""
+
+        from pycbc.waveform.waveform import props
+        from pycbc.waveform import get_waveform_filter_length_in_time
+
+        # Get the precision used to generate the compressed template
+        precision_from_bank_file = self.compressed_waveforms[self.table.template_hash[index]].precision
+
+        # Get the precision that would be used to generate the decompressed
+        # waveform
+        waveform_decompression_precision = tempout.precision
+
+        if waveform_decompression_precision != precision_from_bank_file :
+            raise ValueError("The precision used to compress the "
+                             "waveform was %s, whereas the precision "
+                             "selected to decompress the waveform was "
+                             "%s. Both of theses should be the same. "
+                             "Therefore, use a bank with precision %s."
+                             %(precision_from_bank_file,
+                             waveform_decompression_precision,
+                             waveform_decompression_precision))
+
+        # Get the interpolation method to be used to decompress the waveform
+        if self.waveform_decompression_method is not None :
+            decompression_method = self.waveform_decompression_method
+        else :
+            decompression_method = self.compressed_waveforms[self.table.template_hash[index]].interpolation
+        logging.info("Decompressing waveform using %s", decompression_method)
+
+        # Create memory space for writing the decompressed waveform
+        decomp_scratch = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
+
+        # Get the decompressed waveform
+        hdecomp = self.compressed_waveforms[self.table.template_hash[index]].decompress(out=decomp_scratch, f_lower=f_lower, interpolation=decompression_method)
+        p = props(self.table[index])
+        p.pop('approximant')
+        hdecomp.chirp_length = get_waveform_filter_length_in_time(approximant, **p)
+        hdecomp.length_in_time = hdecomp.chirp_length
+        return hdecomp
 
     def __getitem__(self, index):
         # Make new memory for templates if we aren't given output memory
@@ -676,11 +724,15 @@ class FilterBank(TemplateBank):
 
         # Get the waveform filter
         distance = 1.0 / DYN_RANGE_FAC
-        htilde = pycbc.waveform.get_waveform_filter(
-            tempout[0:self.filter_length], self.table[index],
-            approximant=approximant, f_lower=f_low, f_final=f_end,
-            delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
-            **self.extra_args)
+        if self.compressed_waveforms is not None :
+            htilde = self.get_decompressed_waveform(tempout, index, f_lower=f_low,
+                                                    approximant=approximant)
+        else :
+            htilde = pycbc.waveform.get_waveform_filter(
+                tempout[0:self.filter_length], self.table[index],
+                approximant=approximant, f_lower=f_low, f_final=f_end,
+                delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
+                **self.extra_args)
 
         # If available, record the total duration (which may
         # include ringdown) and the duration up to merger since they will be
