@@ -20,7 +20,6 @@ import sys
 import logging, argparse, numpy, itertools
 import pycbc
 from pycbc import vetoes, psd, waveform, events, strain, scheme, fft, DYN_RANGE_FAC
-from pycbc.vetoes.sgchisq import SingleDetSGChisq
 from pycbc.filter import MatchedFilterControl, make_frequency_series
 from pycbc.types import TimeSeries, FrequencySeries, zeros, float32, complex64
 import pycbc.fft.fftw, pycbc.version
@@ -179,7 +178,6 @@ fft.insert_fft_option_group(parser)
 pycbc.opt.insert_optimization_option_group(parser)
 pycbc.weave.insert_weave_option_group(parser)
 pycbc.inject.insert_injfilterrejector_option_group(parser)
-SingleDetSGChisq.insert_option_group(parser)
 opt = parser.parse_args()
 
 # Check that the values returned for the options make sense
@@ -224,8 +222,16 @@ with ctx:
         'bank_chisq_dof' : int,
         'cont_chisq'     : float32,
                 }
-    out_types.update(SingleDetSGChisq.returns)
-    out_vals = {key: None for key in out_types}
+    out_vals = {
+        'time_index'     : None,
+        'snr'            : None,
+        'chisq'          : None,
+        'chisq_dof'      : None,
+        'bank_chisq'     : None,
+        'bank_chisq_dof' : None,
+        'cont_chisq'     : None
+                }
+
     names = sorted(out_vals.keys())
 
     if len(strain_segments.segment_slices) == 0:
@@ -295,8 +301,6 @@ with ctx:
         waveform_decompression_method=
         opt.waveform_decompression_method if opt.use_compressed_waveforms else None)
 
-    sg_chisq = SingleDetSGChisq.from_cli(opt, bank, opt.chisq_bins)
-
     ntemplates = len(bank)
     nfilters = 0
 
@@ -353,12 +357,6 @@ with ctx:
             out_vals['chisq'], out_vals['chisq_dof'] = \
                   power_chisq.values(corr, snrv, norm, stilde.psd,
                                      idx+stilde.analyze.start, template)
-
-            out_vals['lat_chisq'] = sg_chisq.values(stilde, template, stilde.psd,
-                                          snrv, norm,
-                                          out_vals['chisq'],
-                                          out_vals['chisq_dof'],
-                                          idx+stilde.analyze.start)
 
             out_vals['cont_chisq'] = \
                   autochisq.values(snr, idx+stilde.analyze.start, template,

@@ -727,6 +727,16 @@ class FilterBank(TemplateBank):
         if self.compressed_waveforms is not None :
             htilde = self.get_decompressed_waveform(tempout, index, f_lower=f_low,
                                                     approximant=approximant)
+            amp=numpy.abs(htilde)
+            freq_comp=numpy.array(htilde.sample_frequencies[:])
+            print("numpy.amax(amp)", numpy.amax(amp))
+            print("numpy.amax(htilde.sample_frequencies)", numpy.amax(freq_comp))
+            print("numpy.argmax(amp)", numpy.argmax(amp))
+            print("numpy.argmax(htilde.sample_frequencies)", numpy.argmax(freq_comp))
+            phase=numpy.angle(htilde)
+            phase=numpy.unwrap(phase)
+            print("numpy.amax(phase)", numpy.amax(phase))
+            print("numpy.argmax(phase)", numpy.argmax(phase))
         else :
             htilde = pycbc.waveform.get_waveform_filter(
                 tempout[0:self.filter_length], self.table[index],
