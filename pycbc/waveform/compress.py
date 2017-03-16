@@ -156,7 +156,7 @@ compression_algorithms = {
         'spa': spa_compression
         }
 
-def _vecdiff(htilde, hinterp, fmin, fmax, psd=None):
+def _vecdifforig(htilde, hinterp, fmin, fmax, psd=None):
     return abs(filter.overlap_cplx(htilde, htilde,
                           low_frequency_cutoff=fmin,
                           high_frequency_cutoff=fmax,
@@ -166,6 +166,36 @@ def _vecdiff(htilde, hinterp, fmin, fmax, psd=None):
                           high_frequency_cutoff=fmax,
                           normalized=False, psd=psd))
 
+def _vecdiff(htilde, hinterp, fmin, fmax, psd=None):
+    return abs(filter.overlap(htilde, htilde,
+                          low_frequency_cutoff=fmin,
+                          high_frequency_cutoff=fmax,
+                          normalized=False, psd=psd)
+                - filter.overlap(htilde, hinterp,
+                          low_frequency_cutoff=fmin,
+                          high_frequency_cutoff=fmax,
+                          normalized=False, psd=psd))
+
+def _chisqvecdiff(htilde, hinterp, fmin, fmax, psd=None):
+    sig = filter.sigma(htilde, psd=psd, low_frequency_cutoff=fmin,
+                       high_frequency_cutoff=fmax)
+    sigint = filter.sigma(hinterp, psd=psd, low_frequency_cutoff=fmin,
+                       high_frequency_cutoff=fmax)
+    return abs(filter.overlap_cplx(htilde, htilde,
+                          low_frequency_cutoff=fmin,
+                          high_frequency_cutoff=fmax,
+                          normalized=False, psd=psd)/sig
+                - filter.overlap_cplx(hinterp, htilde,
+                          low_frequency_cutoff=fmin,
+                          high_frequency_cutoff=fmax,
+                          normalized=False, psd=psd)/sigint)
+
+def _vecdiffmatch(htilde, hinterp, fmin, fmax, psd=None):
+    return 1. - filter.overlap(htilde, hinterp,
+               low_frequency_cutoff=fmin,
+               high_frequency_cutoff=fmax,
+               psd=psd)
+
 def vecdiff(htilde, hinterp, sample_points, psd=None):
     """Computes a statistic indicating between which sample points a waveform
     and the interpolated waveform differ the most.
@@ -173,7 +203,7 @@ def vecdiff(htilde, hinterp, sample_points, psd=None):
     vecdiffs = numpy.zeros(sample_points.size-1, dtype=float)
     for kk,thisf in enumerate(sample_points[:-1]):
         nextf = sample_points[kk+1]
-        vecdiffs[kk] = abs(_vecdiff(htilde, hinterp, thisf, nextf, psd=psd))
+        vecdiffs[kk] = _vecdiff(htilde, hinterp, thisf, nextf, psd=psd)
     return vecdiffs
 
 def compress_waveform(htilde, sample_points, tolerance, interpolation,
@@ -259,14 +289,17 @@ def compress_waveform(htilde, sample_points, tolerance, interpolation,
         add_freq = sample_points[[minpt, minpt+1]].mean()
         addidx = int(round(add_freq/df))
         # ensure that only new points are added
-        while addidx in sample_index:
-            addpt -= 1
-            try:
-                minpt = diffidx[addpt]
-            except IndexError:
-                raise ValueError("unable to compress to desired tolerance")
-            add_freq = sample_points[[minpt, minpt+1]].mean()
-            addidx = int(round(add_freq/df))
+        if addidx in sample_index:
+            diffidx = vecdiffs.argsort()
+            addpt = -1
+            while addidx in sample_index:
+                addpt -= 1
+                try:
+                    minpt = diffidx[addpt]
+                except IndexError:
+                    raise ValueError("unable to compress to desired tolerance")
+                add_freq = sample_points[[minpt, minpt+1]].mean()
+                addidx = int(round(add_freq/df))
         new_index = numpy.zeros(sample_index.size+1, dtype=int)
         new_index[:minpt+1] = sample_index[:minpt+1]
         new_index[minpt+1] = addidx
