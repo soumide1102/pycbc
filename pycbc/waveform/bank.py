@@ -693,6 +693,10 @@ class FilterBank(TemplateBank):
         return hdecomp
 
     def __getitem__(self, index):
+        # htilde_diff changes start
+        from pycbc.waveform.waveform import props
+        from pycbc.waveform import get_waveform_filter_length_in_time
+        # htilde_diff changes end
         # Make new memory for templates if we aren't given output memory
         if self.out is None:
             tempout = zeros(self.filter_length, dtype=self.dtype)
@@ -730,27 +734,56 @@ class FilterBank(TemplateBank):
             amp_argmax=numpy.argmax(amp)
             amp_amax=numpy.amax(amp)
             freq_comp=numpy.array(htilde.sample_frequencies[:])
-            fp_amp_comp = open('ampmax_comp.txt', "a")
-            fp_amp_comp.write( "%.6f,%.6f"%(amp_amax, amp_argmax) + "\n" )
-            fp_amp_comp.close()
+            #numpy.savetxt('amp_comp_49173_endpt_vecdiff_fix.txt', amp)
+            #numpy.savetxt('freq_comp_49173_endpt_vecdiff_fix.txt', freq_comp)
+            #fp_amp_comp = open('ampmax_comp.txt', "a")
+            #fp_amp_comp.write( "%.6f,%.6f"%(amp_amax, amp_argmax) + "\n" )
+            #fp_amp_comp.close()
             freq_argmax=numpy.argmax(freq_comp)
             freq_amax=numpy.amax(freq_comp)
-            fp_freq_comp = open('freqmax_comp.txt', "a")
-            fp_freq_comp.write( "%.6f,%.6f"%(freq_amax, freq_argmax) + "\n" )
-            fp_freq_comp.close()
-            #print("numpy.amax(amp)", numpy.amax(amp))
-            #print("numpy.amax(htilde.sample_frequencies)", numpy.amax(freq_comp))
-            #print("numpy.argmax(amp)", numpy.argmax(amp))
-            #print("numpy.argmax(htilde.sample_frequencies)", numpy.argmax(freq_comp))
+            #fp_freq_comp = open('freqmax_comp.txt', "a")
+            #fp_freq_comp.write( "%.6f,%.6f"%(freq_amax, freq_argmax) + "\n" )
+            #fp_freq_comp.close()
+            print("numpy.amax(amp)", numpy.amax(amp))
+            print("numpy.amax(htilde.sample_frequencies)", numpy.amax(freq_comp))
+            print("numpy.argmax(amp)", numpy.argmax(amp))
+            print("numpy.argmax(htilde.sample_frequencies)", numpy.argmax(freq_comp))
             phase=numpy.angle(htilde)
             phase=numpy.unwrap(phase)
             phase_argmax=numpy.argmax(phase)
             phase_amax=numpy.amax(phase)
-            fp_phase_comp = open('phasemax_comp.txt', "a")
-            fp_phase_comp.write( "%.6f,%.6f"%(phase_amax, phase_argmax) + "\n" )
-            fp_phase_comp.close()
-            #print("numpy.amax(phase)", numpy.amax(phase))
-            #print("numpy.argmax(phase)", numpy.argmax(phase))
+            #numpy.savetxt('phase_comp_49173_endpt_vecdiff_fix.txt', phase)
+            #fp_phase_comp = open('phasemax_comp.txt', "a")
+            #fp_phase_comp.write( "%.6f,%.6f"%(phase_amax, phase_argmax) + "\n" )
+            #fp_phase_comp.close()
+            print("numpy.amax(phase)", numpy.amax(phase))
+            print("numpy.argmax(phase)", numpy.argmax(phase))
+            tempout_uncomp = zeros(self.filter_length, dtype=self.dtype)
+            htilde_uncomp = pycbc.waveform.get_waveform_filter(
+                tempout_uncomp[0:self.filter_length], self.table[index],
+                approximant=approximant, f_lower=f_low, f_final=f_end,
+                delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
+                **self.extra_args)
+            # htilde_diff changes start
+            amp_uncomp = numpy.abs(htilde_uncomp)
+            phase_uncomp=numpy.angle(htilde_uncomp)
+            phase_uncomp=numpy.unwrap(phase_uncomp)
+            #htilde_diff = FrequencySeries(tempout[0:self.filter_length], delta_f=self.delta_f, copy=False)
+            htilde_diff = htilde - htilde_uncomp
+            #htilde_array = numpy.array(htilde[:])
+            #htilde_uncomp_array = numpy.array(htilde_uncomp[:])
+            #htilde_diff.data[:] = htilde_array - htilde_uncomp_array
+            #amp_diff = amp - amp_uncomp
+            #phase_diff = phase - phase_uncomp
+            #htilde_diff.data[:] = amp_diff*numpy.cos(phase_diff) + (1j)*amp_diff*numpy.sin(phase_diff)
+            numpy.savetxt('htilde_diff.txt', htilde_diff.data)
+            p = props(self.table[index])
+            p.pop('approximant')
+            htilde_diff.chirp_length = get_waveform_filter_length_in_time(approximant, **p)
+            htilde_diff.length_in_time = htilde_diff.chirp_length
+            print("htilde_diff.chirp_length", htilde_diff.chirp_length)
+            print("htilde_diff.length_in_time", htilde_diff.length_in_time)
+            #htilde_diff changes end
         else :
             htilde = pycbc.waveform.get_waveform_filter(
                 tempout[0:self.filter_length], self.table[index],
@@ -761,53 +794,66 @@ class FilterBank(TemplateBank):
             amp_argmax=numpy.argmax(amp)
             amp_amax=numpy.amax(amp)
             freq_uncomp=numpy.array(htilde.sample_frequencies[:])
-            fp_amp_uncomp = open('ampmax_uncomp.txt', "a")
-            fp_amp_uncomp.write( "%.6f,%.6f"%(amp_amax, amp_argmax) + "\n" )
-            fp_amp_uncomp.close()
-            freq_argmax=numpy.argmax(freq_uncomp)
-            freq_amax=numpy.amax(freq_uncomp)
-            fp_freq_uncomp = open('freqmax_uncomp.txt', "a")
-            fp_freq_uncomp.write( "%.6f,%.6f"%(freq_amax, freq_argmax) + "\n" )
-            fp_freq_uncomp.close()
-            #print("numpy.amax(amp)", numpy.amax(amp))
-            #print("numpy.amax(htilde.sample_frequencies)", numpy.amax(freq_comp))             
-            #print("numpy.argmax(amp)", numpy.argmax(amp))
-            #print("numpy.argmax(htilde.sample_frequencies)", numpy.argmax(freq_comp))            
+            #numpy.savetxt('amp_uncomp_49173_endpt_vecdiff_fix.txt', amp)
+            #numpy.savetxt('freq_uncomp_49173_endpt_vecdiff_fix.txt', freq_uncomp)
+            #fp_amp_uncomp = open('ampmax_uncomp.txt', "a")
+            #fp_amp_uncomp.write( "%.6f,%.6f"%(amp_amax, amp_argmax) + "\n" )
+            #fp_amp_uncomp.close()
+            #freq_argmax=numpy.argmax(freq_uncomp)
+            #freq_amax=numpy.amax(freq_uncomp)
+            #fp_freq_uncomp = open('freqmax_uncomp.txt', "a")
+            #fp_freq_uncomp.write( "%.6f,%.6f"%(freq_amax, freq_argmax) + "\n" )
+            #fp_freq_uncomp.close()
+            print("numpy.amax(amp)", numpy.amax(amp))
+            print("numpy.amax(htilde.sample_frequencies)", numpy.amax(freq_uncomp))             
+            print("numpy.argmax(amp)", numpy.argmax(amp))
+            print("numpy.argmax(htilde.sample_frequencies)", numpy.argmax(freq_uncomp))            
             phase=numpy.angle(htilde)
             phase=numpy.unwrap(phase)
             phase_argmax=numpy.argmax(phase)
             phase_amax=numpy.amax(phase)
-            fp_phase_uncomp = open('phasemax_uncomp.txt', "a")
-            fp_phase_uncomp.write( "%.6f,%.6f"%(phase_amax, phase_argmax) + "\n" )
-            fp_phase_uncomp.close()
-            #print("numpy.amax(phase)", numpy.amax(phase))
-            #print("numpy.argmax(phase)", numpy.argmax(phase))
+            #numpy.savetxt('phase_uncomp_49173_endpt_vecdiff_fix.txt', phase)
+            #fp_phase_uncomp = open('phasemax_uncomp.txt', "a")
+            #fp_phase_uncomp.write( "%.6f,%.6f"%(phase_amax, phase_argmax) + "\n" )
+            #fp_phase_uncomp.close()
+            print("numpy.amax(phase)", numpy.amax(phase))
+            print("numpy.argmax(phase)", numpy.argmax(phase))
 
         # If available, record the total duration (which may
         # include ringdown) and the duration up to merger since they will be
         # erased by the type conversion below.
         ttotal = template_duration = None
-        if hasattr(htilde, 'length_in_time'):
-                ttotal = htilde.length_in_time
-        if hasattr(htilde, 'chirp_length'):
-                template_duration = htilde.chirp_length
+
+        # htilde_diff changes start
+        if hasattr(htilde_diff, 'length_in_time'):
+                ttotal = htilde_diff.length_in_time
+        if hasattr(htilde_diff, 'chirp_length'):
+                template_duration = htilde_diff.chirp_length
 
         self.table[index].template_duration = template_duration
 
-        htilde = htilde.astype(self.dtype)
-        htilde.f_lower = f_low
-        htilde.min_f_lower = self.min_f_lower
-        htilde.end_idx = int(f_end / htilde.delta_f)
-        htilde.params = self.table[index]
-        htilde.chirp_length = template_duration
-        htilde.length_in_time = ttotal
-        htilde.approximant = approximant
-        htilde.end_frequency = f_end
+        htilde_diff = htilde_diff.astype(self.dtype)
+        htilde_diff.f_lower = f_low
+        print("htilde_diff.f_lower", htilde_diff.f_lower)
+        htilde_diff.min_f_lower = self.min_f_lower
+        print("htilde_diff.min_f_lower", htilde_diff.min_f_lower)
+        htilde_diff.end_idx = int(f_end / htilde_diff.delta_f)
+        print("htilde_diff.end_idx", htilde_diff.end_idx)
+        htilde_diff.params = self.table[index]
+        htilde_diff.chirp_length = template_duration
+        print("htilde_diff.chirp_length", htilde_diff.chirp_length)
+        htilde_diff.length_in_time = ttotal
+        print("htilde_diff.length_in_time", htilde_diff.length_in_time)
+        htilde_diff.approximant = approximant
+        print("htilde_diff.approximant", htilde_diff.approximant)
+        htilde_diff.end_frequency = f_end
+        print("htilde_diff.end_frequency", htilde_diff.end_frequency)
 
         # Add sigmasq as a method of this instance
-        htilde.sigmasq = types.MethodType(sigma_cached, htilde)
-        htilde._sigmasq = {}
-        return htilde
+        htilde_diff.sigmasq = types.MethodType(sigma_cached, htilde_diff)
+        print("htilde_diff.sigmasq", htilde_diff.sigmasq)
+        htilde_diff._sigmasq = {}
+        return htilde_diff
 
 def find_variable_start_frequency(approximant, parameters, f_start, max_length,
                                   delta_f = 1):
@@ -914,7 +960,3 @@ class FilterBankSkyMax(TemplateBank):
         # Add sigmasq as a method of this instance
         hplus.sigmasq = types.MethodType(sigma_cached, hplus)
         hplus._sigmasq = {}
-        hcross.sigmasq = types.MethodType(sigma_cached, hcross)
-        hcross._sigmasq = {}
-
-        return hplus, hcross

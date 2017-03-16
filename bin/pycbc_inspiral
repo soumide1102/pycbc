@@ -340,6 +340,9 @@ with ctx:
                          (t_num + 1, len(bank), s_num + 1, len(segments)))
 
             nfilters = nfilters + 1
+            
+            psd = stilde.psd
+            psd_freq = psd.sample_frequencies
             snr, norm, corr, idx, snrv = \
                matched_filter.matched_filter_and_cluster(s_num, template.sigmasq(stilde.psd), cluster_window)
 
