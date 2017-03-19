@@ -156,7 +156,7 @@ compression_algorithms = {
         'spa': spa_compression
         }
 
-def _vecdifforig(htilde, hinterp, fmin, fmax, psd=None):
+def _vecdiff(htilde, hinterp, fmin, fmax, psd=None):
     return abs(filter.overlap_cplx(htilde, htilde,
                           low_frequency_cutoff=fmin,
                           high_frequency_cutoff=fmax,
@@ -166,35 +166,35 @@ def _vecdifforig(htilde, hinterp, fmin, fmax, psd=None):
                           high_frequency_cutoff=fmax,
                           normalized=False, psd=psd))
 
-def _vecdiff(htilde, hinterp, fmin, fmax, psd=None):
-    return abs(filter.overlap(htilde, htilde,
-                          low_frequency_cutoff=fmin,
-                          high_frequency_cutoff=fmax,
-                          normalized=False, psd=psd)
-                - filter.overlap(htilde, hinterp,
-                          low_frequency_cutoff=fmin,
-                          high_frequency_cutoff=fmax,
-                          normalized=False, psd=psd))
+#def _vecdiffoverlap(htilde, hinterp, fmin, fmax, psd=None):
+#    return abs(filter.overlap(htilde, htilde,
+#                          low_frequency_cutoff=fmin,
+#                          high_frequency_cutoff=fmax,
+#                          normalized=False, psd=psd)
+#                - filter.overlap(htilde, hinterp,
+#                          low_frequency_cutoff=fmin,
+#                          high_frequency_cutoff=fmax,
+#                          normalized=False, psd=psd))
 
-def _chisqvecdiff(htilde, hinterp, fmin, fmax, psd=None):
-    sig = filter.sigma(htilde, psd=psd, low_frequency_cutoff=fmin,
-                       high_frequency_cutoff=fmax)
-    sigint = filter.sigma(hinterp, psd=psd, low_frequency_cutoff=fmin,
-                       high_frequency_cutoff=fmax)
-    return abs(filter.overlap_cplx(htilde, htilde,
-                          low_frequency_cutoff=fmin,
-                          high_frequency_cutoff=fmax,
-                          normalized=False, psd=psd)/sig
-                - filter.overlap_cplx(hinterp, htilde,
-                          low_frequency_cutoff=fmin,
-                          high_frequency_cutoff=fmax,
-                          normalized=False, psd=psd)/sigint)
+#def _chisqvecdiff(htilde, hinterp, fmin, fmax, psd=None):
+#    sig = filter.sigma(htilde, psd=psd, low_frequency_cutoff=fmin,
+#                       high_frequency_cutoff=fmax)
+#    sigint = filter.sigma(hinterp, psd=psd, low_frequency_cutoff=fmin,
+#                       high_frequency_cutoff=fmax)
+#    return abs(filter.overlap_cplx(htilde, htilde,
+#                          low_frequency_cutoff=fmin,
+#                          high_frequency_cutoff=fmax,
+#                          normalized=False, psd=psd)/sig
+#                - filter.overlap_cplx(hinterp, htilde,
+#                          low_frequency_cutoff=fmin,
+#                          high_frequency_cutoff=fmax,
+#                          normalized=False, psd=psd)/sigint)
 
-def _vecdiffmatch(htilde, hinterp, fmin, fmax, psd=None):
-    return 1. - filter.overlap(htilde, hinterp,
-               low_frequency_cutoff=fmin,
-               high_frequency_cutoff=fmax,
-               psd=psd)
+#def _vecdiffmatch(htilde, hinterp, fmin, fmax, psd=None):
+#    return 1. - filter.overlap(htilde, hinterp,
+#               low_frequency_cutoff=fmin,
+#               high_frequency_cutoff=fmax,
+#               psd=psd)
 
 def vecdiff(htilde, hinterp, sample_points, psd=None):
     """Computes a statistic indicating between which sample points a waveform
@@ -785,14 +785,18 @@ class CompressedWaveform(object):
             directory.
         precision : {None, str}
             Cast the saved parameters to the given precision before saving. If
-            None provided, will use whatever their current precision is.
+            None provided, will use whatever their current precision is. This 
+            will raise an error if the parameters have single precision but the 
+            requested precision is double.
         """
         if root is None:
             root = ''
         else:
             root = '%s/'%(root)
         if precision is None:
-            precision = 'single'
+            precision = self.precision
+        elif precision == 'double' and self.precision == 'single':
+            raise ValueError("cannot cast single precision to double")
         outdtype = _real_dtypes[precision]
         group = '%scompressed_waveforms/%s' %(root, str(template_hash))
         for param in ['amplitude', 'phase', 'sample_points']:
