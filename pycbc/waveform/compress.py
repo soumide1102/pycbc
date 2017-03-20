@@ -632,13 +632,14 @@ class CompressedWaveform(object):
     mismatch : {None, float}
         The mismatch between the decompressed waveform and the original
         waveform.
-    precision : {None, str}
+    precision : {'double', str}
         The precision used to generate and store the compressed waveform points.
+        Options are 'double' or 'single'; default is 'double'.
     """
 
     def __init__(self, sample_points, amplitude, phase,
                  interpolation=None, tolerance=None, mismatch=None,
-                 precision=None, load_to_memory=True):
+                 precision='double', load_to_memory=True):
         self._sample_points = sample_points
         self._amplitude = amplitude
         self._phase = phase
