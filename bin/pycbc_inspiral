@@ -256,7 +256,6 @@ with ctx:
     else:
             ncores = 1
 
-
     matched_filter = MatchedFilterControl(opt.low_frequency_cutoff, None,
                                    opt.snr_threshold, tlen, delta_f, complex64,
                                    segments, template_mem, use_cluster,
@@ -341,7 +340,16 @@ with ctx:
 
             nfilters = nfilters + 1
             snr, norm, corr, idx, snrv = \
-               matched_filter.matched_filter_and_cluster(s_num, template.sigmasq(stilde.psd), cluster_window)
+               matched_filter.matched_filter_and_cluster(s_num, 
+                                                         template.sigmasq(stilde.psd),
+                                                         cluster_window,
+                                                         epoch=stilde._epoch)
+            
+            #snr = pycbc.filter.matched_filter(template, stilde, psd=stilde.psd, low_frequency_cutoff=flow)
+            numpy.savetxt('h_comp_snr_frominsp' + str(s_num) + '.txt', snr)
+            numpy.savetxt('h_comp_snr_times_frominsp' + str(s_num) + '.txt', snr.sample_times[:])
+            #numpy.savetxt('h_uncomp_idx.txt', idx)
+            #numpy.savetxt('h_uncomp_snrv.txt', snrv)
 
             if not len(idx):
                 continue

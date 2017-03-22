@@ -167,12 +167,12 @@ class MatchedFilterControl(object):
         if downsample_factor == 1:
             self.snr_mem = zeros(self.tlen, dtype=self.dtype)
             self.corr_mem = zeros(self.tlen, dtype=self.dtype)
-
             if use_cluster and (cluster_function == 'symmetric'):
                 self.matched_filter_and_cluster = self.full_matched_filter_and_cluster_symm
                 # setup the threasholding/clustering operations for each segment
                 self.threshold_and_clusterers = []
                 for seg in self.segments:
+                #    print("seg._epoch", seg._epoch)
                     thresh = events.ThresholdCluster(self.snr_mem[seg.analyze])
                     self.threshold_and_clusterers.append(thresh)
             elif use_cluster and (cluster_function == 'findchirp'):
@@ -224,7 +224,7 @@ class MatchedFilterControl(object):
         else:
             raise ValueError("Invalid downsample factor")
 
-    def full_matched_filter_and_cluster_symm(self, segnum, template_norm, window):
+    def full_matched_filter_and_cluster_symm(self, segnum, template_norm, window, epoch=None):
         """ Return the complex snr and normalization.
 
         Calculated the matched filter, threshold, and cluster.
@@ -257,11 +257,16 @@ class MatchedFilterControl(object):
         self.ifft.execute()
         snrv, idx = self.threshold_and_clusterers[segnum].threshold_and_cluster(self.snr_threshold / norm, window)
 
-        if len(idx) == 0:
-            return [], [], [], [], []
+        #if len(idx) == 0:
+        #    return [], [], [], [], []
 
         logging.info("%s points above threshold" % str(len(idx)))
-        return self.snr_mem, norm, self.corr_mem, idx, snrv
+        delta_t = 1.0/(self.delta_f * self.tlen)
+
+        snr = TimeSeries(self.snr_mem, epoch=epoch, delta_t=delta_t, copy=False)
+        corr = FrequencySeries(self.corr_mem, delta_f=self.delta_f, copy=False)
+        print("I am here")
+        return snr, norm, corr, idx, snrv
 
     def full_matched_filter_and_cluster_fc(self, segnum, template_norm, window):
         """ Return the complex snr and normalization.
@@ -302,7 +307,11 @@ class MatchedFilterControl(object):
             return [], [], [], [], []
 
         logging.info("%s points above threshold" % str(len(idx)))
-        return self.snr_mem, norm, self.corr_mem, idx, snrv
+
+        delta_t = 1.0/(self.delta_f * self.tlen)
+        snr = TimeSeries(self.snr_mem, delta_t=delta_t)
+        corr = FrequencySeries(self.corr_mem, delta_f=self.delta_f)
+        return snr, norm, corr, idx, snrv
 
     def full_matched_filter_thresh_only(self, segnum, template_norm, window):
         """ Return the complex snr and normalization.
@@ -343,7 +352,11 @@ class MatchedFilterControl(object):
             return [], [], [], [], []
 
         logging.info("%s points above threshold" % str(len(idx)))
-        return self.snr_mem, norm, self.corr_mem, idx, snrv
+     
+        delta_t = 1.0/(self.delta_f * self.tlen)
+        snr = TimeSeries(self.snr_mem, delta_t=delta_t)
+        corr = FrequencySeries(self.corr_mem, delta_f=self.delta_f)
+        return snr, norm, corr, idx, snrv
 
     def heirarchical_matched_filter_and_cluster(self, segnum, template_norm, window):
         """ Return the complex snr and normalization. 
