@@ -693,6 +693,9 @@ class FilterBank(TemplateBank):
         return hdecomp
 
     def __getitem__(self, index):
+        from pycbc.waveform.waveform import props
+        from pycbc.waveform import get_waveform_filter_length_in_time
+        from pycbc.filter import sigma
         # Make new memory for templates if we aren't given output memory
         if self.out is None:
             tempout = zeros(self.filter_length, dtype=self.dtype)
@@ -724,14 +727,57 @@ class FilterBank(TemplateBank):
         # Get the waveform filter
         distance = 1.0 / DYN_RANGE_FAC
         if self.compressed_waveforms is not None :
-            htilde = self.get_decompressed_waveform(tempout, index, f_lower=f_low,
+            h_decomp = self.get_decompressed_waveform(tempout, index, f_lower=f_low,
                                                     approximant=approximant)
+            phase=numpy.angle(h_decomp)
+            phase=numpy.unwrap(phase)
+            numpy.savetxt('h_comp_freq_frominsp1.txt', h_decomp.sample_frequencies[:])
+            numpy.savetxt('h_comp_amp_frominsp1.txt', abs(h_decomp))
+            numpy.savetxt('h_comp_phase_frominsp1.txt', phase)
+            tempout_uncomp=zeros(self.N, dtype=numpy.complex64)
+            print("len(self.out)", len(self.out))
+            print("self.N", self.N)
+            print("len(tempout)",len(tempout))
+            print("len(tempout_uncomp[0:self.filter_length])", len(tempout_uncomp[0:self.filter_length]))
+            
+            h_uncomp=pycbc.waveform.get_waveform_filter(
+                tempout_uncomp[0:self.filter_length], self.table[index],
+                approximant=approximant, f_lower=f_low, f_final=f_end,
+                delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
+                **self.extra_args)
+            htilde=h_uncomp-h_decomp
+
+            phase_uncomp=numpy.angle(h_uncomp)
+            phase_uncomp=numpy.unwrap(phase_uncomp)
+            numpy.savetxt('h_uncomp_freq_frominsp1.txt', h_uncomp.sample_frequencies[:])
+            numpy.savetxt('h_uncomp_amp_frominsp1.txt', abs(h_uncomp))
+            numpy.savetxt('h_uncomp_phase_frominsp1.txt', phase_uncomp)
+            phase_diff=numpy.angle(htilde)
+            phase_diff=numpy.unwrap(phase_diff)
+            numpy.savetxt('h_diff_freq_frominsp.txt', htilde.sample_frequencies[:])
+            numpy.savetxt('h_diff_amp_frominsp.txt', abs(htilde))
+            numpy.savetxt('h_diff_phase_frominsp.txt', phase_diff)
+            p = props(self.table[index])
+            p.pop('approximant')
+            diff_sigma = sigma(htilde, low_frequency_cutoff=f_low)
+            print("diff_sigma=%.20f", diff_sigma)
+            h_uncomp_sigma = sigma(h_uncomp, low_frequency_cutoff=f_low)
+            print("h_uncomp_sigma=%.20f", h_uncomp_sigma)
+            h_decomp_sigma = sigma(h_decomp, low_frequency_cutoff=f_low)
+            print("h_decomp_sigma=%.20f", h_decomp_sigma)
+            htilde.chirp_length = get_waveform_filter_length_in_time(approximant, **p)
+            htilde.length_in_time = htilde.chirp_length
         else :
             htilde = pycbc.waveform.get_waveform_filter(
                 tempout[0:self.filter_length], self.table[index],
                 approximant=approximant, f_lower=f_low, f_final=f_end,
                 delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
                 **self.extra_args)
+            phase=numpy.angle(htilde)
+            phase=numpy.unwrap(phase)
+            numpy.savetxt('h_uncomp_freq_frominsp.txt', htilde.sample_frequencies[:])
+            numpy.savetxt('h_uncomp_amp_frominsp.txt', abs(htilde))
+            numpy.savetxt('h_uncomp_phase_frominsp.txt', phase)
 
         # If available, record the total duration (which may
         # include ringdown) and the duration up to merger since they will be
