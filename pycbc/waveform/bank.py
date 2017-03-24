@@ -727,17 +727,19 @@ class FilterBank(TemplateBank):
         # Get the waveform filter
         distance = 1.0 / DYN_RANGE_FAC
         if self.compressed_waveforms is not None :
-            h_decomp = self.get_decompressed_waveform(tempout, index, f_lower=f_low,
+            tempout_comp=zeros(self.N, dtype=numpy.complex64)
+            h_decomp = self.get_decompressed_waveform(tempout_comp, index, f_lower=f_low,
                                                     approximant=approximant)
             phase=numpy.angle(h_decomp)
             phase=numpy.unwrap(phase)
             numpy.savetxt('h_comp_freq_frominsp1.txt', h_decomp.sample_frequencies[:])
             numpy.savetxt('h_comp_amp_frominsp1.txt', abs(h_decomp))
             numpy.savetxt('h_comp_phase_frominsp1.txt', phase)
+            
             tempout_uncomp=zeros(self.N, dtype=numpy.complex64)
             print("len(self.out)", len(self.out))
             print("self.N", self.N)
-            print("len(tempout)",len(tempout))
+            print("len(tempout_comp)",len(tempout_comp))
             print("len(tempout_uncomp[0:self.filter_length])", len(tempout_uncomp[0:self.filter_length]))
             
             h_uncomp=pycbc.waveform.get_waveform_filter(
@@ -745,8 +747,14 @@ class FilterBank(TemplateBank):
                 approximant=approximant, f_lower=f_low, f_final=f_end,
                 delta_f=self.delta_f, delta_t=self.delta_t, distance=distance,
                 **self.extra_args)
-            htilde=h_uncomp-h_decomp
-
+            h_uncomp_arr = numpy.array(h_uncomp.data, copy=False)
+            h_decomp_arr = numpy.array(h_decomp.data, copy=False)
+            htilde_arr=h_uncomp_arr-h_decomp_arr
+            #htilde_arr = numpy.array(htilde_arr)
+            
+            print("len(htilde_arr)", len(htilde_arr))
+            #tempout[0:len(htilde_arr)] = htilde_arr.data[:]
+            htilde = FrequencySeries(htilde_arr[:], delta_f=self.delta_f, copy=False)
             phase_uncomp=numpy.angle(h_uncomp)
             phase_uncomp=numpy.unwrap(phase_uncomp)
             numpy.savetxt('h_uncomp_freq_frominsp1.txt', h_uncomp.sample_frequencies[:])
