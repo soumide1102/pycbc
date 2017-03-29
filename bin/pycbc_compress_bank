@@ -135,6 +135,7 @@ seg_lens = 4*numpy.array([max(4./args.sample_rate,
     2**numpy.ceil(numpy.log2(compress.rough_time_estimate(m1, m2, flow))))
     for m1,m2,flow in zip(templates.mass1, templates.mass2, templates.f_lower)])
 
+numpy.savetxt('f_lower.txt',templates.f_lower)
 # generate output file
 logging.info("writing template info to output")
 output = bank.write_to_hdf(args.output, force=args.force,
@@ -166,11 +167,6 @@ for ii in range(imin, imax):
     else:
         print("args.low_frequency_cutoff not provided")
         fmin=tmplt.f_lower
-        if (tmplt.f_lower==None):
-            raise ValueError("""The template bank used does not store a low
-                             frequency cutoff for each template. Please provide
-                             a low frequency cutoff that could be used for all
-                             templates using the argument --low-frequency-cutoff.""")
     kmin = int(fmin / df)
     if numpy.abs(htilde[kmin]) == 0:
         raise ValueError("""The amplitude of the waveform at the
