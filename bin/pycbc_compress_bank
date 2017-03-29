@@ -129,11 +129,11 @@ else:
     imin, imax = 0, templates.size
 
 # figure out the dfs needed for each waveform
-#logging.info("getting needed dfs")
+logging.info("getting needed dfs")
 # we'll ensure that the there are atleast 2 samples in a waveform
-#seg_lens = 4*numpy.array([max(4./args.sample_rate,
-#    2**numpy.ceil(numpy.log2(compress.rough_time_estimate(m1, m2, fmin))))
-#    for m1,m2,fmin in zip(templates.mass1, templates.mass2, templates.f_lower)])
+seg_lens = 4*numpy.array([max(4./args.sample_rate,
+    2**numpy.ceil(numpy.log2(compress.rough_time_estimate(m1, m2, flow))))
+    for m1,m2,flow in zip(templates.mass1, templates.mass2, templates.f_lower)])
 
 # generate output file
 logging.info("writing template info to output")
@@ -148,6 +148,14 @@ mismatches = numpy.zeros(imax-imin, dtype=float)
 psd_dict = {}
 
 for ii in range(imin, imax):
+    # update the N, df to use based on this waveform
+    N = int(args.sample_rate*seg_lens[ii-imin])
+    df = 1./seg_lens[ii-imin]
+    bank.delta_f = df
+    bank.N = N
+    bank.filter_length = N/2 + 1
+    # scratch space
+    decomp_scratch = FrequencySeries(numpy.zeros(N, dtype=dtype), delta_f=df)
     # generate the waveform
     htilde = bank[ii-imin]
     tmplt = bank.table[ii-imin]
@@ -163,16 +171,6 @@ for ii in range(imin, imax):
                              frequency cutoff for each template. Please provide
                              a low frequency cutoff that could be used for all
                              templates using the argument --low-frequency-cutoff.""")
-    seg_len = 4*(max(4./args.sample_rate,
-        2**numpy.ceil(numpy.log2(compress.rough_time_estimate(tmplt.mass1, tmplt.mass2, fmin)))))
-    # update the N, df to use based on this waveform
-    N = int(args.sample_rate*seg_len)
-    df = 1./seg_len
-    bank.delta_f = df
-    bank.N = N
-    bank.filter_length = N/2 + 1
-    # scratch space
-    decomp_scratch = FrequencySeries(numpy.zeros(N, dtype=dtype), delta_f=df)
     kmin = int(fmin / df)
     if numpy.abs(htilde[kmin]) == 0:
         raise ValueError("""The amplitude of the waveform at the
