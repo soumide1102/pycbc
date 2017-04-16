@@ -114,7 +114,7 @@ def get_param_bounds_from_config(cp, section, tag, param):
 
 
 def bounded_from_config(cls, cp, section, variable_args,
-        bounds_required=False):
+                        bounds_required=False, **kwargs):
     """Returns a bounded distribution based on a configuration file. The
     parameters for the distribution are retrieved from the section titled
     "[`section`-`variable_args`]" in the config file.
@@ -177,6 +177,9 @@ def bounded_from_config(cls, cp, section, variable_args,
             pass
         # add option
         dist_args.update({key:val})
+   
+    # use any overrides
+    dist_args.update(kwargs)
 
     # construction distribution and add to list
     return cls(**dist_args)
