@@ -621,14 +621,14 @@ class FilterBank(TemplateBank):
 
         from pycbc.waveform.waveform import props
         from pycbc.waveform import get_waveform_filter_length_in_time
-       
+
         # Get the template hash corresponding to the template index taken in as argument
         tmplt_hash = self.table.template_hash[index]
 
         # Read the compressed waveform from the bank file
         compressed_waveform = pycbc.waveform.compress.CompressedWaveform.from_hdf(
                                 self.filehandler, tmplt_hash,
-                                load_now=self.load_compressed_now)
+                                load_now=True)
 
         # Get the template hash corresponding to the template index taken in as argument
         tmplt_hash = self.table.template_hash[index]
