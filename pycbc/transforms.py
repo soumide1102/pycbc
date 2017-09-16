@@ -1297,4 +1297,6 @@ def read_transforms_from_config(cp, section="transforms"):
         name = cp.get_opt_tag(section, "name", subsection)
         t = transforms[name].from_config(cp, section, subsection)
         trans.append(t)
+        logging.info("I am here")
+        logging.info(t)
     return order_transforms(trans)
