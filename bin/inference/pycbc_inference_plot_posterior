@@ -39,6 +39,7 @@ from pycbc.inference import option_utils, likelihood
 from pycbc.io.inference_hdf import InferenceFile
 from pycbc.results import metadata
 from pycbc.results.scatter_histograms import create_multidim_plot
+from pycbc.io.record import FieldArray
 
 # add options to command line
 parser = argparse.ArgumentParser()
@@ -80,6 +81,10 @@ fp = fp if isinstance(fp, list) else [fp]
 parameters = parameters if isinstance(parameters[0], list) else [parameters]
 labels = labels if isinstance(labels[0], list) else [labels]
 samples = samples if isinstance(samples, list) else [samples]
+print(samples[0][:])
+print(samples[0]['spin1z'][0:10])
+print(samples[0].shape)
+print(samples[0]['spin1z'].shape)
 
 # get likelihood statistic values
 if opts.z_arg is not None:
@@ -106,6 +111,31 @@ else:
     zlbl = None
     for f in fp:
         f.close()
+print(zvals)
+print(zlbl)
+
+samples_post_dict = {}
+zvals_postprocess = []
+for param in parameters[0]:
+    samples_post_dict[param] = []
+
+for i in range(len(zvals[0])):
+    #print(i)
+    #print(samples[0]['spin1z'][i])
+    #print(samples[0]['spin2z'][i])
+    if samples[0]['spin1z'][i] > 0.0 and samples[0]['spin2z'][i] > 0.0 :
+        for param in parameters[0]:
+            print(param)
+            samples_post_dict[param].append(samples[0][param][i])
+        zvals_postprocess.append(zvals[0][i])
+ 
+zvals_postprocess = [numpy.array(zvals_postprocess)]
+#samples_post_dict = {p:samples_post_dict[p][:] for p in samples_post_dict}       
+samples_postprocess = FieldArray.from_kwargs(**samples_post_dict)
+samples_postprocess = samples_postprocess if isinstance(samples_postprocess, list) else [samples_postprocess]     
+    
+print(samples_postprocess)
+print(zvals_postprocess)
 
 # determine if colorbar should be shown
 show_colorbar = True if opts.z_arg else False
@@ -130,9 +160,9 @@ mins, maxs = option_utils.plot_ranges_from_cli(opts)
 # add any missing parameters
 for p in parameters[0]:
     if p not in mins:
-        mins[p] = numpy.array([s[p].min() for s in samples]).min()
+        mins[p] = numpy.array([s[p].min() for s in samples_postprocess]).min()
     if p not in maxs:
-        maxs[p] = numpy.array([s[p].max() for s in samples]).max()
+        maxs[p] = numpy.array([s[p].max() for s in samples_postprocess]).max()
 
 # get expected parameter values from command line
 expected_parameters = option_utils.expected_parameters_from_cli(
@@ -161,8 +191,8 @@ colors = itertools.cycle(["black"] + ["C{}".format(i) for i in range(10)])
 # plot each input file
 logging.info("Plotting")
 hist_colors = []
-for i, (p, l, s) in enumerate(zip(parameters, labels, samples)):
-
+for i, (p, l, s) in enumerate(zip(parameters, labels, samples_postprocess)):
+    print(i)
     # on first iteration create figure otherwise update old figure
     if i == 0:
         fig = None
@@ -188,7 +218,7 @@ for i, (p, l, s) in enumerate(zip(parameters, labels, samples)):
                     plot_marginal=opts.plot_marginal,
                     marginal_percentiles=opts.marginal_percentiles,
                     plot_scatter=opts.plot_scatter,
-                    zvals=zvals[i] if zvals is not None else None,
+                    zvals=zvals_postprocess[i] if zvals is not None else None,
                     show_colorbar=show_colorbar,
                     cbar_label=zlbl[i] if zlbl is not None else None,
                     vmin=opts.vmin, vmax=opts.vmax,
