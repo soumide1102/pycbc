@@ -81,10 +81,6 @@ fp = fp if isinstance(fp, list) else [fp]
 parameters = parameters if isinstance(parameters[0], list) else [parameters]
 labels = labels if isinstance(labels[0], list) else [labels]
 samples = samples if isinstance(samples, list) else [samples]
-print(samples[0][:])
-print(samples[0]['spin1z'][0:10])
-print(samples[0].shape)
-print(samples[0]['spin1z'].shape)
 
 # get likelihood statistic values
 if opts.z_arg is not None:
@@ -123,7 +119,7 @@ for i in range(len(zvals[0])):
     #print(i)
     #print(samples[0]['spin1z'][i])
     #print(samples[0]['spin2z'][i])
-    if samples[0]['spin1z'][i] > 0.0 and samples[0]['spin2z'][i] > 0.0 :
+    if (samples[0]['spin1z'][i] > 0.0 and samples[0]['spin2z'][i] > 0.0):
         for param in parameters[0]:
             print(param)
             samples_post_dict[param].append(samples[0][param][i])
