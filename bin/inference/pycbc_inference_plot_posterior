@@ -222,9 +222,11 @@ fig.set_dpi(200)
 # set tight layout
 fig.set_tight_layout(True)
 
+#fig.savefig(opts.output_file)
+
 # save
 metadata.save_fig_with_metadata(
-                 fig, opts.output_file, {},
+                 fig, opts.output_file, bbox_inches='tight',
                  cmd=" ".join(sys.argv),
                  title="Posteriors",
                  caption="Posterior probability density functions.")

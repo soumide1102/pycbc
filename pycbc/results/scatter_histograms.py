@@ -84,7 +84,8 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if ndim < 3:
         fsize = (8, 7)
     else:
-        fsize = (ndim*3 - 1, ndim*3 - 2)
+        #fsize = (ndim*3 - 1, ndim*3 - 2)
+        fsize = (ndim*3 + 1, ndim*3 - 2)
     fig = pyplot.figure(figsize=fsize)
     # create the axis grid
     gs = gridspec.GridSpec(ndim, ndim, width_ratios=width_ratios,
@@ -393,7 +394,7 @@ def create_marginalized_hist(ax, values, label, percentiles=None,
 
 
     if percentiles is None:
-        percentiles = [0., 50., 90.]
+        percentiles = [0., 50., 95.]
     values = numpy.percentile(values, percentiles)
     for val in values:
         if rotated:
