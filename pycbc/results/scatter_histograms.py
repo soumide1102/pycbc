@@ -394,7 +394,7 @@ def create_marginalized_hist(ax, values, label, percentiles=None,
 
 
     if percentiles is None:
-        percentiles = [0., 50., 95.]
+        percentiles = [5., 50., 95.]
     values = numpy.percentile(values, percentiles)
     for val in values:
         if rotated:
