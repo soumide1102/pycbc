@@ -272,7 +272,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                 delta_lambda_array.append(delta_lambda)
             ax.plot(lambda1_array, delta_lambda_array, 'gray', linestyle='--')
             bbox_props = dict(boxstyle="square,pad=0.05", fc='w', ec='w', alpha=0.75)
-            ax.text(lambda1_array[int(len(lambda1_array)/1.15)], delta_lambda_array[int(len(delta_lambda_array)/1.15)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2)
+            ax.text(lambda1_array[int(len(lambda1_array)/1.37)], delta_lambda_array[int(len(delta_lambda_array)/1.37)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
 
     if plot_contours:
         # compute the percentile values
@@ -292,7 +292,8 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         # label contours
         lbls = ['{p}%'.format(p=int(p)) for p in (100. - percentiles)]
         fmt = dict(zip(ct.levels, lbls))
-        fs = 12
+        #fs = 12
+        fs = 10
         ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
 
     return fig, ax
