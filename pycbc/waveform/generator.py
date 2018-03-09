@@ -591,6 +591,8 @@ class FDomainDetFrameGenerator(object):
             for d in h.values():
                 d.resize(ceilpow2(len(d)-1) + 1)
             h = gate.apply_gates_to_fd(h, self.gates)
+        #print("self.current_params")
+        #print(self.current_params["mass1"], self.current_params["mass2"])
         return h
 
 

@@ -114,6 +114,9 @@ class JointDistribution(object):
                 draw = dist.rvs(n_test_samples)
                 for param in dist.params:
                     samples[param] = draw[param][:]
+                    #print("In joint")
+                    #print(param)
+                    #print(samples[param])
 
             # evaluate constraints
             result = numpy.ones(len(samples.values()[0]), dtype=bool)

@@ -64,29 +64,34 @@ def _formatreturn(arg):
 #
 # =============================================================================
 #
-def primary_mass(mass1, mass2):
-    """Returns the larger of mass1 and mass2 (p = primary)."""
-    mass1 = _ensurearray(mass1)
-    mass2 = _ensurearray(mass2)
-    if mass1.shape != mass2.shape:
-        raise ValueError("mass1 and mass2 must have same shape")
-    mp = copy.copy(mass1)
-    mask = mass1 < mass2
-    mp[mask] = mass2[mask]
-    return _formatreturn(mp)
+#def primary_mass(mass1, mass2):
+#    """Returns the larger of mass1 and mass2 (p = primary)."""
+#    mass1 = _ensurearray(mass1)
+#    mass2 = _ensurearray(mass2)
+#    if mass1.shape != mass2.shape:
+#        raise ValueError("mass1 and mass2 must have same shape")
+#    mp = copy.copy(mass1)
+#    mask = mass1 < mass2
+#    mp[mask] = mass2[mask]
+#    return _formatreturn(mp)
 
+
+#def secondary_mass(mass1, mass2):
+#    """Returns the smaller of mass1 and mass2 (s = secondary)."""
+#    mass1 = _ensurearray(mass1)
+#    mass2 = _ensurearray(mass2)
+#    if mass1.shape != mass2.shape:
+#        raise ValueError("mass1 and mass2 must have same shape")
+#    ms = copy.copy(mass2)
+#    mask = mass1 < mass2
+#    ms[mask] = mass1[mask]
+#    return _formatreturn(ms)
+
+def primary_mass(mass1, mass2):
+    return mass1
 
 def secondary_mass(mass1, mass2):
-    """Returns the smaller of mass1 and mass2 (s = secondary)."""
-    mass1 = _ensurearray(mass1)
-    mass2 = _ensurearray(mass2)
-    if mass1.shape != mass2.shape:
-        raise ValueError("mass1 and mass2 must have same shape")
-    ms = copy.copy(mass2)
-    mask = mass1 < mass2
-    ms[mask] = mass1[mask]
-    return _formatreturn(ms)
-
+    return mass2
 
 def mtotal_from_mass1_mass2(mass1, mass2):
     """Returns the total mass from mass1 and mass2."""
