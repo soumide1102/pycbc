@@ -274,14 +274,14 @@ def eta_from_q(q):
 
 def mass1_from_mchirp_q(mchirp, q):
     """Returns the primary mass from the given chirp mass and mass ratio."""
-    mass1 = (q**(5./2.))/(((1.0 + q)**0.5)*(mchirp**(5./2.)))
+    mass1 = (q**(2./5.))*((1.0 + q)**(1./5.))*mchirp
     return mass1
     #return mass1_from_mchirp_eta(mchirp, eta_from_q(q))
 
 
 def mass2_from_mchirp_q(mchirp, q):
     """Returns the secondary mass from the given chirp mass and mass ratio."""
-    mass2 = (q**(3./2.))/(((1.0 + q)**0.5)*(mchirp**(5./2.)))
+    mass2 = (q**(-3./5.))*((1.0 + q)**(1./5.))*mchirp
     return mass2
     #return mass2_from_mchirp_eta(mchirp, eta_from_q(q))
 
