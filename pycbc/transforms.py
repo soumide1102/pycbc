@@ -358,9 +358,12 @@ class MchirpQToMass1Mass2(BaseTransform):
         out[parameters.mass1] = conversions.mass1_from_mchirp_q(
                                                 maps[parameters.mchirp],
                                                 maps[parameters.q])
+        #print("In transforms")
         out[parameters.mass2] = conversions.mass2_from_mchirp_q(
                                                 maps[parameters.mchirp],
                                                 maps[parameters.q])
+        #print(out[parameters.mass1])
+        #print(out[parameters.mass2])
         return self.format_output(maps, out)
 
     def inverse_transform(self, maps):
@@ -392,11 +395,12 @@ class MchirpQToMass1Mass2(BaseTransform):
         out[parameters.mchirp] = \
                  conversions.mchirp_from_mass1_mass2(maps[parameters.mass1],
                                                      maps[parameters.mass2])
-        m_p = conversions.primary_mass(maps[parameters.mass1],
-                                       maps[parameters.mass2])
-        m_s = conversions.secondary_mass(maps[parameters.mass1],
-                                         maps[parameters.mass2])
-        out[parameters.q] = m_p / m_s
+        #m_p = conversions.primary_mass(maps[parameters.mass1],
+        #                               maps[parameters.mass2])
+        #m_s = conversions.secondary_mass(maps[parameters.mass1],
+        #                                 maps[parameters.mass2])
+        out[parameters.q] = maps[parameters.mass1]/maps[parameters.mass2]
+        #out[parameters.q] = m_p / m_s
         return self.format_output(maps, out)
 
     def jacobian(self, maps):
@@ -411,8 +415,10 @@ class MchirpQToMass1Mass2(BaseTransform):
         """Returns the Jacobian for transforming mass1 and mass2 to
         mchirp and q.
         """
-        m1 = conversions.primary_mass(maps['mass1'], maps['mass2'])
-        m2 = conversions.secondary_mass(maps['mass1'], maps['mass2'])
+        #m1 = conversions.primary_mass(maps['mass1'], maps['mass2'])
+        #m2 = conversions.secondary_mass(maps['mass1'], maps['mass2'])
+        m1 = maps['mass1']
+        m2 = maps['mass2']
         return conversions.mchirp_from_mass1_mass2(m1, m2)/m2**2.
 
 
@@ -634,10 +640,12 @@ class AlignedMassSpinToCartesianSpin(BaseTransform):
             A dict with key as parameter name and value as numpy.array or float
             of transformed values.
         """
-        mass1 = conversions.primary_mass(maps[parameters.mass1],
-                                         maps[parameters.mass2])
-        mass2 = conversions.secondary_mass(maps[parameters.mass1],
-                                           maps[parameters.mass2])
+        #mass1 = conversions.primary_mass(maps[parameters.mass1],
+        #                                 maps[parameters.mass2])
+        #mass2 = conversions.secondary_mass(maps[parameters.mass1],
+        #                                   maps[parameters.mass2])
+        mass1 = maps[parameters.mass1]
+        mass2 = maps[parameters.mass2]
         out = {}
         same_idx = numpy.where(mass1 != maps[parameters.mass1])[0]
         out[parameters.spin1z] = \

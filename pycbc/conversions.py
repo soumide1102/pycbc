@@ -93,15 +93,21 @@ def mtotal_from_mass1_mass2(mass1, mass2):
     return mass1 + mass2
 
 
+#def q_from_mass1_mass2(mass1, mass2):
+#    """Returns the mass ratio m1/m2, where m1 >= m2."""
+#    return primary_mass(mass1, mass2) / secondary_mass(mass1, mass2)
+
 def q_from_mass1_mass2(mass1, mass2):
     """Returns the mass ratio m1/m2, where m1 >= m2."""
-    return primary_mass(mass1, mass2) / secondary_mass(mass1, mass2)
+    return mass1 / mass2
 
+#def invq_from_mass1_mass2(mass1, mass2):
+#    """Returns the inverse mass ratio m2/m1, where m1 >= m2."""
+#    return secondary_mass(mass1, mass2) / primary_mass(mass1, mass2)
 
 def invq_from_mass1_mass2(mass1, mass2):
     """Returns the inverse mass ratio m2/m1, where m1 >= m2."""
-    return secondary_mass(mass1, mass2) / primary_mass(mass1, mass2)
-
+    return mass2 / mass1
 
 def eta_from_mass1_mass2(mass1, mass2):
     """Returns the symmetric mass ratio from mass1 and mass2."""
@@ -268,12 +274,16 @@ def eta_from_q(q):
 
 def mass1_from_mchirp_q(mchirp, q):
     """Returns the primary mass from the given chirp mass and mass ratio."""
-    return mass1_from_mchirp_eta(mchirp, eta_from_q(q))
+    mass1 = (q**(5./2.))/(((1.0 + q)**0.5)*(mchirp**(5./2.)))
+    return mass1
+    #return mass1_from_mchirp_eta(mchirp, eta_from_q(q))
 
 
 def mass2_from_mchirp_q(mchirp, q):
     """Returns the secondary mass from the given chirp mass and mass ratio."""
-    return mass2_from_mchirp_eta(mchirp, eta_from_q(q))
+    mass2 = (q**(3./2.))/(((1.0 + q)**0.5)*(mchirp**(5./2.)))
+    return mass2
+    #return mass2_from_mchirp_eta(mchirp, eta_from_q(q))
 
 
 def _a0(f_lower):
