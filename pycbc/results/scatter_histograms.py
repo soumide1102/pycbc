@@ -223,6 +223,8 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     if ax is None:
         ax = fig.add_subplot(111)
 
+    ax.grid(True, linestyle='dotted', color='lightgray')
+
     # convert samples to array and construct kde
     xsamples = samples[xparam]
     ysamples = samples[yparam]
@@ -260,7 +262,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         if contour_color is None:
             contour_color = 'w'
         q_array=numpy.linspace(0.1,1.0,10000)
-        for lambda_tilde in [400,500,600,700,800,900,1000,1100,1200,1300,1400]:
+        for lambda_tilde in [400.0,500.0,600.0,700.0,800.0,900.0,1000.0,1100.0,1200.0,1300.0,1400.0,1500.0,1600.0]:
             delta_lambda_array = []
             lambda2_array=[]
             lambda1_array=[]
@@ -275,7 +277,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
             ax.plot(lambda1_array, lambda2_array, 'gray', linestyle='--')
             bbox_props = dict(boxstyle="square,pad=0.05", fc='w', ec='w', alpha=0.75)
             #ax.text(lambda1_array[int(len(lambda1_array)/1.37)], delta_lambda_array[int(len(delta_lambda_array)/1.37)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
-            ax.text(lambda1_array[int(len(lambda1_array)/1.15)], lambda2_array[int(len(lambda2_array)/1.15)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
+            ax.text(lambda1_array[int(len(lambda1_array)/1.15)], lambda2_array[int(len(lambda2_array)/1.15)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
 
     if plot_contours:
         # compute the percentile values
@@ -412,7 +414,7 @@ def create_marginalized_hist(ax, values, label, percentiles=None,
 
 
     if percentiles is None:
-        percentiles = [0., 50., 90.]
+        percentiles = [5., 50., 95.]
     values = numpy.percentile(values, percentiles)
     for val in values:
         if rotated:

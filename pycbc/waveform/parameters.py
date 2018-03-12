@@ -241,10 +241,10 @@ spin_sz = Parameter("spin_sz",
                 description="The z component of the dimensionless spin of the "
                             "secondary object.")
 lambda1 = Parameter("lambda1",
-                dtype=float, default=None, label=r"$\lambda_1$",
+                dtype=float, default=None, label=r"$\Lambda_1$",
                 description="The tidal deformability parameter of object 1.")
 lambda2 = Parameter("lambda2",
-                dtype=float, default=None, label=r"$\lambda_2$",
+                dtype=float, default=None, label=r"$\Lambda_2$",
                 description="The tidal deformability parameter of object 2.")
 dquad_mon1 = Parameter("dquad_mon1",
                 dtype=float, default=None, label=r"$qm_1$",
