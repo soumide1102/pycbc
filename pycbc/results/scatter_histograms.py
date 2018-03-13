@@ -261,23 +261,30 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
             aspect='auto', cmap=cmap, zorder=1)
         if contour_color is None:
             contour_color = 'w'
-        q_array=numpy.linspace(0.5,2.0,10000)
+        #q_array=numpy.linspace(0.5,2.0,10000)
+        q_array=numpy.linspace(0.5,1.0,10000)
         for lambda_tilde in [400.0,500.0,600.0,700.0,800.0,900.0,1000.0,1100.0,1200.0,1300.0,1400.0,1500.0,1600.0]:
             delta_lambda_array = []
             lambda2_array=[]
             lambda1_array=[]
             for q in q_array:
-                lambda1=(13.0/16)*lambda_tilde*(((q**2)*(1.0 + q)**5)/(12*q**4 + q**2 + q + 12))
+                # This is written according to Jim's convention which uses q=m2/m1
+                lambda1=(13./16.)*lambda_tilde*(((q**2)*(1.0 + q)**5)/(12*q**3 + q**2 + q + 12))
+                #lambda1=(13./16.)*lambda_tilde*(((1.0 + q)**5)/(12*q + 1.0 + q**(-1) + 12*q**(-2)))
                 lambda2=lambda1/q**6
                 delta_lambda=lambda2-lambda1
                 lambda1_array.append(lambda1)
                 lambda2_array.append(lambda2)
                 delta_lambda_array.append(delta_lambda)
-            #ax.plot(lambda1_array, delta_lambda_array, 'gray', linestyle='--')
-            ax.plot(lambda1_array, lambda2_array, 'gray', linestyle='--')
+            ax.plot(lambda1_array, delta_lambda_array, 'gray', linestyle='--')
+            #ax.plot(lambda1_array, lambda2_array, 'gray', linestyle='--')
             bbox_props = dict(boxstyle="square,pad=0.05", fc='w', ec='w', alpha=0.75)
-            #ax.text(lambda1_array[int(len(lambda1_array)/1.37)], delta_lambda_array[int(len(delta_lambda_array)/1.37)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
-            ax.text(lambda1_array[int(len(lambda1_array)/3.5)], lambda2_array[int(len(lambda2_array)/3.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
+            ax.text(lambda1_array[int(len(lambda1_array)/1.37)], delta_lambda_array[int(len(delta_lambda_array)/1.37)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
+            # Scale for no m1 > m2 plot
+            #ax.text(lambda1_array[int(len(lambda1_array)/3.5)], lambda2_array[int(len(lambda2_array)/3.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
+            # Scale for m1 > m2 plot
+            #ax.text(lambda1_array[int(len(lambda1_array)/1.5)], lambda2_array[int(len(lambda2_array)/1.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
+          
 
     if plot_contours:
         # compute the percentile values
