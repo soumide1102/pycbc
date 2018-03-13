@@ -75,7 +75,6 @@ def primary_mass(mass1, mass2):
     mp[mask] = mass2[mask]
     return _formatreturn(mp)
 
-
 def secondary_mass(mass1, mass2):
     """Returns the smaller of mass1 and mass2 (s = secondary)."""
     mass1 = _ensurearray(mass1)
@@ -86,7 +85,6 @@ def secondary_mass(mass1, mass2):
     mask = mass1 < mass2
     ms[mask] = mass1[mask]
     return _formatreturn(ms)
-
 
 def mtotal_from_mass1_mass2(mass1, mass2):
     """Returns the total mass from mass1 and mass2."""
@@ -372,6 +370,8 @@ def lambda_tilde(mass1, mass2, lambda1, lambda2):
     p1 = (lsum) * (1 + 7. * eta - 31 * eta ** 2.0)
     p2 = (1 - 4 * eta)**0.5 * (1 + 9 * eta - 11 * eta ** 2.0) * (ldiff)
     return _formatreturn(8.0 / 13.0 * (p1 + p2))
+    #lt = (16./13.)*(((m1 + 12.0*m2)*(m1**4)*lambda1 + (m2 + 12.0*m1)*(m2**4)*lambda2)/(m1+m2)**5)
+    #return lt
 
 #
 # =============================================================================
