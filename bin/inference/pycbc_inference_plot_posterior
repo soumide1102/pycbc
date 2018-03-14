@@ -53,6 +53,7 @@ parser.add_argument("--verbose", action="store_true", default=False,
 parser.add_argument("--input-file-labels", nargs="+", default=None,
                     help="Labels to add to plot if using more than one"
                          "input file.")
+parser.add_argument("--title")
 
 # add options for what plots to create
 option_utils.add_plot_posterior_option_group(parser)
