@@ -85,8 +85,8 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
         fsize = (8, 7)
     else:
         #fsize = (ndim*3 - 1, ndim*3 - 2)
-        #fsize = (ndim*3 + 6, ndim*3 - 2)
-        fsize = (ndim*3 + 1, ndim*3 - 2)
+        fsize = (ndim*3 + 6, ndim*3 + 3)
+        #fsize = (ndim*3 + 1, ndim*3 - 2)
     fig = pyplot.figure(figsize=fsize)
     # create the axis grid
     gs = gridspec.GridSpec(ndim, ndim, width_ratios=width_ratios,
