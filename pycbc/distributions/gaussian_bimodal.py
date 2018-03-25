@@ -122,8 +122,6 @@ class GaussianBimodal(bounded.BoundedDist):
 
         # check that there are no params in mean/var that are not in params
         missing = set(self._mean1.keys()) - set(params.keys())
-        print(self._mean1.keys())
-        print(params.keys())
         if any(missing):
             raise ValueError("means provided for unknow params {}".format(
                 ', '.join(missing)))
