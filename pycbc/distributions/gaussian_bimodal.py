@@ -162,27 +162,6 @@ class GaussianBimodal(bounded.BoundedDist):
         self._r2.update(dict([[p, 1.]
             for p in params if p not in self._r2]))
 
-        # compute norms
-        #for p,bnds in self._bounds.items():
-        #    sigma1 = numpy.sqrt(self._var1[p])
-        #    mu1 = self._mean1[p]
-        #    sigma2 = numpy.sqrt(self._var2[p])
-        #    mu2 = self._mean2[p]
-        #    a,b = bnds
-            #invnorm1 = scipy.stats.norm.cdf(b, loc=mu1, scale=sigmasq1**0.5) \
-            #        - scipy.stats.norm.cdf(a, loc=mu1, scale=sigmasq1**0.5)
-            #invnorm1 *= numpy.sqrt(2*numpy.pi*sigmasq1)
-            #invnorm2 = scipy.stats.norm.cdf(b, loc=mu2, scale=sigmasq2**0.5) \
-            #        - scipy.stats.norm.cdf(a, loc=mu2, scale=sigmasq2**0.5)
-            #invnorm2 *= numpy.sqrt(2*numpy.pi*sigmasq2)
-            #self._norm1[p] = 1./invnorm1
-            #self._lognorm1[p] = numpy.log(self._norm1[p])
-            #self._expnorm1[p] = -1./(2*sigmasq1)
-            #self._norm2[p] = 1./invnorm2
-            #self._lognorm2[p] = numpy.log(self._norm2[p])
-            #self._expnorm2[p] = -1./(2*sigmasq2)
-
-
     @property
     def mean1(self):
         return self._mean1
@@ -216,25 +195,11 @@ class GaussianBimodal(bounded.BoundedDist):
         ignored.
         """
         pdf=1.0
-        print("self._params", self._params)
         for p in self._params:
-            print("p",p)
-            print("kwargs[p]")
-            print(kwargs[p])
-            #print("self._mean1[p]", self._mean1[p])
-            #print("self._var1[p]", self._var1[p])
-            #g1 = stats.norm.pdf(kwargs[p], loc=self._mean1[p], scale=numpy.sqrt(self._var1[p]))
-            #g2 = stats.norm.pdf(kwargs[p], loc=self._mean2[p], scale=numpy.sqrt(self._var2[p]))
             g1, g2 = self.get_gaussian_pdf(kwargs[p], self._mean1[p], self._mean2[p], self._var1[p], self._var1[p])
             pdf_param=self.r1[p]*g1 + self.r2[p]*g2
-            #print(pdf_param)
-            #pdf_param_norm=pdf_param/pdf_param.sum()
-            #print(pdf_param_norm)
-            #pdf_norm*=pdf_param
             pdf*=pdf_param
-            #print(pdf_norm)
         return pdf
-        #return numpy.exp(self._logpdf(**kwargs))
 
     @staticmethod
     def get_gaussian_pdf(x, mean1, mean2, var1, var2):
@@ -249,16 +214,8 @@ class GaussianBimodal(bounded.BoundedDist):
         """
         if kwargs in self: 
             return numpy.log(self._pdf(**kwargs))
-            #return sum([self._lognorm[p] +
-            #            self._expnorm[p]*(kwargs[p]-self._mean[p])**2.
-            #            for p in self._params])
         else:
             return -numpy.inf
-
-    #def set_pdf(self, x, pdf, Nrl=1000):
-    #    self.x = x
-    #    self.pdf = pdf
-        
 
     def rvs(self, size=1, param=None):
         """Gives a set of random values drawn from this distribution.
@@ -293,20 +250,12 @@ class GaussianBimodal(bounded.BoundedDist):
             r2 = self._r2[p]
             a,b = self._bounds[p]
             x = numpy.linspace(a,b,1000)
-            #d = {p : list(x)}
             g1, g2 = self.get_gaussian_pdf(x, self._mean1[p], self._mean2[p], self._var1[p], self._var1[p])
             pdf_param=self.r1[p]*g1 + self.r2[p]*g2
             pdf = pdf_param/pdf_param.sum()
-            #pdf=self._pdf(**d)
-            #pdf=pdf[0]/pdf[0].sum()
-            #print("pdf")
-            #print(pdf)
             cdf = pdf.cumsum()
-            #print("cdf")
-            #print(cdf)
             nrl = 100000
             inversecdfbins = nrl
-            #self.Nrl = Nrl
             y = pylab.arange(nrl)/float(nrl)
             delta = 1.0/nrl
             inversecdf = pylab.zeros(nrl)
@@ -315,30 +264,15 @@ class GaussianBimodal(bounded.BoundedDist):
             for n in xrange(1,inversecdfbins):
                 while cdf[cdf_idx] < y[n] and cdf_idx < nrl:
                     cdf_idx += 1
-                #print(cdf[cdf_idx], cdf[cdf_idx-1])
                 inversecdf[n] = x[cdf_idx-1] + (x[cdf_idx] - x[cdf_idx-1]) * (y[n] - cdf[cdf_idx-1])/(cdf[cdf_idx] - cdf[cdf_idx-1])
                 if cdf_idx >= nrl:
                     break
             delta_inversecdf = pylab.concatenate((pylab.diff(inversecdf), [0]))
-
-            #numpy.random.seed(seed=0)
             idx_f = numpy.random.uniform(size = size, high = nrl-1)
             idx = pylab.array([idx_f],'i')
             arr[p][:] = inversecdf[idx] + (idx_f - idx)*delta_inversecdf[idx]
             
         return arr
-
-            #arr[p][:] = scipy.stats.truncnorm.rvs((a-mu)/sigma, (b-mu)/sigma,
-            #    loc=self._mean[p], scale=sigma, size=size)
-            #kde = neighbors.KernelDensity(kernel='gaussian', bandwidth=0.5).fit(x)
-            
-            #params = {'bandwidth': numpy.logspace(-1, 1, 20)}
-            #grid = GridSearchCV(neighbors.KernelDensity(), params)
-            #grid.fit(x)
-            #kde = grid.best_estimator_
-            #print(kde.sample())
-            #arr[p][:] = kde.sample()
-        #return arr
 
 
     @classmethod

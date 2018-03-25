@@ -19,6 +19,7 @@ probability density function of distributions.
 from pycbc.distributions.angular import *
 from pycbc.distributions.arbitrary import *
 from pycbc.distributions.gaussian import *
+from pycbc.distributions.gaussian_bimodal import *
 from pycbc.distributions.power_law import *
 from pycbc.distributions.sky_location import *
 from pycbc.distributions.uniform import *
@@ -32,6 +33,7 @@ distribs = {
     Arbitrary.name : Arbitrary,
     FromFile.name : FromFile,
     Gaussian.name : Gaussian,
+    GaussianBimodal.name : GaussianBimodal,
     UniformPowerLaw.name : UniformPowerLaw,
     UniformRadius.name : UniformRadius,
     Uniform.name : Uniform,
