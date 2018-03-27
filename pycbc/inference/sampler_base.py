@@ -374,12 +374,14 @@ class BaseMCMCSampler(_BaseSampler):
                 samples)
         # draw random samples if samples are not provided
         else:
+            print("Calculating prior_rvs")
             samples = self.likelihood_evaluator.prior_rvs(size=nwalkers,
                                                           prior=prior)
         # convert to 2D array
         for i, param in enumerate(self.sampling_args):
             p0[:, i] = samples[param]
         self._p0 = p0
+        print("Returning p0")
         return p0
 
     @property
