@@ -253,6 +253,7 @@ class GaussianBimodal(bounded.BoundedDist):
             pdf = pdf_param/pdf_param.sum()
             cdf = pdf.cumsum()
             nrl = 100000
+            #nrl =1000
             inversecdfbins = nrl
             y = pylab.arange(nrl)/float(nrl)
             delta = 1.0/nrl
