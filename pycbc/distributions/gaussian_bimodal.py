@@ -234,12 +234,14 @@ class GaussianBimodal(bounded.BoundedDist):
             given parameter. Otherwise, the array will have an element for each
             parameter in self's params.
         """
+        print("In gaussian bimodal")
         if param is not None:
             dtype = [(param, float)]
         else:
             dtype = [(p, float) for p in self.params]
         arr = numpy.zeros(size, dtype=dtype)
         for (p,_) in dtype:
+            print("starting pdf count")
             sigma1 = numpy.sqrt(self._var1[p])
             mu1 = self._mean1[p]
             sigma2 = numpy.sqrt(self._var2[p])
@@ -264,12 +266,14 @@ class GaussianBimodal(bounded.BoundedDist):
                 while cdf[cdf_idx] < y[n] and cdf_idx < nrl:
                     cdf_idx += 1
                 inversecdf[n] = x[cdf_idx-1] + (x[cdf_idx] - x[cdf_idx-1]) * (y[n] - cdf[cdf_idx-1])/(cdf[cdf_idx] - cdf[cdf_idx-1])
+                #print("In invrse cdf loop")
                 if cdf_idx >= nrl:
                     break
             delta_inversecdf = pylab.concatenate((pylab.diff(inversecdf), [0]))
             idx_f = numpy.random.uniform(size = size, high = nrl-1)
             idx = pylab.array([idx_f],'i')
             arr[p][:] = inversecdf[idx] + (idx_f - idx)*delta_inversecdf[idx]
+            print("returning arr")
             
         return arr
 
