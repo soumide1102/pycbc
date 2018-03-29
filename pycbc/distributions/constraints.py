@@ -18,6 +18,7 @@ This modules provides classes for evaluating multi-dimensional constraints.
 
 from pycbc import transforms
 from pycbc.io import record
+import numpy
 
 class Constraint(object):
     """ Creates a constraint that evaluates to True if parameters obey
@@ -61,6 +62,37 @@ class Constraint(object):
         """
         return params[self.constraint_arg]
 
+class LambdaMin(Constraint):
+    """ Pre-defined constraint that checks if lambda values are greater than
+    a minimum lambda value defined by the masses.
+    """
+    name = "lambda_mins_from_masses"
+    required_parameters = ["mass1", "mass2", "lambdasym"]
+
+    def _constraint(self, params):
+        """ Evaluates constraint function.
+        """
+        #print("new")
+        #print("lambda",params["lambdasym"])
+        #print("m1",params["mass1"])
+        #print("m2",params["mass2"])
+        #print("lenlambdasym", len(params["lambdasym"]))
+        mask = []
+        for ii in range(len(params["lambdasym"])):
+            if params["lambdasym"][ii]/((params["mass1"][ii]/params["mass2"][ii])**3) < (numpy.exp(8.642 - 
+                    11.35*(params["mass1"][ii]) + 6.884*((params["mass1"][ii])**2) - 1.627*((params["mass1"][ii])**3))):
+                #print("lambda1 below")
+                lim_val = False
+            elif params["lambdasym"][ii]/((params["mass2"][ii]/params["mass1"][ii])**3) < (numpy.exp(8.642 - 11.35*(params["mass2"][ii]) + 6.884*((params["mass2"][ii])**2) - 1.627*((params["mass2"][ii])**3))):
+                lim_val = False
+                #print("lambda2 below")
+            else:
+                lim_val = True
+                #print("Both are fine")
+            mask.append(lim_val)
+        #print(mask)
+        return mask
+
 class MtotalLT(Constraint):
     """ Pre-defined constraint that check if total mass is less than a value.
     """
@@ -70,6 +102,8 @@ class MtotalLT(Constraint):
     def _constraint(self, params):
         """ Evaluates constraint function.
         """
+        #print(params["mass1"] + params["mass2"])
+        #print(params["mass1"] + params["mass2"] < self.mtotal)
         return params["mass1"] + params["mass2"] < self.mtotal
 
 class CartesianSpinSpace(Constraint):
@@ -128,6 +162,7 @@ class EffectiveSpinSpace(Constraint):
 # list of all constraints
 constraints = {
     Constraint.name : Constraint,
+    LambdaMin.name : LambdaMin,
     MtotalLT.name : MtotalLT,
     CartesianSpinSpace.name : CartesianSpinSpace,
     EffectiveSpinSpace.name : EffectiveSpinSpace,
