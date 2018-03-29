@@ -72,25 +72,16 @@ class LambdaMin(Constraint):
     def _constraint(self, params):
         """ Evaluates constraint function.
         """
-        #print("new")
-        #print("lambda",params["lambdasym"])
-        #print("m1",params["mass1"])
-        #print("m2",params["mass2"])
-        #print("lenlambdasym", len(params["lambdasym"]))
         mask = []
         for ii in range(len(params["lambdasym"])):
             if params["lambdasym"][ii]/((params["mass1"][ii]/params["mass2"][ii])**3) < (numpy.exp(8.642 - 
                     11.35*(params["mass1"][ii]) + 6.884*((params["mass1"][ii])**2) - 1.627*((params["mass1"][ii])**3))):
-                #print("lambda1 below")
                 lim_val = False
             elif params["lambdasym"][ii]/((params["mass2"][ii]/params["mass1"][ii])**3) < (numpy.exp(8.642 - 11.35*(params["mass2"][ii]) + 6.884*((params["mass2"][ii])**2) - 1.627*((params["mass2"][ii])**3))):
                 lim_val = False
-                #print("lambda2 below")
             else:
                 lim_val = True
-                #print("Both are fine")
             mask.append(lim_val)
-        #print(mask)
         return mask
 
 class MtotalLT(Constraint):
@@ -102,8 +93,6 @@ class MtotalLT(Constraint):
     def _constraint(self, params):
         """ Evaluates constraint function.
         """
-        #print(params["mass1"] + params["mass2"])
-        #print(params["mass1"] + params["mass2"] < self.mtotal)
         return params["mass1"] + params["mass2"] < self.mtotal
 
 class CartesianSpinSpace(Constraint):
