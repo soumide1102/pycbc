@@ -119,7 +119,7 @@ class JointDistribution(object):
             result = numpy.ones(len(samples.values()[0]), dtype=bool)
             for constraint in self._constraints:
                 result = constraint(samples) & result
-                print("in joint.py __init__")
+                #print("in joint.py __init__")
                 #print(result)
 
             # set new scaling factor for prior to be
@@ -165,7 +165,7 @@ class JointDistribution(object):
     def rvs(self, size=1):
         """ Rejection samples the parameter space.
         """
-        print("In joint.py rvs")
+        #print("In joint.py rvs")
 
         # create output FieldArray
         out = record.FieldArray(size, dtype=[(arg, float)
