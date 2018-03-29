@@ -18,6 +18,7 @@ This modules provides classes for evaluating multi-dimensional constraints.
 
 from pycbc import transforms
 from pycbc.io import record
+import numpy
 
 class Constraint(object):
     """ Creates a constraint that evaluates to True if parameters obey
@@ -60,6 +61,31 @@ class Constraint(object):
         """ Evaluates constraint function.
         """
         return params[self.constraint_arg]
+
+class LambdaMin(Constraint):
+    """ Pre-defined constraint that checks if lambda values are greater than
+    a minimum lambda value defined by the masses.
+    """
+    name = "lambda_mins_from_masses"
+    required_parameters = ["mass1", "mass2", "lambdasym"]
+
+    def _constraint(self, params):
+        """ Evaluates constraint function.
+        """
+        print("new")
+        print("lambda",params["lambdasym"])
+        print("m1",params["mass1"])
+        print("m2",params["mass2"])
+        if (params["lambdasym"]/((params["mass1"]/params["mass2"])**3) < (numpy.exp(8.642 - 
+                11.35*(params["mass1"]) + 6.884*((params["mass1"])**2) - 1.627*((params["mass1"])**3)))).any():
+            print("lambda1 below")
+            return False
+        elif (params["lambdasym"]/((params["mass2"]/params["mass1"])**3) < (numpy.exp(8.642 - 11.35*(params["mass2"]) + 6.884*((params["mass2"])**2) - 1.627*((params["mass2"])**3)))).any():
+            print("lambda2 below")
+            return False
+        else:
+            print("both are fine")
+            return True
 
 class MtotalLT(Constraint):
     """ Pre-defined constraint that check if total mass is less than a value.
@@ -128,6 +154,7 @@ class EffectiveSpinSpace(Constraint):
 # list of all constraints
 constraints = {
     Constraint.name : Constraint,
+    LambdaMin.name : LambdaMin,
     MtotalLT.name : MtotalLT,
     CartesianSpinSpace.name : CartesianSpinSpace,
     EffectiveSpinSpace.name : EffectiveSpinSpace,
