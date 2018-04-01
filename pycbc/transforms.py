@@ -1410,11 +1410,17 @@ def get_common_cbc_transforms(requested_params, variable_args,
     # calculated from base parameters
     from_base_c = []
     for converter in common_cbc_inverse_transforms:
+        #print("In transforms")
+        #print(converter.outputs)
+        #print(converter.outputs.issubset(variable_args))
         if (converter.outputs.issubset(variable_args) or
                 converter.outputs.isdisjoint(requested_params)):
             continue
         intersect = converter.outputs.intersection(requested_params)
         if len(intersect) < 1 or intersect.issubset(converter.inputs):
+            continue
+        #if [x not in variable_args for x in converter.inputs].any():
+        if converter.inputs.isdisjoint(variable_args):
             continue
         requested_params.update(converter.inputs)
         from_base_c.append(converter)
@@ -1428,6 +1434,8 @@ def get_common_cbc_transforms(requested_params, variable_args,
             requested_params.update(converter.inputs)
             to_base_c.append(converter)
             variable_args.update(converter.outputs)
+            #print("In transorms")
+            #print(requested_params)
 
     # get list of transforms that converts sampling parameters to the base
     # parameters and then converts base parameters to the derived parameters
