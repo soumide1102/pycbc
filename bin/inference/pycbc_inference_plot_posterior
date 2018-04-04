@@ -54,6 +54,11 @@ parser.add_argument("--input-file-labels", nargs="+", default=None,
                          "input file.")
 parser.add_argument("--title", default=None,
                     help="Title.")
+parser.add_argument("--plot-lvc-contours", action="store_true", default=False,
+                    help="Plot published LVC 50 and 90 percent contours.")
+parser.add_argument("--plot-lambdat-contours", action="store_true", default=False,
+                    help="Plot lambda_tilde contours.")
+
 # add options for what plots to create
 option_utils.add_plot_posterior_option_group(parser)
 
@@ -196,6 +201,8 @@ for i, (p, l, s) in enumerate(zip(parameters, labels, samples)):
                     scatter_cmap=opts.scatter_cmap,
                     plot_density=opts.plot_density,
                     plot_contours=opts.plot_contours,
+                    plot_lvc_contours=opts.plot_lvc_contours,
+                    plot_lambdat_contours=opts.plot_lambdat_contours,
                     contour_percentiles=opts.contour_percentiles,
                     density_cmap=opts.density_cmap,
                     contour_color=contour_color,
