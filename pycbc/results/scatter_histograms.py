@@ -224,6 +224,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     if ax is None:
         ax = fig.add_subplot(111)
 
+    ax.invert_xaxis()
     # convert samples to array and construct kde
     xsamples = samples[xparam]
     ysamples = samples[yparam]
