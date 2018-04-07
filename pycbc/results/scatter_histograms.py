@@ -328,8 +328,8 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         fmt = dict(zip(ct.levels, lbls))
         #fs = 12
         fs = 10
-        ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
-        #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(150, 1450), (1000, 450)])
+        #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
+        ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
 
     if plot_lvc_contours:
             lambda1_lvc50 = [1.2135922330096491, 59.46601941747565, 114.07766990291248, 154.12621359223294, 194.1747572815533, 321.6019417475727, 427.1844660194174, 478.1553398058252, 532.7669902912621, 580.0970873786407, 631.0679611650485, 660.1941747572816, 689.3203883495146,]
