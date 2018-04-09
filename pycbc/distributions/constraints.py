@@ -74,13 +74,13 @@ class LambdaMin(Constraint):
         """
         mask = []
         for ii in range(len(params["lambdasym"])):
-            if params["lambdasym"][ii]/((params["mass1"][ii]/params["mass2"][ii])**3) < (numpy.exp(8.642 - 
-                    11.35*(params["mass1"][ii]) + 6.884*((params["mass1"][ii])**2) - 1.627*((params["mass1"][ii])**3))):
-                lim_val = False
-            elif params["lambdasym"][ii]/((params["mass2"][ii]/params["mass1"][ii])**3) < (numpy.exp(8.642 - 11.35*(params["mass2"][ii]) + 6.884*((params["mass2"][ii])**2) - 1.627*((params["mass2"][ii])**3))):
-                lim_val = False
-            else:
+            if (params["lambdasym"][ii]/((params["mass1"][ii]/params["mass2"][ii])**3) > (numpy.exp(8.642 - 
+                    11.35*(params["mass1"][ii]) + 6.884*((params["mass1"][ii])**2) - 1.627*((params["mass1"][ii])**3)))) and (params["lambdasym"][ii]/((params["mass2"][ii]/params["mass1"][ii])**3) > (numpy.exp(8.642 - 11.35*(params["mass2"][ii]) + 6.884*((params["mass2"][ii])**2) - 1.627*((params["mass2"][ii])**3)))):
                 lim_val = True
+            #elif params["lambdasym"][ii]/((params["mass2"][ii]/params["mass1"][ii])**3) < (numpy.exp(8.642 - 11.35*(params["mass2"][ii]) + 6.884*((params["mass2"][ii])**2) - 1.627*((params["mass2"][ii])**3))):
+            #    lim_val = False
+            else:
+                lim_val = False
             mask.append(lim_val)
         return mask
 
