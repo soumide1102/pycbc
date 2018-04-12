@@ -614,6 +614,7 @@ class AlignedMassSpinToCartesianSpin(BaseTransform):
         spin2z = conversions.secondary_spin(
                               maps[parameters.mass1], maps[parameters.mass2],
                               maps[parameters.spin1z], maps[parameters.spin2z])
+        
         out = {
             parameters.chi_eff : conversions.chi_eff(mass1, mass2,
                                                      spin1z, spin2z),
@@ -1410,7 +1411,6 @@ def get_common_cbc_transforms(requested_params, variable_args,
     # calculated from base parameters
     from_base_c = []
     for converter in common_cbc_inverse_transforms:
-        #print("In transforms")
         #print(converter.outputs)
         #print(converter.outputs.issubset(variable_args))
         if (converter.outputs.issubset(variable_args) or
