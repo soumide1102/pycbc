@@ -43,6 +43,7 @@ from matplotlib import pyplot
 import matplotlib.gridspec as gridspec
 from pycbc.results import str_utils
 from pycbc.io import FieldArray
+import matplotlib.ticker as ticker
 
 def create_axes_grid(parameters, labels=None, height_ratios=None,
         width_ratios=None, no_diagonals=False):
@@ -82,7 +83,7 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if no_diagonals:
         ndim -= 1
     if ndim < 3:
-        fsize = (8, 7)
+        fsize = (11, 10)
     else:
         #fsize = (ndim*3 - 1, ndim*3 - 2)
         fsize = (ndim*3 + 1, ndim*3 - 2)
@@ -115,12 +116,24 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
                 axis_dict[px, py] = (ax, nrow, ncolumn)
                 # x labels only on bottom
                 if nrow + 1 == ndim:
-                    ax.set_xlabel('{}'.format(labels[px]), fontsize=18)
+                    ax.set_xlabel('{}'.format(labels[px]), fontsize=24)
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(19)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(19)
+                    ax.xaxis.labelpad = 12
                 else:
                     pyplot.setp(ax.get_xticklabels(), visible=False)
                 # y labels only on left
                 if ncolumn == 0:
-                    ax.set_ylabel('{}'.format(labels[py]), fontsize=18)
+                    ax.set_ylabel('{}'.format(labels[py]), fontsize=24)
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(19)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(19)
+                    ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
+                    ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
+                    #ax.xaxis.labelpad = 12
                 else:
                     pyplot.setp(ax.get_yticklabels(), visible=False)
             else:
@@ -268,9 +281,9 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
             contour_color = 'w'
         if plot_lambdat_contours:
             #q_array=numpy.linspace(0.5,2.0,10000)
-            q_array=numpy.linspace(0.5,1.0,10000)
+            q_array=numpy.linspace(0.55,1.0,10000)
             #for lambda_tilde in [400.0,500.0,600.0,700.0,800.0,900.0,1000.0,1100.0,1200.0,1300.0,1400.0,1500.0,1600.0]:
-            for lambda_tilde in [1600.0, 1500.0, 1400.0, 1300.0, 1200.0, 1100.0, 1000.0, 900.0, 800.0, 700.0, 600.0, 500.0, 400.0]:
+            for lambda_tilde in [1200.0, 1100.0, 1000.0, 900.0, 800.0, 700.0, 600.0, 500.0, 400.0]:
                 delta_lambda_array = []
                 lambda2_array=[]
                 lambda1_array=[]
@@ -284,13 +297,13 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                     lambda2_array.append(lambda2)
                     delta_lambda_array.append(delta_lambda)
                 #ax.plot(lambda1_array, delta_lambda_array, 'gray', linestyle='--')
-                ax.plot(lambda1_array, lambda2_array, 'purple', linestyle='dashdot', linewidth=1)
+                ax.plot(lambda1_array, lambda2_array, 'm', linestyle='dashdot', linewidth=2)
                 bbox_props = dict(boxstyle="square,pad=0.03", fc='w', ec='w', alpha=0.75)
                 #ax.text(lambda1_array[int(len(lambda1_array)/1.37)], delta_lambda_array[int(len(delta_lambda_array)/1.37)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
                 # Scale for no m1 > m2 plot
                 #ax.text(lambda1_array[int(len(lambda1_array)/3.5)], lambda2_array[int(len(lambda2_array)/3.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
                 # Scale for m1 > m2 plot
-                ax.text(lambda1_array[int(len(lambda1_array)/1.5)], lambda2_array[int(len(lambda2_array)/1.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='purple', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=9)
+                ax.text(lambda1_array[int(len(lambda1_array)/1.45)], lambda2_array[int(len(lambda2_array)/1.45)], r'$\~\Lambda$={}'.format(int(lambda_tilde)), color='m', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=18)
 
         #if plot_lvc_contours:
         #    lambda1_lvc50 = [1.2135922330096491, 59.46601941747565, 114.07766990291248, 154.12621359223294, 194.1747572815533, 321.6019417475727, 427.1844660194174, 478.1553398058252, 532.7669902912621, 580.0970873786407, 631.0679611650485, 660.1941747572816, 689.3203883495146,]
@@ -318,16 +331,16 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         # make linewidths thicker if not plotting density for clarity
         if plot_density:
             #lw = 1
-            lw = 1.1
-        else:
             lw = 2
+        else:
+            lw = 3
         ct = ax.contour(X, Y, Z, s, colors=contour_color, linewidths=lw,
                         zorder=3)
         # label contours
         lbls = ['{p}%'.format(p=int(p)) for p in (100. - percentiles)]
         fmt = dict(zip(ct.levels, lbls))
         #fs = 12
-        fs = 10
+        fs = 12
         #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
         ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
 
@@ -512,7 +525,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
     if rotated:
         yscale = 1.0
     elif len(ax.get_figure().axes) > 1:
-        yscale = 1.15
+        yscale = 1.2
     else:
         yscale = 1.05
 
@@ -526,7 +539,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
         title = "{} = {}".format(label, fmt)
         tbox1 = offsetbox.TextArea(
                    title,
-                   textprops=dict(color=color, size=15, rotation=rotation,
+                   textprops=dict(color=color, size=20, rotation=rotation,
                                   ha='left', va='bottom'))
 
         # save a list of text boxes as attribute for later
@@ -545,7 +558,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
         # add new text box to list
         tbox1 = offsetbox.TextArea(
                    " {}".format(fmt),
-                   textprops=dict(color=color, size=15, rotation=rotation,
+                   textprops=dict(color=color, size=20, rotation=rotation,
                                   ha='left', va='bottom'))
         ax.title_boxes = ax.title_boxes + [tbox1]
 
