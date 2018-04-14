@@ -40,6 +40,7 @@ from pycbc.io.inference_hdf import InferenceFile
 from pycbc.results import metadata
 from pycbc.results.scatter_histograms import create_multidim_plot
 from pycbc.io.record import FieldArray
+from pycbc.conversions import lambda_tilde
 
 # add options to command line
 parser = argparse.ArgumentParser()
@@ -123,7 +124,7 @@ for i in range(len(zvals[0])):
     #print(i)
     #print(samples[0]['spin1z'][i])
     #print(samples[0]['spin2z'][i])
-    if samples[0]['lambda1'][i] < 3000 and samples[0]['lambda2'][i] < 3000:
+    if lambda_tilde(samples[0]['mass1'][i], samples[0]['mass2'][i], samples[0]['lambda1'][i], samples[0]['lambda2'][i]) < 5000:
         for param in parameters[0]:
             samples_post_dict[param].append(samples[0][param][i])
         zvals_postprocess.append(zvals[0][i])
