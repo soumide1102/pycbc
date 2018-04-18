@@ -44,6 +44,9 @@ import matplotlib.gridspec as gridspec
 from pycbc.results import str_utils
 from pycbc.io import FieldArray
 import matplotlib.ticker as ticker
+from math import ceil
+from scipy.interpolate import UnivariateSpline
+from matplotlib import pyplot as plt
 
 def create_axes_grid(parameters, labels=None, height_ratios=None,
         width_ratios=None, no_diagonals=False):
@@ -116,21 +119,21 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
                 axis_dict[px, py] = (ax, nrow, ncolumn)
                 # x labels only on bottom
                 if nrow + 1 == ndim:
-                    ax.set_xlabel('{}'.format(labels[px]), fontsize=24)
+                    ax.set_xlabel('{}'.format(labels[px]), fontsize=28)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(19)
+                        tick.label.set_fontsize(24)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(19)
+                        tick.label.set_fontsize(24)
                     ax.xaxis.labelpad = 12
                 else:
                     pyplot.setp(ax.get_xticklabels(), visible=False)
                 # y labels only on left
                 if ncolumn == 0:
-                    ax.set_ylabel('{}'.format(labels[py]), fontsize=24)
+                    ax.set_ylabel('{}'.format(labels[py]), fontsize=28)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(19)
+                        tick.label.set_fontsize(24)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(19)
+                        tick.label.set_fontsize(24)
                     ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
                     ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
                     #ax.xaxis.labelpad = 12
@@ -169,6 +172,7 @@ def construct_kde(samples_array, use_kombine=False):
 
 def create_density_plot(xparam, yparam, samples, plot_density=True,
         plot_contours=True, plot_lvc_contours=False, plot_lambdat_contours=False,
+        plot_ul=False,
         percentiles=None, cmap='viridis',
         contour_color=None, xmin=None, xmax=None, ymin=None, ymax=None,
         exclude_region=None, fig=None, ax=None, use_kombine=False):
@@ -241,7 +245,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     if ax is None:
         ax = fig.add_subplot(111)
 
-    ax.grid(True, linestyle='dotted', color='lightgray')
+    ax.grid(True, linestyle='dotted', color='darkgray')
 
     # convert samples to array and construct kde
     xsamples = samples[xparam]
@@ -279,6 +283,54 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
             aspect='auto', cmap=cmap, zorder=1)
         if contour_color is None:
             contour_color = 'w'
+
+        #if plot_ul:
+        #    lambda1=samples[xparam]
+        #    lambda2-samples[yparam]
+        #    phi_step=6
+        #    max_lambda = max(lambda1+lambda2)
+        #    ang_bin_dict = {i*phi_step: [] for i in range(int(90/phi_step))}
+
+         #   for l1, l2 in zip(lambda1, lambda2):
+         #       phi = np.arctan(l2/l1) * 180./np.pi
+         #       d = np.sqrt(l1**2 + l2**2)
+
+                # sort into 1D (angular) bin
+          #      for a in ang_bin_dict:
+          #          if phi >= a and phi < a+phi_step:
+          #              ang_bin_dict[a].append(d)
+
+          #  contour_points_1D = []
+          #  for bound in ang_bin_dict:
+          #      num_samples = len(ang_bin_dict[bound])
+          #      #print("Bin with lower bound {} has {} samples in it".format(bound, num_samples))
+          #      # sort into ascending order so we can get upper bounds
+          #      ang_bin_dict[bound].sort()
+          #      if bound == 0:
+          #          b = bound
+          #      elif bound == 90 - phi_step:
+          #          b = 90*np.pi/180.
+          #      else:
+          #          b = (bound+0.5*phi_step)*np.pi/180.
+          #      contour_points_1D.append((b,
+          #                        ang_bin_dict[bound][int(round(0.5*num_samples))],
+          #                        ang_bin_dict[bound][int(round(0.9*num_samples))]))
+
+          #  contour_points_1D.sort(key=lambda x: x[0])
+            # convert to cartesian, make spline fits, and plot
+          #  thetas, rad1, rad2 = zip(*contour_points_1D)
+          #  xx1 = np.array([r*np.cos(t) for t, r in zip(thetas, rad1)])
+          #  yy1 = np.array([r*np.sin(t) for t, r in zip(thetas, rad1)])
+          #  idx1 = np.argsort(xx1)
+          #  sp1 = UnivariateSpline(xx1[idx1], yy1[idx1], k=1, s=0)
+
+          #  xx2 = np.array([r*np.cos(t) for t, r in zip(thetas, rad2)])
+          #  yy2 = np.array([r*np.sin(t) for t, r in zip(thetas, rad2)])
+          #  idx2 = np.argsort(xx2)
+          #  sp2 = UnivariateSpline(xx2[idx2], yy2[idx2], k=1, s=0)
+          #  ax.plot(xx1, sp1(xx1), '--g', linewidth=2)
+          #  ax.plot(xx2, sp2(xx2), '--g', linewidth=2)
+
         if plot_lambdat_contours:
             #q_array=numpy.linspace(0.5,2.0,10000)
             q_array=numpy.linspace(0.55,1.0,10000)
@@ -318,7 +370,73 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         #    ax.plot(lambda1_lvc90, lambda2_lvc90, 'red', linestyle='--')
         #    bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
         #    ax.text(lambda1_lvc90[int(len(lambda1_lvc90)/1.5)], lambda2_lvc90[int(len(lambda2_lvc90)/1.5)], r'LVC 90$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=3, fontsize=9)
-          
+         
+
+
+    if plot_ul:
+            print("In scatter")
+            #print(samples.fieldnames)
+            #print(samples)
+            #if 'lambdasym' in samples:
+            #    lambda1 = (samples['lambdasym'])*((samples['mass2'])/(samples['mass1']))**3
+             #   lambda2 = (samples['lambdasym'])*((samples['mass1'])/(samples['mass2']))**3
+            #else:
+            #    lambda1=samples['lambda1']
+            #    lambda2=samples['lambda2']
+            lambda1=samples[xparam]
+            lambda2=samples[yparam]
+            phi_step=6
+            max_lambda = max(lambda1+lambda2)
+            ang_bin_dict = {i*phi_step: [] for i in range(int(90/phi_step))}
+
+            for l1, l2 in zip(lambda1, lambda2):
+                phi = numpy.arctan(l2/l1) * 180./numpy.pi
+                d = numpy.sqrt(l1**2 + l2**2)
+
+                # sort into 1D (angular) bin
+                for a in ang_bin_dict:
+                    if phi >= a and phi < a+phi_step:
+                        ang_bin_dict[a].append(d)
+
+            contour_points_1D = []
+            for bound in ang_bin_dict:
+                num_samples = len(ang_bin_dict[bound])
+                #print("Bin with lower bound {} has {} samples in it".format(bound, num_samples))
+                # sort into ascending order so we can get upper bounds
+                ang_bin_dict[bound].sort()
+                if bound == 0:
+                    b = bound
+                elif bound == 90 - phi_step:
+                    b = 90*numpy.pi/180.
+                else:
+                    b = (bound+0.5*phi_step)*numpy.pi/180.
+                contour_points_1D.append((b,
+                                  ang_bin_dict[bound][int(round(0.5*num_samples))],
+                                  ang_bin_dict[bound][int(round(0.9*num_samples))]))
+
+            contour_points_1D.sort(key=lambda x: x[0])
+            # convert to cartesian, make spline fits, and plot
+            thetas, rad1, rad2 = zip(*contour_points_1D)
+            xx1 = numpy.array([r*numpy.cos(t) for t, r in zip(thetas, rad1)])
+            yy1 = numpy.array([r*numpy.sin(t) for t, r in zip(thetas, rad1)])
+            idx1 = numpy.argsort(xx1)
+            sp1 = UnivariateSpline(xx1[idx1], yy1[idx1], k=1, s=0)
+
+            xx2 = numpy.array([r*numpy.cos(t) for t, r in zip(thetas, rad2)])
+            yy2 = numpy.array([r*numpy.sin(t) for t, r in zip(thetas, rad2)])
+            idx2 = numpy.argsort(xx2)
+            sp2 = UnivariateSpline(xx2[idx2], yy2[idx2], k=1, s=0)
+            bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
+            ax.text(xx1[int(len(xx1)/1.5)], sp1(xx1)[int(len(sp1(xx1))/1.5)], r'50$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.plot(xx1, sp1(xx1), linestyle='--', color="k", linewidth=2)
+            bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
+            ax.text(xx2[int(len(xx2)/1.5)], sp2(xx2)[int(len(sp2(xx2))/1.5)], r'90$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.plot(xx2, sp2(xx2), linestyle='--', color="k", linewidth=2)
+
+
+
+
+ 
 
     if plot_contours:
         # compute the percentile values
@@ -331,7 +449,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         # make linewidths thicker if not plotting density for clarity
         if plot_density:
             #lw = 1
-            lw = 2
+            lw = 1.5
         else:
             lw = 3
         ct = ax.contour(X, Y, Z, s, colors=contour_color, linewidths=lw,
@@ -340,11 +458,16 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         lbls = ['{p}%'.format(p=int(p)) for p in (100. - percentiles)]
         fmt = dict(zip(ct.levels, lbls))
         #fs = 12
-        fs = 12
-        #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
-        ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
+        fs = 18
+        #if plot_lambdat_contours:
+        #    ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
+        #else:
+        #    ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
+        #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
+        ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(600, 600), (900, 1500)])
 
     if plot_lvc_contours:
+            print("plotting lvc contours")
             lambda1_lvc50 = [1.2135922330096491, 59.46601941747565, 114.07766990291248, 154.12621359223294, 194.1747572815533, 321.6019417475727, 427.1844660194174, 478.1553398058252, 532.7669902912621, 580.0970873786407, 631.0679611650485, 660.1941747572816, 689.3203883495146,]
             lambda2_lvc50 = [1175.1736234143577, 1153.1340797959037, 1098.2566791864501, 1025.1665367443834, 955.7260293388135, 747.3867904471686, 539.1007015803275, 447.7358089433769, 345.41315285947076, 261.3563886329812, 180.94040110551987, 118.82573878534458, 1.9665509177234526]
             lambda1_lvc90 = [-0.567126636733633, 152.54824984132188, 265.7384987893462, 429.59989656550454, 531.5504595782692, 619.0965937140037, 666.6558922400619, 703.2399680293378, 743.4648205176428, 827.3525470744495, 911.1433037918147, 1009.4530901055504, 1064.1617104304287, 1159.2097839629514, 1261.2573168151584, 1410.2911445967234, 1454.2008509838029, 1494.6020122710925, 1614.7564587790034, 1662.2187874656197]
@@ -352,11 +475,11 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
 
             ax.plot(lambda1_lvc50, lambda2_lvc50, 'red', linestyle='--')
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(lambda1_lvc50[int(len(lambda1_lvc50)/1.5)], lambda2_lvc50[int(len(lambda2_lvc50)/1.5)], r'LVC 50$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=9)
+            ax.text(lambda1_lvc50[int(len(lambda1_lvc50)/1.5)], lambda2_lvc50[int(len(lambda2_lvc50)/1.5)], r'50$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
 
             ax.plot(lambda1_lvc90, lambda2_lvc90, 'red', linestyle='--')
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(lambda1_lvc90[int(len(lambda1_lvc90)/1.5)], lambda2_lvc90[int(len(lambda2_lvc90)/1.5)], r'LVC 90$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=9)
+            ax.text(lambda1_lvc90[int(len(lambda1_lvc90)/1.5)], lambda2_lvc90[int(len(lambda2_lvc90)/1.5)], r'90$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
 
     return fig, ax
 
@@ -525,7 +648,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
     if rotated:
         yscale = 1.0
     elif len(ax.get_figure().axes) > 1:
-        yscale = 1.2
+        yscale = 1.21
     else:
         yscale = 1.05
 
@@ -539,7 +662,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
         title = "{} = {}".format(label, fmt)
         tbox1 = offsetbox.TextArea(
                    title,
-                   textprops=dict(color=color, size=20, rotation=rotation,
+                   textprops=dict(color=color, size=22, rotation=rotation,
                                   ha='left', va='bottom'))
 
         # save a list of text boxes as attribute for later
@@ -558,7 +681,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
         # add new text box to list
         tbox1 = offsetbox.TextArea(
                    " {}".format(fmt),
-                   textprops=dict(color=color, size=20, rotation=rotation,
+                   textprops=dict(color=color, size=22, rotation=rotation,
                                   ha='left', va='bottom'))
         ax.title_boxes = ax.title_boxes + [tbox1]
 
@@ -580,6 +703,7 @@ def create_multidim_plot(parameters, samples, labels=None,
                 expected_parameters_color='r',
                 plot_marginal=True, plot_scatter=True, plot_lvc_contours=False,
                 plot_lambdat_contours=False,
+                plot_ul=False,
                 marginal_percentiles=None, contour_percentiles=None,
                 zvals=None, show_colorbar=True, cbar_label=None,
                 vmin=None, vmax=None, scatter_cmap='plasma',
@@ -653,6 +777,8 @@ def create_multidim_plot(parameters, samples, labels=None,
         Plot LVC 50th and 90th percentile contours.
     plot_lambdat_contours : {False, bool}
         Plot lambda_tilde contours.
+    plot_ul : {False, bool}
+        Plot UL
     density_cmap : {'viridis', string}
         The color map to use for the density plot.
     contour_color : {None, string}
@@ -672,6 +798,8 @@ def create_multidim_plot(parameters, samples, labels=None,
         location in the subplots grid; i.e., the key, values are:
         `{('param1', 'param2'): (pyplot.axes, row index, column index)}`
     """
+    if plot_ul:
+        print("In multidim")
     if labels is None:
         labels = [p for p in parameters]
     # turn labels into a dict for easier access
@@ -680,11 +808,11 @@ def create_multidim_plot(parameters, samples, labels=None,
     # set up the figure with a grid of axes
     # if only plotting 2 parameters, make the marginal plots smaller
     nparams = len(parameters)
-    if nparams == 2:
-        width_ratios = [3,1]
-        height_ratios = [1,3]
-    else:
-        width_ratios = height_ratios = None
+    #if nparams == 2:
+    #    width_ratios = [3,1]
+    #    height_ratios = [1,3]
+    #else:
+    width_ratios = height_ratios = None
 
     # only plot scatter if more than one parameter
     plot_scatter = plot_scatter and nparams > 1
@@ -801,7 +929,7 @@ def create_multidim_plot(parameters, samples, labels=None,
                 exclude_region = None
             create_density_plot(px, py, samples, plot_density=plot_density,
                     plot_contours=plot_contours, plot_lvc_contours=plot_lvc_contours,
-                    plot_lambdat_contours=plot_lambdat_contours,
+                    plot_lambdat_contours=plot_lambdat_contours, plot_ul=plot_ul,
                     cmap=density_cmap,
                     percentiles=contour_percentiles,
                     contour_color=contour_color, xmin=mins[px], xmax=maxs[px],

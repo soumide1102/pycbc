@@ -58,6 +58,8 @@ parser.add_argument("--plot-lvc-contours", action="store_true", default=False,
                     help="Plot published LVC 50 and 90 percent contours.")
 parser.add_argument("--plot-lambdat-contours", action="store_true", default=False,
                     help="Plot lambda_tilde contours.")
+parser.add_argument("--plot-ul", action="store_true", default=False,
+                    help="Plot UL contours.")
 
 # add options for what plots to create
 option_utils.add_plot_posterior_option_group(parser)
@@ -80,7 +82,9 @@ pycbc.init_logging(opts.verbose)
 # get parameters
 logging.info("Loading parameters")
 fp, parameters, labels, samples = option_utils.results_from_cli(opts)
-
+print("first print")
+if(opts.plot_ul):
+    print("plotting ul")
 # typecast to list so the input files can be iterated over
 fp = fp if isinstance(fp, list) else [fp]
 parameters = parameters if isinstance(parameters[0], list) else [parameters]
@@ -203,6 +207,7 @@ for i, (p, l, s) in enumerate(zip(parameters, labels, samples)):
                     plot_contours=opts.plot_contours,
                     plot_lvc_contours=opts.plot_lvc_contours,
                     plot_lambdat_contours=opts.plot_lambdat_contours,
+                    plot_ul=opts.plot_ul,
                     contour_percentiles=opts.contour_percentiles,
                     density_cmap=opts.density_cmap,
                     contour_color=contour_color,
