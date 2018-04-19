@@ -60,6 +60,8 @@ parser.add_argument("--plot-lambdat-contours", action="store_true", default=Fals
                     help="Plot lambda_tilde contours.")
 parser.add_argument("--plot-ul", action="store_true", default=False,
                     help="Plot UL contours.")
+parser.add_argument("--plot-q-contours", action="store_true", default=False,
+                    help="Plot q contours.")
 
 # add options for what plots to create
 option_utils.add_plot_posterior_option_group(parser)
@@ -207,6 +209,7 @@ for i, (p, l, s) in enumerate(zip(parameters, labels, samples)):
                     plot_contours=opts.plot_contours,
                     plot_lvc_contours=opts.plot_lvc_contours,
                     plot_lambdat_contours=opts.plot_lambdat_contours,
+                    plot_q_contours=opts.plot_q_contours,
                     plot_ul=opts.plot_ul,
                     contour_percentiles=opts.contour_percentiles,
                     density_cmap=opts.density_cmap,

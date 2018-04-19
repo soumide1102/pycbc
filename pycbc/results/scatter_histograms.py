@@ -172,7 +172,7 @@ def construct_kde(samples_array, use_kombine=False):
 
 def create_density_plot(xparam, yparam, samples, plot_density=True,
         plot_contours=True, plot_lvc_contours=False, plot_lambdat_contours=False,
-        plot_ul=False,
+        plot_ul=False, plot_q_contours=False,
         percentiles=None, cmap='viridis',
         contour_color=None, xmin=None, xmax=None, ymin=None, ymax=None,
         exclude_region=None, fig=None, ax=None, use_kombine=False):
@@ -194,6 +194,8 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     plot_lvc_contours : {False, bool}
         Plot the lvc 50 and 90 percent contours
     plot_lambdat_contours : {False, bool}
+        Plot lambda_tilde contours.
+    plot_q_contours : {False, bool}
         Plot lambda_tilde contours.
     percentiles : {None, float or array}
         What percentile contours to draw. If None, will plot the 50th
@@ -235,6 +237,8 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     ax : pyplot.axes
         The axes the plot was drawn on.
     """
+    print(xparam)
+    print(yparam)
     if percentiles is None:
         percentiles = numpy.array([50., 90.])
     percentiles = 100. - numpy.array(percentiles)
@@ -284,57 +288,17 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         if contour_color is None:
             contour_color = 'w'
 
-        #if plot_ul:
-        #    lambda1=samples[xparam]
-        #    lambda2-samples[yparam]
-        #    phi_step=6
-        #    max_lambda = max(lambda1+lambda2)
-        #    ang_bin_dict = {i*phi_step: [] for i in range(int(90/phi_step))}
-
-         #   for l1, l2 in zip(lambda1, lambda2):
-         #       phi = np.arctan(l2/l1) * 180./np.pi
-         #       d = np.sqrt(l1**2 + l2**2)
-
-                # sort into 1D (angular) bin
-          #      for a in ang_bin_dict:
-          #          if phi >= a and phi < a+phi_step:
-          #              ang_bin_dict[a].append(d)
-
-          #  contour_points_1D = []
-          #  for bound in ang_bin_dict:
-          #      num_samples = len(ang_bin_dict[bound])
-          #      #print("Bin with lower bound {} has {} samples in it".format(bound, num_samples))
-          #      # sort into ascending order so we can get upper bounds
-          #      ang_bin_dict[bound].sort()
-          #      if bound == 0:
-          #          b = bound
-          #      elif bound == 90 - phi_step:
-          #          b = 90*np.pi/180.
-          #      else:
-          #          b = (bound+0.5*phi_step)*np.pi/180.
-          #      contour_points_1D.append((b,
-          #                        ang_bin_dict[bound][int(round(0.5*num_samples))],
-          #                        ang_bin_dict[bound][int(round(0.9*num_samples))]))
-
-          #  contour_points_1D.sort(key=lambda x: x[0])
-            # convert to cartesian, make spline fits, and plot
-          #  thetas, rad1, rad2 = zip(*contour_points_1D)
-          #  xx1 = np.array([r*np.cos(t) for t, r in zip(thetas, rad1)])
-          #  yy1 = np.array([r*np.sin(t) for t, r in zip(thetas, rad1)])
-          #  idx1 = np.argsort(xx1)
-          #  sp1 = UnivariateSpline(xx1[idx1], yy1[idx1], k=1, s=0)
-
-          #  xx2 = np.array([r*np.cos(t) for t, r in zip(thetas, rad2)])
-          #  yy2 = np.array([r*np.sin(t) for t, r in zip(thetas, rad2)])
-          #  idx2 = np.argsort(xx2)
-          #  sp2 = UnivariateSpline(xx2[idx2], yy2[idx2], k=1, s=0)
-          #  ax.plot(xx1, sp1(xx1), '--g', linewidth=2)
-          #  ax.plot(xx2, sp2(xx2), '--g', linewidth=2)
+        if plot_q_contours:
+            lambda1=numpy.linspace(0, 3000, 10000)
+            for q in [0.7, 0.8, 0.9, 1.0]:
+                lambda2=lambda1*(1.0/q**6)
+                ax.plot(lambda1, lambda2, color="grey", linestyle='dashed', linewidth=2)
+                bbox_props = dict(boxstyle="square,pad=0.03", fc='w', ec='w', alpha=0.75)
+                ax.text(1500*q**6, 1500, r'$q$={}'.format(q), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=45*(1.0/q)+8, zorder=2, fontsize=20)
 
         if plot_lambdat_contours:
             #q_array=numpy.linspace(0.5,2.0,10000)
             q_array=numpy.linspace(0.55,1.0,10000)
-            #for lambda_tilde in [400.0,500.0,600.0,700.0,800.0,900.0,1000.0,1100.0,1200.0,1300.0,1400.0,1500.0,1600.0]:
             for lambda_tilde in [1200.0, 1100.0, 1000.0, 900.0, 800.0, 700.0, 600.0, 500.0, 400.0]:
                 delta_lambda_array = []
                 lambda2_array=[]
@@ -351,26 +315,10 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                 #ax.plot(lambda1_array, delta_lambda_array, 'gray', linestyle='--')
                 ax.plot(lambda1_array, lambda2_array, 'm', linestyle='dashdot', linewidth=2)
                 bbox_props = dict(boxstyle="square,pad=0.03", fc='w', ec='w', alpha=0.75)
-                #ax.text(lambda1_array[int(len(lambda1_array)/1.37)], delta_lambda_array[int(len(delta_lambda_array)/1.37)], r'$\Lambda_T$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
                 # Scale for no m1 > m2 plot
                 #ax.text(lambda1_array[int(len(lambda1_array)/3.5)], lambda2_array[int(len(lambda2_array)/3.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
                 # Scale for m1 > m2 plot
-                ax.text(lambda1_array[int(len(lambda1_array)/1.45)], lambda2_array[int(len(lambda2_array)/1.45)], r'$\~\Lambda$={}'.format(int(lambda_tilde)), color='m', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=18)
-
-        #if plot_lvc_contours:
-        #    lambda1_lvc50 = [1.2135922330096491, 59.46601941747565, 114.07766990291248, 154.12621359223294, 194.1747572815533, 321.6019417475727, 427.1844660194174, 478.1553398058252, 532.7669902912621, 580.0970873786407, 631.0679611650485, 660.1941747572816, 689.3203883495146,]
-        #    lambda2_lvc50 = [1175.1736234143577, 1153.1340797959037, 1098.2566791864501, 1025.1665367443834, 955.7260293388135, 747.3867904471686, 539.1007015803275, 447.7358089433769, 345.41315285947076, 261.3563886329812, 180.94040110551987, 118.82573878534458, 1.9665509177234526]
-        #    lambda1_lvc90 = [-0.567126636733633, 152.54824984132188, 265.7384987893462, 429.59989656550454, 531.5504595782692, 619.0965937140037, 666.6558922400619, 703.2399680293378, 743.4648205176428, 827.3525470744495, 911.1433037918147, 1009.4530901055504, 1064.1617104304287, 1159.2097839629514, 1261.2573168151584, 1410.2911445967234, 1454.2008509838029, 1494.6020122710925, 1614.7564587790034, 1662.2187874656197]
-        #    lambda2_lvc90 = [2740.2912621359224, 2503.640776699029, 2256.0679611650485, 2081.3106796116504, 1975.7281553398059, 1819.1747572815534, 1677.1844660194174, 1567.9611650485438, 1455.097087378641, 1309.4660194174758, 1203.883495145631, 1101.9417475728155, 1007.2815533980583, 752.4271844660193, 606.7961165048546, 555.8252427184466, 421.11650485436894, 235.43689320388376, 111.65048543689318, 9.708737864077648]
-
-        #    ax.plot(lambda1_lvc50, lambda2_lvc50, 'red', linestyle='--')
-        #    bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-        #    ax.text(lambda1_lvc50[int(len(lambda1_lvc50)/1.5)], lambda2_lvc50[int(len(lambda2_lvc50)/1.5)], r'LVC 50$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=3, fontsize=9)
-        
-        #    ax.plot(lambda1_lvc90, lambda2_lvc90, 'red', linestyle='--')
-        #    bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-        #    ax.text(lambda1_lvc90[int(len(lambda1_lvc90)/1.5)], lambda2_lvc90[int(len(lambda2_lvc90)/1.5)], r'LVC 90$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=3, fontsize=9)
-         
+                ax.text(lambda1_array[int(len(lambda1_array)/1.45)], lambda2_array[int(len(lambda2_array)/1.45)], r'$\~\Lambda$={}'.format(int(lambda_tilde)), color='m', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=22)
 
 
     if plot_ul:
@@ -410,9 +358,12 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                     b = 90*numpy.pi/180.
                 else:
                     b = (bound+0.5*phi_step)*numpy.pi/180.
-                contour_points_1D.append((b,
+                try:
+                    contour_points_1D.append((b,
                                   ang_bin_dict[bound][int(round(0.5*num_samples))],
                                   ang_bin_dict[bound][int(round(0.9*num_samples))]))
+                except IndexError:
+                     print("Bin {} has zero samples".format(b))
 
             contour_points_1D.sort(key=lambda x: x[0])
             # convert to cartesian, make spline fits, and plot
@@ -458,13 +409,13 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         lbls = ['{p}%'.format(p=int(p)) for p in (100. - percentiles)]
         fmt = dict(zip(ct.levels, lbls))
         #fs = 12
-        fs = 18
-        #if plot_lambdat_contours:
-        #    ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
-        #else:
-        #    ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
+        fs = 21
+        if plot_lambdat_contours:
+            ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
+        else:
+            ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
         #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
-        ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(600, 600), (900, 1500)])
+        #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(600, 600), (900, 1500)])
 
     if plot_lvc_contours:
             print("plotting lvc contours")
@@ -703,6 +654,7 @@ def create_multidim_plot(parameters, samples, labels=None,
                 expected_parameters_color='r',
                 plot_marginal=True, plot_scatter=True, plot_lvc_contours=False,
                 plot_lambdat_contours=False,
+                plot_q_contours=False,
                 plot_ul=False,
                 marginal_percentiles=None, contour_percentiles=None,
                 zvals=None, show_colorbar=True, cbar_label=None,
@@ -777,6 +729,8 @@ def create_multidim_plot(parameters, samples, labels=None,
         Plot LVC 50th and 90th percentile contours.
     plot_lambdat_contours : {False, bool}
         Plot lambda_tilde contours.
+    plot_q_contours : {False, bool}
+        Plot q contours.
     plot_ul : {False, bool}
         Plot UL
     density_cmap : {'viridis', string}
@@ -930,6 +884,7 @@ def create_multidim_plot(parameters, samples, labels=None,
             create_density_plot(px, py, samples, plot_density=plot_density,
                     plot_contours=plot_contours, plot_lvc_contours=plot_lvc_contours,
                     plot_lambdat_contours=plot_lambdat_contours, plot_ul=plot_ul,
+                    plot_q_contours=plot_q_contours,
                     cmap=density_cmap,
                     percentiles=contour_percentiles,
                     contour_color=contour_color, xmin=mins[px], xmax=maxs[px],
