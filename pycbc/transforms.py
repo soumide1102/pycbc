@@ -358,18 +358,39 @@ class MchirpQToMass1Mass2(BaseTransform):
         out = {}
         mchirp = maps[parameters.mchirp]
         q = maps[parameters.q]
+        out[parameters.mass1] = conversions.mass1_from_mchirp_q(
+                                                maps[parameters.mchirp],
+                                                maps[parameters.q])
+        out[parameters.mass2] = conversions.mass2_from_mchirp_q(
+                                                maps[parameters.mchirp],
+                                                maps[parameters.q])
+        print("New")
+        print("m1", out[parameters.mass1])
+        print("m2", out[parameters.mass2])
         # the mass{1,2}_from_mchirp_q functions always returns mass1 >= mass2
-        primary = conversions.mass1_from_mchirp_q(mchirp, q)
-        secondary = conversions.mass2_from_mchirp_q(mchirp, q)
+        #primary = conversions.mass1_from_mchirp_q(mchirp, q)
+        #secondary = conversions.mass2_from_mchirp_q(mchirp, q)
         # if q > 1 means mass1 > mass2; if q < 1 means mass2 > mass1
-        if q < 1:
-            m1 = secondary
-            m2 = primary
-        else:
-            m1 = primary
-            m2 = secondary
-        out[parameters.mass1] = m1
-        out[parameters.mass2] = m2
+        #m1 = []
+        #m2 = []
+        #for ii in range(len(q)):
+        #    primary = conversions.mass1_from_mchirp_q(mchirp[ii], q[ii])
+        #    secondary = conversions.mass2_from_mchirp_q(mchirp[ii], q[ii])
+        #    if q[ii] < 1:
+        #        m1.append(secondary)
+        #        m2.append(primary)
+        #    else:
+        #        m1.append(primary)
+        #        m2.append(secondary)
+        #print(q)
+        #if q < 1:
+        #    m1 = secondary
+        #    m2 = primary
+        #else:
+        #    m1 = primary
+        #    m2 = secondary
+        #out[parameters.mass1] = m1
+        #out[parameters.mass2] = m2
         return self.format_output(maps, out)
 
     def inverse_transform(self, maps):
