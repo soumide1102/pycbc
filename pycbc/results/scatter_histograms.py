@@ -294,7 +294,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                 lambda2=lambda1*(1.0/q**6)
                 ax.plot(lambda1, lambda2, color="grey", linestyle='dashed', linewidth=2)
                 bbox_props = dict(boxstyle="square,pad=0.03", fc='w', ec='w', alpha=0.75)
-                ax.text(1500*q**6, 1500, r'$q$={}'.format(q), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=45*(1.0/q)+8, zorder=2, fontsize=20)
+                ax.text(1500*q**6, 1500, r'$q$={}'.format(q), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=45*(1.0/q)+8, zorder=2, fontsize=25)
 
         if plot_lambdat_contours:
             #q_array=numpy.linspace(0.5,2.0,10000)
