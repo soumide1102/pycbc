@@ -28,6 +28,7 @@ have burned in.
 
 import numpy
 from scipy.stats import ks_2samp
+import logging
 
 def ks_test(sampler, fp, threshold=0.9):
     """Burn in based on whether the p-value of the KS test between the samples
@@ -112,8 +113,10 @@ def n_acl(sampler, fp, nacls=10):
         of all False or True.
     """
     acl = numpy.array(sampler.compute_acls(fp, start_index=0).values()).max()
+    logging.info("acl=%f", acl)
     burn_idx = nacls * acl
     is_burned_in = burn_idx < fp.niterations
+    logging.info("is_burned_in=%s", is_burned_in)
     if not is_burned_in:
         burn_idx = fp.niterations
     nwalkers = fp.nwalkers

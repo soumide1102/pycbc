@@ -30,6 +30,7 @@ import numpy
 from math import isnan
 from pycbc.filter.matchedfilter import correlate
 from pycbc.types import FrequencySeries, TimeSeries, zeros
+import logging
 
 def calculate_acf(data, delta_t=1.0, unbiased=False):
     r"""Calculates the one-sided autocorrelation function.
@@ -139,36 +140,49 @@ def calculate_acl(data, m=5, k=2, dtype=int):
     """
 
     # sanity check output data type
+    logging.info("calculate_acl: if dtype")
     if dtype not in [int, float]:
         raise ValueError("The dtype must be either int or float.")
 
     # if we have only a single point, just return 1
+    logging.info("calculate_acl: if len(data)")
     if len(data) < 2:
         return 1
 
     # calculate ACF that is normalized by the zero-lag value
+    logging.info("calculate_acl: acf")
     acf = calculate_acf(data)
 
     # multiply all values beyond the zero-lag value by 2.0
+    logging.info("calculate_acl: acf[1:]")
     acf[1:] *= 2.0
 
     # sanity check ACF
+    logging.info("calculate_acl: if isnan")
     if isnan(acf[0]):
         return numpy.inf
+    logging.info("calculate_acl: assert")
     assert acf[0] == 1.0
 
     # the maximum index to calculate ACF
+    logging.info("calculate_acl: imax")
     imax = int(len(acf)/k)
 
     # calculate cumlative ACL until s is less than the cumulative ACL
+    logging.info("calculate_acl: cum_acl")
     cum_acl = 0.0
     for i,val in enumerate(acf[:imax]):
+        logging.info("calculate_acl: s =")
         s = float(i)/m
         if cum_acl+val < s:
+            logging.info("calculate_acl: if cum_acl+val")
             if dtype == int:
+                logging.info("calculate_acl: if dtype")
                 return numpy.ceil(s)
             elif dtype == float:
+                logging.info("calculate_acl: elif dtype")
                 return s
+        logging.info("calculate_acl: cum_acl +=")
         cum_acl += val
 
     return numpy.inf

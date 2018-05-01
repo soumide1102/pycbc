@@ -32,6 +32,7 @@ import numpy
 from pycbc.inference.sampler_base import BaseMCMCSampler, _check_fileformat
 from pycbc.io import FieldArray
 from pycbc.filter import autocorrelation
+import logging
 
 #
 # =============================================================================
@@ -901,9 +902,14 @@ class EmceePTSampler(BaseMCMCSampler):
                                                flatten=False)[param]
                     # contract the walker dimension using the mean, and flatten
                     # the (length 1) temp dimension
-                    samples = samples.mean(axis=1)[0,:]
-                    thisacf = autocorrelation.calculate_acf(samples).numpy()
+                    for chain in samples[0,:]:
+                        acf_single_chain = autocorrelation.calculate_acf(chain).numpy()
+                        acf_all_chains.append(acf_single_chain)
+                    thisacf=numpy.mean(acf_all_chains)
                     subacfs.append(thisacf)
+                    #samples = samples.mean(axis=1)[0,:]
+                    #thisacf = autocorrelation.calculate_acf(samples).numpy()
+                    #subacfs.append(thisacf)
             # stack the temperatures
             # FIXME: the following if/else can be condensed to a single line
             # using numpy.stack, once the version requirements are bumped to
@@ -948,21 +954,61 @@ class EmceePTSampler(BaseMCMCSampler):
         if end_index is None:
             end_index = fp.niterations
         tidx = numpy.arange(fp.ntemps)
+        #for param in fp.variable_args:
+        #    these_acls = numpy.zeros(fp.ntemps, dtype=int)
+        #    for tk in tidx:
+        #        logging.info("Reading samples in compute_acls")
+        #        samples = cls.read_samples(fp, param, thin_start=start_index,
+        #                                   thin_interval=1, thin_end=end_index,
+        #                                   temps=tk, flatten=False)[param]
+                # compute acl for each chain (or walker); then take average of acls
+                # for all walkers which will be the acl for temperature tk,
+                # for parameter param
+        #        logging.info("Finished Reading samples in compute_acls")
+        #        acl_all_chains = []
+        #        for chain in samples[0,:]:
+        #            logging.info("acl_single_chain")
+        #            acl_single_chain = autocorrelation.calculate_acl(chain)
+        #            logging.info("if numpy.isinf")
+        #            if numpy.isinf(acl_single_chain):
+        #                acl_single_chain = chain.size
+        #            logging.info("acl_all_chains.append")
+        #            acl_all_chains.append(acl_single_chain)
+        #        logging.info("these_acls")
+        #        these_acls[tk] = numpy.mean(acl_all_chains)
+        #    logging.info("acls[param]")
+        #    acls[param] = these_acls
+        #logging.info("return acls")
+        #return acls
         for param in fp.variable_args:
             these_acls = numpy.zeros(fp.ntemps, dtype=int)
             for tk in tidx:
-                samples = cls.read_samples(fp, param, thin_start=start_index,
+                acl_all_chains = []
+                for j in range(fp.nwalkers):
+                    logging.info("Reading samples in compute_acls")
+                    samples = cls.read_samples(fp, param, thin_start=start_index,
                                            thin_interval=1, thin_end=end_index,
-                                           temps=tk, flatten=False)[param]
-                # contract the walker dimension using the mean, and flatten
-                # the (length 1) temp dimension
-                samples = samples.mean(axis=1)[0,:]
-                acl = autocorrelation.calculate_acl(samples)
-                if numpy.isinf(acl):
-                    acl = samples.size
-                these_acls[tk] = acl
+                                           walkers=j, temps=tk, flatten=False)[param]
+                    # compute acl for each chain (or walker); then take average of acls
+                    # for all walkers which will be the acl for temperature tk,
+                    # for parameter param
+                    #print(samples[0,:].shape)
+                    #print(samples)
+                    logging.info("acl_single_chain")
+                    acl_single_chain = autocorrelation.calculate_acl(samples[0][0])
+                    logging.info("if numpy.isinf")
+                    if numpy.isinf(acl_single_chain):
+                        acl_single_chain = samples[0][0].size
+                    logging.info("acl_all_chains.append")
+                    acl_all_chains.append(acl_single_chain)
+                logging.info("these_acls")
+                these_acls[tk] = numpy.mean(acl_all_chains)
+            logging.info("acls[param]")
             acls[param] = these_acls
+        #print(acls)
+        logging.info("return acls")
         return acls
+
 
     @staticmethod
     def _oldstyle_read_acls(fp):
