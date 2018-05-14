@@ -242,19 +242,50 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         ymax = ysamples.max()
     npts = 100
     X, Y = numpy.mgrid[xmin:xmax:complex(0,npts), ymin:ymax:complex(0,npts)] # pylint:disable=invalid-slice-index
-    pos = numpy.vstack([X.ravel(), Y.ravel()])
+    # uncomment
+    print("X")
+    print(X)
+    print("Y")
+    print(Y)
+    X_ravel = X.ravel()
+    Y_ravel = Y.ravel()
+    # uncomment
+    #X_ravel_new = numpy.array(numpy.zeros(len(X_ravel)))
+    #Y_ravel_new = numpy.array(numpy.zeros(len(Y_ravel)))
+    #for i in range(len(X_ravel)):
+    #    if Y_ravel[i] > X_ravel[i]:
+    #        X_ravel_new[i] = X_ravel[i]
+    #        Y_ravel_new[i] = Y_ravel[i]
+    ##pos = numpy.vstack([X.ravel(), Y.ravel()])
+    #pos = numpy.vstack([X_ravel_new, Y_ravel_new])
+    #print("pos")
+    #print(pos)
+
+    # comment
+    pos = numpy.vstack([X_ravel, Y_ravel])
+    
     if use_kombine:
         Z = numpy.exp(kde(pos.T).reshape(X.shape))
         draw = kde.draw
     else:
         Z = kde(pos).T.reshape(X.shape)
+        Z_ravel = kde(pos).T
+        print("Z_ravel")
+        print(Z_ravel)
         draw = kde.resample
-
+    for i in range(len(X_ravel)):
+        #if Y_ravel[i] == 0. and X_ravel[i]== 0.:
+        if Y_ravel[i] < X_ravel[i]:
+            Z_ravel[i] = 0
+    Z = Z_ravel.reshape(X.shape)
+    print("Z")
+    print(Z)
     if exclude_region is not None:
         # convert X,Y to a single FieldArray so we can use it's ability to
         # evaluate strings
         farr = FieldArray.from_kwargs(**{xparam: X, yparam: Y})
         Z[farr[exclude_region]] = 0.
+        #Z[farr['lambdasym*((mass2/mass1)**3) > lambdasym*((mass1/mass2)**3)']] = 0.
 
     if plot_density:
         ax.imshow(numpy.rot90(Z), extent=[xmin, xmax, ymin, ymax],
@@ -719,6 +750,7 @@ def create_multidim_plot(parameters, samples, labels=None,
                 exclude_region = 'm_s > m_p'
             else:
                 exclude_region = None
+            print(px, py)
             create_density_plot(px, py, samples, plot_density=plot_density,
                     plot_contours=plot_contours, cmap=density_cmap,
                     percentiles=contour_percentiles,
