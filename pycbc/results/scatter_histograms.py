@@ -277,6 +277,10 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         #if Y_ravel[i] == 0. and X_ravel[i]== 0.:
         if Y_ravel[i] < X_ravel[i]:
             Z_ravel[i] = 0
+            X_ravel[i] = 0
+            Y_ravel[i] = 0
+    X = X_ravel.reshape(X.shape)
+    Y = Y_ravel.reshape(X.shape)
     Z = Z_ravel.reshape(X.shape)
     print("Z")
     print(Z)
