@@ -33,6 +33,7 @@ from pycbc.inference.sampler_base import BaseMCMCSampler, _check_fileformat
 from pycbc.io import FieldArray
 from pycbc.filter import autocorrelation
 import logging
+import resource
 
 #
 # =============================================================================
@@ -985,7 +986,14 @@ class EmceePTSampler(BaseMCMCSampler):
             for tk in tidx:
                 acl_all_chains = []
                 for j in range(fp.nwalkers):
-                    logging.info("Reading samples in compute_acls")
+                    #logging.info("Reading samples in compute_acls")
+                    #logging.info("I am using: ")
+                    #logging.info(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+                    #logging.info("System memory status:")
+
+                    #with open('/proc/meminfo','r') as meminfo:
+                    #    for line in meminfo:
+                    #        logging.info(line)
                     samples = cls.read_samples(fp, param, thin_start=start_index,
                                            thin_interval=1, thin_end=end_index,
                                            walkers=j, temps=tk, flatten=False)[param]
@@ -994,19 +1002,19 @@ class EmceePTSampler(BaseMCMCSampler):
                     # for parameter param
                     #print(samples[0,:].shape)
                     #print(samples)
-                    logging.info("acl_single_chain")
+                    #logging.info("acl_single_chain")
                     acl_single_chain = autocorrelation.calculate_acl(samples[0][0])
-                    logging.info("if numpy.isinf")
+                    #logging.info("if numpy.isinf")
                     if numpy.isinf(acl_single_chain):
                         acl_single_chain = samples[0][0].size
-                    logging.info("acl_all_chains.append")
+                    #logging.info("acl_all_chains.append")
                     acl_all_chains.append(acl_single_chain)
-                logging.info("these_acls")
+                #logging.info("these_acls")
                 these_acls[tk] = numpy.mean(acl_all_chains)
-            logging.info("acls[param]")
+            #logging.info("acls[param]")
             acls[param] = these_acls
         #print(acls)
-        logging.info("return acls")
+        #logging.info("return acls")
         return acls
 
 
