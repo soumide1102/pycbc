@@ -32,6 +32,7 @@ import numpy
 import lal
 import lalsimulation as lalsim
 from pycbc.detector import Detector
+from scipy.stats import norm
 
 #
 # =============================================================================
@@ -579,6 +580,41 @@ def dquadmon_from_lambda(lambdav):
     ln_quad_moment = ai + bi*ll + ci*ll**2.0 + di*ll**3.0 + ei*ll**4.0
     return numpy.exp(ln_quad_moment) - 1
 
+def lambda_a_from_q_lambda_s(q, lambda_s):
+    r"""Return :math:`\Lambda_{a}` from :math:`\Lambda_{s}` and mass ratio q
+    using Eq. 10 of https://journals.aps.org/prd/pdf/10.1103/PhysRevD.97.104036 
+    """
+    lambda_s, ia1 = ensurearray(lambda_s)
+    q, ia2 = ensurearray(q)
+    input_is_array = any([ia1, ia2])
+    f_q = (1.0 - q**(10/(3.0-0.743)))/(1.0 + q**(10/(3.0-0.743)))
+    x = 1.0 - 27.7408*q*lambda_s**(-1./5) + 8.42358*(q**2)*lambda_s**(-1./5) \
+            + 122.686*q*lambda_s**(-2./5) -19.7551*(q**2)*lambda_s**(-2./5) \
+            - 175.496*q*lambda_s**(-3./5) + 133.708*(q**2)*lambda_s**(-3./5)
+    y = 1.0 - 25.5593*q*lambda_s**(-1./5) + 5.58527*(q**2)*lambda_s**(-1./5) \
+            + 92.0337*q*lambda_s**(-2./5) + 26.8586*(q**2)*lambda_s**(-2./5) \
+            - 70.247*q*lambda_s**(-3./5) - 56.3076*(q**2)*lambda_s**(-3./5)
+    lambda_a = f_q*lambda_s*(x/y)
+    mu_lambda_s = 137.1252739/lambda_s**2 - 32.8026613/lambda_s + 0.5168637
+    mu_q = -11.2765281*q**2 + 14.9499544*q - 4.6638851
+    sigma_lambda_s = -0.0000739*lambda_s*numpy.sqrt(lambda_s) + 0.0103778*lambda_s + 0.4581717*numpy.sqrt(lambda_s) - 0.8341913
+    sigma_q = -201.4323962*q**2 + 273.9268276*q - 71.2342246
+    mu_lambda_s_q = (mu_lambda_s + mu_q)/2
+    var_lambda_s_q = sigma_lambda_s*sigma_lambda_s + sigma_q*sigma_q
+    sigma_lambda_s_q = numpy.sqrt(var_lambda_s_q)
+    lambda_s = [lambda_s] if not isinstance(lambda_s, list) else lambda_s
+
+    norm_rvs = norm.rvs(size=len(lambda_s))
+    lambda_a_error_marginalized = lambda_a + norm_rvs
+    return formatreturn(lambda_a_error_marginalized, input_is_array)
+
+def lambda1_from_q_lambda_s(q, lambda_s):
+    lambda_a = lambda_a_from_q_lambda_s(q, lambda_s)
+    return lambda_s - lambda_a
+
+def lambda2_from_q_lambda_s(q, lambda_s):
+    lambda_a = lambda_a_from_q_lambda_s(q, lambda_s)
+    return lambda_s + lambda_a
 #
 # =============================================================================
 #
@@ -688,7 +724,9 @@ def tau_from_final_mass_spin(final_mass, final_spin, l=2, m=2):
     return get_lm_f0tau(final_mass, final_spin, l, m, 1)[1][0]
 
 
-__all__ = ['dquadmon_from_lambda', 'lambda_tilde', 'primary_mass', 'secondary_mass', 'mtotal_from_mass1_mass2',
+__all__ = ['lambda_a_from_q_lambda_s', 'lambda1_from_q_lambda_s',
+           'lambda2_from_q_lambda_s', 'dquadmon_from_lambda', 'lambda_tilde',
+           'primary_mass', 'secondary_mass', 'mtotal_from_mass1_mass2',
            'q_from_mass1_mass2', 'invq_from_mass1_mass2',
            'eta_from_mass1_mass2', 'mchirp_from_mass1_mass2',
            'mass1_from_mtotal_q', 'mass2_from_mtotal_q',
