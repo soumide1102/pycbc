@@ -603,8 +603,8 @@ def lambda_a_from_q_lambda_s(q, lambda_s):
     var_lambda_s_q = sigma_lambda_s*sigma_lambda_s + sigma_q*sigma_q
     sigma_lambda_s_q = numpy.sqrt(var_lambda_s_q)
     lambda_s = [lambda_s] if not isinstance(lambda_s, list) else lambda_s
-
-    norm_rvs = norm.rvs(size=len(lambda_s))
+    norm_rvs = numpy.random.normal(mu_lambda_s_q, sigma_lambda_s_q, len(lambda_s))
+    #norm_rvs = norm.rvs(size=len(lambda_s))
     lambda_a_error_marginalized = lambda_a + norm_rvs
     return formatreturn(lambda_a_error_marginalized, input_is_array)
 
