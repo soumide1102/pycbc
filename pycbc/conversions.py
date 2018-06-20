@@ -615,6 +615,18 @@ def lambda1_from_q_lambda_s(q, lambda_s):
 def lambda2_from_q_lambda_s(q, lambda_s):
     lambda_a = lambda_a_from_q_lambda_s(q, lambda_s)
     return lambda_s + lambda_a
+
+def radius_from_mass_lambda(mass, lambdav):
+    G = 6.67408 * 10**(-11.)
+    masss, ia1 = ensurearray(mass)
+    lambdav, ia2 = ensurearray(lambdav)
+    input_is_array = any([ia1, ia2])
+    m = mass * 1.989*10**(30.)
+    c_sq = (2.99792458 * 10**(8.))**(2.)
+    C = 0.36 - 0.0355*numpy.log(lambdav) + 0.000705*(numpy.log(lambdav))**(2.)
+    radius = ((G * m)/(c_sq * C ))/1000   # in km
+    return formatreturn(radius, input_is_array) 
+
 #
 # =============================================================================
 #
