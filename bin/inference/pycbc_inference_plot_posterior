@@ -216,7 +216,7 @@ if opts.input_file_labels:
     for color, label in zip(hist_colors, opts.input_file_labels):
         handles.append(patches.Patch(color=color, label=label))
     fig.legend(loc="upper right", handles=handles,
-               labels=opts.input_file_labels, fontsize=16)
+               labels=opts.input_file_labels, fontsize=10)
 
 
 if opts.title:
