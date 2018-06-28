@@ -81,7 +81,8 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if no_diagonals:
         ndim -= 1
     if ndim < 3:
-        fsize = (8, 7)
+        #fsize = (8, 7)
+        fsize = (14,14)
     else:
         #fsize = (ndim*3 - 1, ndim*3 - 2)
         fsize = (ndim*3 + 6, ndim*3 + 3)
