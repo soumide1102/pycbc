@@ -86,7 +86,7 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if no_diagonals:
         ndim -= 1
     if ndim < 3:
-        fsize = (11, 10)
+        fsize = (13, 12)
     else:
         #fsize = (ndim*3 - 1, ndim*3 - 2)
         fsize = (ndim*3 + 1, ndim*3 - 2)
@@ -119,29 +119,31 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
                 axis_dict[px, py] = (ax, nrow, ncolumn)
                 # x labels only on bottom
                 if nrow + 1 == ndim:
-                    ax.set_xlabel('{}'.format(labels[px]), fontsize=28)
+                    ax.set_xlabel('{}'.format(labels[px]), fontsize=32)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(24)
+                        tick.label.set_fontsize(28)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(24)
-                    ax.xaxis.labelpad = 12
+                        tick.label.set_fontsize(28)
+                    ax.xaxis.labelpad = 13
                 else:
                     pyplot.setp(ax.get_xticklabels(), visible=False)
                 # y labels only on left
                 if ncolumn == 0:
-                    ax.set_ylabel('{}'.format(labels[py]), fontsize=28)
+                    ax.set_ylabel('{}'.format(labels[py]), fontsize=32)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(24)
+                        tick.label.set_fontsize(28)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(24)
-                    ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
-                    ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
+                        tick.label.set_fontsize(28)
+                    #ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
+                    #ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
                     #ax.xaxis.labelpad = 12
                 else:
                     pyplot.setp(ax.get_yticklabels(), visible=False)
             else:
                 # make non-used axes invisible
                 ax.axis('off')
+        ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
+        ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
     return fig, axis_dict
 
 
@@ -324,12 +326,13 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                 lambda2=lambda1*(1.0/q**6)
                 ax.plot(lambda1, lambda2, color="grey", linestyle='dashed', linewidth=2)
                 bbox_props = dict(boxstyle="square,pad=0.03", fc='w', ec='w', alpha=0.75)
-                ax.text(1500*q**6, 1500, r'$q$={}'.format(q), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=45*(1.0/q)+8, zorder=2, fontsize=25)
+                ax.text(1100*q**6, 1100, r'$q$={}'.format(q), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=45*(1.0/q)+8, zorder=2, fontsize=30)
 
         if plot_lambdat_contours:
             #q_array=numpy.linspace(0.5,2.0,10000)
             q_array=numpy.linspace(0.55,1.0,10000)
-            for lambda_tilde in [1200.0, 1100.0, 1000.0, 900.0, 800.0, 700.0, 600.0, 500.0, 400.0]:
+            #for lambda_tilde in [1200.0, 1100.0, 1000.0, 900.0, 800.0, 700.0, 600.0, 500.0, 400.0]:
+            for lambda_tilde in [1000.0, 900.0, 800.0, 700.0, 600.0, 500.0, 400.0]:
                 delta_lambda_array = []
                 lambda2_array=[]
                 lambda1_array=[]
@@ -348,7 +351,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                 # Scale for no m1 > m2 plot
                 #ax.text(lambda1_array[int(len(lambda1_array)/3.5)], lambda2_array[int(len(lambda2_array)/3.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
                 # Scale for m1 > m2 plot
-                ax.text(lambda1_array[int(len(lambda1_array)/1.45)], lambda2_array[int(len(lambda2_array)/1.45)], r'$\~\Lambda$={}'.format(int(lambda_tilde)), color='m', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=22)
+                ax.text(lambda1_array[int(len(lambda1_array)/1.15)], lambda2_array[int(len(lambda2_array)/1.15)], r'$\~\Lambda$={}'.format(int(lambda_tilde)), color='m', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=29)
 
 
     if plot_ul:
@@ -439,9 +442,11 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         lbls = ['{p}%'.format(p=int(p)) for p in (100. - percentiles)]
         fmt = dict(zip(ct.levels, lbls))
         #fs = 12
-        fs = 21
+        fs = 23
         if plot_lambdat_contours:
-            ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
+            #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(150, 250), (120, 500)])
+            #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(100, 350), (100, 600)])
+            #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(80, 1100), (100, 500)])
         else:
             ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
         #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, manual=[(260, 250), (800, 750)])
