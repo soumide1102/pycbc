@@ -239,8 +239,6 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     ax : pyplot.axes
         The axes the plot was drawn on.
     """
-    print(xparam)
-    print(yparam)
     if percentiles is None:
         percentiles = numpy.array([50., 90.])
     percentiles = 100. - numpy.array(percentiles)
@@ -270,43 +268,13 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         ymax = ysamples.max()
     npts = 100
     X, Y = numpy.mgrid[xmin:xmax:complex(0,npts), ymin:ymax:complex(0,npts)] # pylint:disable=invalid-slice-index
-    
-    # uncomment
-    #pos = numpy.vstack([X.ravel(), Y.ravel()])
-
-    # comment
-    print("X")
-    print(X)
-    print("Y")
-    print(Y)
-    X_ravel = X.ravel()
-    Y_ravel = Y.ravel()
-    pos = numpy.vstack([X_ravel, Y_ravel])
-
+    pos = numpy.vstack([X.ravel(), Y.ravel()])
     if use_kombine:
         Z = numpy.exp(kde(pos.T).reshape(X.shape))
         draw = kde.draw
     else:
-        # uncomment
-        #Z = kde(pos).T.reshape(X.shape)
-        # comment
-        Z_ravel = kde(pos).T
-        print("Z_ravel")
-        print(Z_ravel)
-
+        Z = kde(pos).T.reshape(X.shape)
         draw = kde.resample
-
-    # comment    
-    for i in range(len(X_ravel)):
-        if Y_ravel[i] < X_ravel[i]:
-            X_ravel[i] = 0
-            Y_ravel[i] = 0
-            Z_ravel[i] = 0
-    X = X_ravel.reshape(X.shape)
-    Y = Y_ravel.reshape(X.shape)
-    Z = Z_ravel.reshape(X.shape)
-    print("Z")
-    print(Z)
 
     if exclude_region is not None:
         # convert X,Y to a single FieldArray so we can use it's ability to
@@ -444,7 +412,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         #fs = 12
         fs = 23
         if plot_lambdat_contours:
-            #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(150, 250), (120, 500)])
+            ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(150, 250), (120, 500)])
             #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(100, 350), (100, 600)])
             #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(80, 1100), (100, 500)])
         else:
