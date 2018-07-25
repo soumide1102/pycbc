@@ -386,6 +386,13 @@ def chi_eff(mass1, mass2, spin1z, spin2z):
     """Returns the effective spin from mass1, mass2, spin1z, and spin2z."""
     return (spin1z * mass1 + spin2z * mass2) / (mass1 + mass2)
 
+def chi_eff_from_spherical(mass1, mass2, spin1_a, spin1_polar,
+                           spin2_a, spin2_polar):
+    """Returns the effective spin using spins in spherical coordinates."""
+    spin1z = spin1_a * numpy.cos(spin1_polar)
+    spin2z = spin2_a * numpy.cos(spin2_polar)
+    return chi_eff(mass1, mass2, spin1z, spin2z)
+
 def chi_a(mass1, mass2, spin1z, spin2z):
     """ Returns the aligned mass-weighted spin difference from mass1, mass2,
     spin1z, and spin2z.
@@ -702,7 +709,7 @@ __all__ = ['dquadmon_from_lambda', 'lambda_tilde', 'primary_mass', 'secondary_ma
            'tau3_from_mass1_mass2', 'mtotal_from_tau0_tau3',
            'eta_from_tau0_tau3', 'mass1_from_tau0_tau3',
            'mass2_from_tau0_tau3', 'primary_spin', 'secondary_spin',
-           'chi_eff', 'chi_a', 'chi_p', 'phi_a', 'phi_s',
+           'chi_eff', 'chi_eff_from_spherical', 'chi_a', 'chi_p', 'phi_a', 'phi_s',
            'primary_xi', 'secondary_xi',
            'xi1_from_spin1x_spin1y', 'xi2_from_mass1_mass2_spin2x_spin2y',
            'chi_perp_from_spinx_spiny', 'chi_perp_from_mass1_mass2_xi2',
