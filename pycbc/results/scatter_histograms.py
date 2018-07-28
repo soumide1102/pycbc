@@ -86,7 +86,7 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if no_diagonals:
         ndim -= 1
     if ndim < 3:
-        fsize = (13, 12)
+        fsize = (14, 13)
     else:
         #fsize = (ndim*3 - 1, ndim*3 - 2)
         fsize = (ndim*3 + 1, ndim*3 - 2)
@@ -119,21 +119,21 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
                 axis_dict[px, py] = (ax, nrow, ncolumn)
                 # x labels only on bottom
                 if nrow + 1 == ndim:
-                    ax.set_xlabel('{}'.format(labels[px]), fontsize=32)
+                    ax.set_xlabel('{}'.format(labels[px]), fontsize=40)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
+                        tick.label.set_fontsize(36)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
+                        tick.label.set_fontsize(36)
                     ax.xaxis.labelpad = 13
                 else:
                     pyplot.setp(ax.get_xticklabels(), visible=False)
                 # y labels only on left
                 if ncolumn == 0:
-                    ax.set_ylabel('{}'.format(labels[py]), fontsize=32)
+                    ax.set_ylabel('{}'.format(labels[py]), fontsize=40)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
+                        tick.label.set_fontsize(36)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
+                        tick.label.set_fontsize(36)
                     #ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
                     #ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
                     #ax.xaxis.labelpad = 12
@@ -251,7 +251,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     if ax is None:
         ax = fig.add_subplot(111)
 
-    ax.grid(True, linestyle='dotted', color='darkgray')
+    ax.grid(True, linestyle='dotted', color='gray')
 
     # convert samples to array and construct kde
     xsamples = samples[xparam]
@@ -326,7 +326,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                 lambda2=lambda1*(1.0/q**6)
                 ax.plot(lambda1, lambda2, color="grey", linestyle='dashed', linewidth=2)
                 bbox_props = dict(boxstyle="square,pad=0.03", fc='w', ec='w', alpha=0.75)
-                ax.text(1100*q**6, 1100, r'$q$={}'.format(q), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=45*(1.0/q)+8, zorder=2, fontsize=30)
+                ax.text(1100*q**6, 1100, r'$q$={}'.format(q), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=45*(1.0/q)+8, zorder=2, fontsize=37)
 
         if plot_lambdat_contours:
             #q_array=numpy.linspace(0.5,2.0,10000)
@@ -351,7 +351,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
                 # Scale for no m1 > m2 plot
                 #ax.text(lambda1_array[int(len(lambda1_array)/3.5)], lambda2_array[int(len(lambda2_array)/3.5)], r'$\~\Lambda$={}'.format(lambda_tilde), color='dimgrey', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize='small')
                 # Scale for m1 > m2 plot
-                ax.text(lambda1_array[int(len(lambda1_array)/1.15)], lambda2_array[int(len(lambda2_array)/1.15)], r'$\~\Lambda$={}'.format(int(lambda_tilde)), color='m', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=29)
+                ax.text(lambda1_array[int(len(lambda1_array)/1.15)], lambda2_array[int(len(lambda2_array)/1.15)], r'$\~\Lambda$={}'.format(int(lambda_tilde)), color='m', va="center", ha="center", bbox=bbox_props, rotation=290, zorder=2, fontsize=35)
 
 
     if plot_ul:
@@ -411,10 +411,10 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
             idx2 = numpy.argsort(xx2)
             sp2 = UnivariateSpline(xx2[idx2], yy2[idx2], k=1, s=0)
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(xx1[int(len(xx1)/1.5)], sp1(xx1)[int(len(sp1(xx1))/1.5)], r'50$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.text(xx1[int(len(xx1)/1.5)], sp1(xx1)[int(len(sp1(xx1))/1.5)], r'50$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=24)
             ax.plot(xx1, sp1(xx1), linestyle='--', color="k", linewidth=2)
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(xx2[int(len(xx2)/1.5)], sp2(xx2)[int(len(sp2(xx2))/1.5)], r'90$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.text(xx2[int(len(xx2)/1.5)], sp2(xx2)[int(len(sp2(xx2))/1.5)], r'90$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=24)
             ax.plot(xx2, sp2(xx2), linestyle='--', color="k", linewidth=2)
 
 
@@ -442,10 +442,10 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         lbls = ['{p}%'.format(p=int(p)) for p in (100. - percentiles)]
         fmt = dict(zip(ct.levels, lbls))
         #fs = 12
-        fs = 23
+        fs = 30
         if plot_lambdat_contours:
             #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(150, 250), (120, 500)])
-            #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(100, 350), (100, 600)])
+            ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(100, 350), (100, 600)])
             #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs, inline_spacing=0.5, manual=[(80, 1100), (100, 500)])
         else:
             ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
