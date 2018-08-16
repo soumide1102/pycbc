@@ -119,24 +119,24 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
                 axis_dict[px, py] = (ax, nrow, ncolumn)
                 # x labels only on bottom
                 if nrow + 1 == ndim:
-                    ax.set_xlabel('{}'.format(labels[px]), fontsize=32)
+                    ax.set_xlabel('{}'.format(labels[px]), fontsize=31)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
+                        tick.label.set_fontsize(24)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
-                    ax.xaxis.labelpad = 13
+                        tick.label.set_fontsize(24)
+                    ax.xaxis.labelpad = 18
                 else:
                     pyplot.setp(ax.get_xticklabels(), visible=False)
                 # y labels only on left
                 if ncolumn == 0:
-                    ax.set_ylabel('{}'.format(labels[py]), fontsize=32)
+                    ax.set_ylabel('{}'.format(labels[py]), fontsize=31)
                     for tick in ax.xaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
+                        tick.label.set_fontsize(24)
                     for tick in ax.yaxis.get_major_ticks():
-                        tick.label.set_fontsize(28)
+                        tick.label.set_fontsize(24)
                     #ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
                     #ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
-                    #ax.xaxis.labelpad = 12
+                    ax.yaxis.labelpad = 18
                 else:
                     pyplot.setp(ax.get_yticklabels(), visible=False)
             else:
@@ -249,7 +249,7 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     if ax is None:
         ax = fig.add_subplot(111)
 
-    ax.grid(True, linestyle='dotted', color='darkgray')
+    ax.grid(True, linestyle='dotted', color='gray')
 
     # convert samples to array and construct kde
     xsamples = samples[xparam]
@@ -379,10 +379,10 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
             idx2 = numpy.argsort(xx2)
             sp2 = UnivariateSpline(xx2[idx2], yy2[idx2], k=1, s=0)
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(xx1[int(len(xx1)/1.5)], sp1(xx1)[int(len(sp1(xx1))/1.5)], r'50$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.text(xx1[int(len(xx1)/1.5)], sp1(xx1)[int(len(sp1(xx1))/1.5)], r'50$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=24)
             ax.plot(xx1, sp1(xx1), linestyle='--', color="k", linewidth=2)
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(xx2[int(len(xx2)/1.5)], sp2(xx2)[int(len(sp2(xx2))/1.5)], r'90$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.text(xx2[int(len(xx2)/1.5)], sp2(xx2)[int(len(sp2(xx2))/1.5)], r'90$\%$', color='k', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=24)
             ax.plot(xx2, sp2(xx2), linestyle='--', color="k", linewidth=2)
 
 
@@ -429,11 +429,11 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
 
             ax.plot(lambda1_lvc50, lambda2_lvc50, 'red', linestyle='--')
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(lambda1_lvc50[int(len(lambda1_lvc50)/1.5)], lambda2_lvc50[int(len(lambda2_lvc50)/1.5)], r'50$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.text(lambda1_lvc50[int(len(lambda1_lvc50)/1.5)], lambda2_lvc50[int(len(lambda2_lvc50)/1.5)], r'50$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=24)
 
             ax.plot(lambda1_lvc90, lambda2_lvc90, 'red', linestyle='--')
             bbox_props = dict(boxstyle="round,pad=0.03", fc='w', ec='w', alpha=0.8)
-            ax.text(lambda1_lvc90[int(len(lambda1_lvc90)/1.5)], lambda2_lvc90[int(len(lambda2_lvc90)/1.5)], r'90$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=18)
+            ax.text(lambda1_lvc90[int(len(lambda1_lvc90)/1.5)], lambda2_lvc90[int(len(lambda2_lvc90)/1.5)], r'90$\%$', color='red', va="center", ha="center", bbox=bbox_props, rotation=300, zorder=5, fontsize=24)
 
     return fig, ax
 
