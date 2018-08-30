@@ -624,6 +624,9 @@ def results_from_cli(opts, load_samples=True, **kwargs):
             parameters_all.append(parameters)
             labels_all.append(labels)
             samples_all.append(samples)
+            #print(samples_all)
+            #print(labels_all)
+            #print(parameters_all)
 
         # else only one input file then do not return lists
         else:
