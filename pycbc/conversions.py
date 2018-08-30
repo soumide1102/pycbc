@@ -354,6 +354,28 @@ def mass2_from_tau0_tau3(tau0, tau3, f_lower):
     eta = eta_from_tau0_tau3(tau0, tau3, f_lower)
     return mass2_from_mtotal_eta(mtotal, eta)
 
+def lambda_tilde(mass1, mass2, lambda1, lambda2):
+    """ The effective lambda parameter
+
+    The mass-weighted dominant effective lambda parameter defined in
+    https://journals.aps.org/prd/pdf/10.1103/PhysRevD.91.043002
+    """
+    m1 = _ensurearray(mass1)
+    m2 = _ensurearray(mass2)
+
+    lsum = _ensurearray(lambda1 + lambda2)
+    ldiff = _ensurearray(lambda1 - lambda2)
+    mask = m1 < m2
+    ldiff[mask] = -ldiff[mask]
+
+    eta = eta_from_mass1_mass2(m1, m2)
+    p1 = (lsum) * (1 + 7. * eta - 31 * eta ** 2.0)
+    p2 = (1 - 4 * eta)**0.5 * (1 + 9 * eta - 11 * eta ** 2.0) * (ldiff)
+    #lt = (16./13.)*(((m1 + 12.0*m2)*(m1**4)*lambda1 + (m2 + 12.0*m1)*(m2**4)*lambda2)/(m1+m2)**5)
+    #return lt
+    return _formatreturn(8.0 / 13.0 * (p1 + p2))
+
+
 #def lambda_tilde(mass1, mass2, lambda1, lambda2):
 #    """ The effective lambda parameter
 #
@@ -363,31 +385,9 @@ def mass2_from_tau0_tau3(tau0, tau3, f_lower):
 #    m1 = _ensurearray(mass1)
 #    m2 = _ensurearray(mass2)
 
-#    lsum = _ensurearray(lambda1 + lambda2)
-#    ldiff = _ensurearray(lambda1 - lambda2)
-#    mask = m1 < m2
-#    ldiff[mask] = -ldiff[mask]
-
-#    eta = eta_from_mass1_mass2(m1, m2)
-#    p1 = (lsum) * (1 + 7. * eta - 31 * eta ** 2.0)
-#    p2 = (1 - 4 * eta)**0.5 * (1 + 9 * eta - 11 * eta ** 2.0) * (ldiff)
-    #lt = (16./13.)*(((m1 + 12.0*m2)*(m1**4)*lambda1 + (m2 + 12.0*m1)*(m2**4)*lambda2)/(m1+m2)**5)
-    #return lt
-#    return _formatreturn(8.0 / 13.0 * (p1 + p2))
-
-
-def lambda_tilde(mass1, mass2, lambda1, lambda2):
-#    """ The effective lambda parameter
-#
-#    The mass-weighted dominant effective lambda parameter defined in
-#    https://journals.aps.org/prd/pdf/10.1103/PhysRevD.91.043002
-#    """
-#    m1 = _ensurearray(mass1)
-#    m2 = _ensurearray(mass2)
-
-    lt = (16./13.)*(((mass1 + 12.0*mass2)*(mass1**4)*lambda1 + (mass2 + 12.0*mass1)*(mass2**4)*lambda2)/(mass1+mass2)**5)
-    print("I am here")
-    return lt
+#    lt = (16./13.)*(((mass1 + 12.0*mass2)*(mass1**4)*lambda1 + (mass2 + 12.0*mass1)*(mass2**4)*lambda2)/(mass1+mass2)**5)
+#    print("I am here")
+#    return lt
 
 
 #

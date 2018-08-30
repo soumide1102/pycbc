@@ -239,8 +239,6 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     ax : pyplot.axes
         The axes the plot was drawn on.
     """
-    #print(xparam)
-    #print(yparam)
     if percentiles is None:
         percentiles = numpy.array([50., 90.])
     percentiles = 100. - numpy.array(percentiles)
@@ -275,10 +273,6 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     #pos = numpy.vstack([X.ravel(), Y.ravel()])
 
     # comment
-    #print("X")
-    #print(X)
-    #print("Y")
-    #print(Y)
     X_ravel = X.ravel()
     Y_ravel = Y.ravel()
     pos = numpy.vstack([X_ravel, Y_ravel])
@@ -291,8 +285,6 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         #Z = kde(pos).T.reshape(X.shape)
         # comment
         Z_ravel = kde(pos).T
-        #print("Z_ravel")
-        #print(Z_ravel)
 
         draw = kde.resample
 
@@ -305,8 +297,6 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
     X = X_ravel.reshape(X.shape)
     Y = Y_ravel.reshape(X.shape)
     Z = Z_ravel.reshape(X.shape)
-    #print("Z")
-    #print(Z)
 
     if exclude_region is not None:
         # convert X,Y to a single FieldArray so we can use it's ability to
@@ -825,8 +815,6 @@ def create_multidim_plot(parameters, samples, labels=None,
     # convert samples to a dictionary to avoid re-computing derived parameters
     # every time they are needed
     samples = dict([[p, samples[p]] for p in parameters])
-    print("samples dict")
-    print(samples)
 
     # values for axis bounds
     if mins is None:
