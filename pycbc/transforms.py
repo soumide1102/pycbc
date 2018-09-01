@@ -1556,6 +1556,9 @@ def compute_jacobian(samples, transforms, inverse=False):
         The product of the jacobians of all fo the transforms.
     """
     j = 1.
+    #print("In transforms.py")
+    #print("samples", samples)
+    #print("transforms", transforms)
     if inverse:
         for t in transforms:
             j *= t.inverse_jacobian(samples)

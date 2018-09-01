@@ -317,6 +317,9 @@ class BaseLikelihoodEvaluator(object):
         if self._sampling_transforms is None:
             return 0.
         else:
+            #print("In likelihood.py line 320")
+            #print("params", params)
+            #print("self._sampling_transforms", self._sampling_transforms)
             return numpy.log(abs(pycbc.transforms.compute_jacobian(params,
                 self._sampling_transforms, inverse=True)))
 
