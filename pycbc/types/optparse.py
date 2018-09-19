@@ -298,7 +298,10 @@ def copy_opts_for_single_ifo(opt, ifo):
     """
     opt = copy.deepcopy(opt)
     for arg, val in vars(opt).items():
+        print("arg", arg)
+        print("val", val)
         if isinstance(val, DictWithDefaultReturn):
+            print("getattr(opt, arg)[ifo]", getattr(opt, arg)[ifo])
             setattr(opt, arg, getattr(opt, arg)[ifo])
     return opt
 

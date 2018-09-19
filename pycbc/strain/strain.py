@@ -228,6 +228,8 @@ def from_cli(opt, dyn_range_fac=1, precision='single',
                                           end_time=opt.gps_end_time+opt.pad_data,
                                           sieve=sieve)
         else:
+            print("frame_source", frame_source)
+            print("opt.channel_name", opt.channel_name)
             strain = read_frame(frame_source, opt.channel_name,
                             start_time=opt.gps_start_time-opt.pad_data,
                             end_time=opt.gps_end_time+opt.pad_data,
@@ -431,7 +433,10 @@ def from_cli_single_ifo(opt, ifo, **kwargs):
     """
     Get the strain for a single ifo when using the multi-detector CLI
     """
+    print("ifo", ifo)
     single_det_opt = copy_opts_for_single_ifo(opt, ifo)
+    #print(single_det_opt)
+    print("**kwargs", kwargs)
     return from_cli(single_det_opt, **kwargs)
 
 def from_cli_multi_ifos(opt, ifos, **kwargs):
@@ -439,6 +444,7 @@ def from_cli_multi_ifos(opt, ifos, **kwargs):
     Get the PSD for all ifos when using the multi-detector CLI
     """
     strain = {}
+    print("ifos", ifos)
     for ifo in ifos:
         strain[ifo] = from_cli_single_ifo(opt, ifo, **kwargs)
     return strain

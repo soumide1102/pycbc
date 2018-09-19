@@ -113,6 +113,7 @@ def locations_to_cache(locations, latest=False):
     """
     cum_cache = lal.Cache()
     for source in locations:
+        print("source", source)
         flist = glob.glob(source)
         if latest:
             flist = [max(flist, key=os.path.getctime)]

@@ -308,6 +308,7 @@ def low_frequency_cutoff_from_cli(opts):
     dict
         Dictionary of instruments -> low frequency cutoff.
     """
+    print("opts.low_frequency_cutoff", opts.low_frequency_cutoff)
     return opts.low_frequency_cutoff
 
 def data_from_cli(opts):
@@ -330,8 +331,11 @@ def data_from_cli(opts):
         Dictionary of instruments -> `FrequencySeries` psds.
     """
     # get gates to apply
+    print("opts")
+    print(opts)
     gates = gates_from_cli(opts)
     psd_gates = psd_gates_from_cli(opts)
+    print("psd_gates", psd_gates)
 
     # get strain time series
     strain_dict = strain_from_cli_multi_ifos(opts, opts.instruments,
@@ -373,7 +377,10 @@ def data_from_cli(opts):
         stilde_dict[ifo] = strain_dict[ifo].to_frequencyseries()
         length_dict[ifo] = len(stilde_dict[ifo])
         delta_f_dict[ifo] = stilde_dict[ifo].delta_f
-
+    print("length_dict", length_dict)
+    print("delta_f_dict", delta_f_dict)
+    print("low_frequency_cutoff_dict", low_frequency_cutoff_dict)
+    print("psd_strain_dict", psd_strain_dict)
     # get PSD as frequency series
     psd_dict = psd_from_cli_multi_ifos(opts, length_dict, delta_f_dict,
                                low_frequency_cutoff_dict, opts.instruments,

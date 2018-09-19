@@ -25,7 +25,9 @@ def _gates_from_cli(opts, gate_opt):
     gates = {}
     if getattr(opts, gate_opt) is None:
         return gates
+    print("getattr(opts, gate_opt)", getattr(opts, gate_opt))
     for gate in getattr(opts, gate_opt):
+        print("gate", gate)
         try:
             ifo, central_time, half_dur, taper_dur = gate.split(':')
             central_time = float(central_time)

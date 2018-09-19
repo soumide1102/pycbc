@@ -139,11 +139,17 @@ def from_cli_multi_ifos(opt, length_dict, delta_f_dict,
     Get the PSD for all ifos when using the multi-detector CLI
     """
     psd = {}
+    print("type(length_dict)", type(length_dict))
+    print("type(delta_f_dict)", type(delta_f_dict))
+    print("type(low_frequency_cutoff_dict", type(low_frequency_cutoff_dict))
     for ifo in ifos:
         if strain_dict is not None:
             strain = strain_dict[ifo]
         else:
             strain = None
+        print("length_dic[ifo]", length_dict[ifo])
+        print("delta_f_dict[ifo]", delta_f_dict[ifo])
+        print("low_frequency_cutoff_dict[ifo]", low_frequency_cutoff_dict[ifo])
         psd[ifo] = from_cli_single_ifo(opt, length_dict[ifo], delta_f_dict[ifo],
                                        low_frequency_cutoff_dict[ifo], ifo,
                                        strain=strain, **kwargs)
