@@ -397,6 +397,9 @@ def data_from_cli(opts):
         for ifo in gates:
             stilde_dict[ifo] *= psd_dict[ifo]
 
+    for ifo in opts.instruments:
+        print("psd_dict[ifo] for {}".format(ifo))
+        print(psd_dict[ifo].sample_frequencies)
     return strain_dict, stilde_dict, psd_dict
 
 

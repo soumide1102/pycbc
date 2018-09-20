@@ -480,8 +480,12 @@ class InferenceFile(h5py.File):
         else:
             group = '/'.join([group, subgroup])
         self.attrs["low_frequency_cutoff"] = min(low_frequency_cutoff.values())
+        #self.attrs["low_frequency_cutoff"] = low_frequency_cutoff
         for ifo in psds:
             self[group.format(ifo=ifo)] = psds[ifo]
+            print("In write_psds")
+            print("sample_frequencies for {} is".format(ifo))
+            print(psds[ifo].sample_frequencies)
             self[group.format(ifo=ifo)].attrs['delta_f'] = psds[ifo].delta_f
 
     def write_data(self, strain_dict=None, stilde_dict=None,

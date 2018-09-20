@@ -129,6 +129,8 @@ def from_cli_single_ifo(opt, length, delta_f, low_frequency_cutoff, ifo,
     Get the PSD for a single ifo when using the multi-detector CLI
     """
     single_det_opt = copy_opts_for_single_ifo(opt, ifo)
+    print("In from_cli_single_ifo")
+    print("low_frequency_cutoff for {} is {}".format(ifo, low_frequency_cutoff))
     return from_cli(single_det_opt, length, delta_f, low_frequency_cutoff,
                     **kwargs)
 
