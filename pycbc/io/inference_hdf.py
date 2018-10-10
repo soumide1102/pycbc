@@ -730,6 +730,7 @@ class InferenceFile(h5py.File):
         # if only the posterior is desired, we'll flatten the results
         if not posterior_only and not self.posterior_only:
             kwargs['flatten'] = False
+        print(parameters)
         samples = self.read_samples(parameters, **kwargs)
         logging.info("Copying {} samples".format(samples.size))
         # if different parameter names are desired, get them from the samples

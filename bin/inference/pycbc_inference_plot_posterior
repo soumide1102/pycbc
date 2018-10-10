@@ -74,7 +74,9 @@ pycbc.init_logging(opts.verbose)
 # get parameters
 logging.info("Loading parameters")
 fp, parameters, labels, samples = option_utils.results_from_cli(opts)
-
+logging.info("In plot_posterior")
+logging.info('parameters', parameters)
+logging.info('samples', samples)
 # typecast to list so the input files can be iterated over
 fp = fp if isinstance(fp, list) else [fp]
 parameters = parameters if isinstance(parameters[0], list) else [parameters]

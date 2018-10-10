@@ -749,6 +749,7 @@ class EmceePTSampler(BaseMCMCSampler):
         arrays = {}
         group = fields_group + '/{name}'
         for name in fields:
+            print("name in sampler_emcee", name)
             arr = fp[group.format(name=name)][tidx, widx, get_index]
             if niterations is None:
                 niterations = arr.shape[-1]
