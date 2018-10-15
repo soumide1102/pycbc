@@ -89,7 +89,7 @@ class TestSamplers(unittest.TestCase):
             nwalkers = 30
             niterations = 4
             update_interval = 2
-            nprocesses = 2
+            inverse_temperatures_input_file = None
         self.opts = Arguments()
 
     def get_cbc_fdomain_generator(self, approximant="IMRPhenomPv2"):

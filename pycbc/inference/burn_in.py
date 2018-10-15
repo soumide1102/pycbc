@@ -78,6 +78,48 @@ def ks_test(sampler, fp):
         burn_in_idx = numpy.repeat(niterations, nwalkers).astype(int)
     return burn_in_idx, is_burned_in
 
+
+def n_acl(sampler, fp, nacls=5):
+    """Burn in based on ACL.
+    This applies the following test to determine burn in:
+    1. The first half of the samples are ignored.
+    2. An ACL is calculated from the second half.
+    3. If the ``nacls`` times the ACL is < the number of iterations / 2,
+       the sampler is considered to be burned in at the half-way point.
+    Parameters
+    ----------
+    sampler : pycbc.inference.sampler
+        Sampler to determine burn in for. May be either an instance of a
+        `inference.sampler`, or the class itself.
+    fp : InferenceFile
+        Open inference hdf file containing the samples to load for determing
+        burn in.
+    nacls : int
+        Number of ACLs to use for burn in. Default is 5.
+    Returns
+    -------
+    burn_in_idx : array
+        Array of indices giving the burn-in index for each chain. By definition
+        of this function, all chains reach burn in at the same iteration. Thus
+        the returned array is the burn-in index repeated by the number of
+        chains.
+    is_burned_in : array
+        Array of booleans indicating whether each chain is burned in. Since
+        all chains obtain burn in at the same time, this is either an array
+        of all False or True.
+    """
+    N = fp.niterations
+    acl = numpy.array(sampler.compute_acls(fp, start_index=N/2).values()).max()
+    is_burned_in = nacls * acl < N/2
+    if not is_burned_in:
+        burn_idx = N
+    else:
+        burn_idx = N/2
+    nwalkers = fp.nwalkers
+    return numpy.repeat(burn_idx, nwalkers).astype(int), \
+           numpy.repeat(is_burned_in, nwalkers).astype(bool)
+
+
 def max_posterior(sampler, fp):
     """Burn in based on samples being within dim/2 of maximum posterior.
 
@@ -223,6 +265,7 @@ def use_sampler(sampler, fp=None):
 
 burn_in_functions = {
     'ks_test': ks_test,
+    'n_acl': n_acl,
     'max_posterior': max_posterior,
     'posterior_step': posterior_step,
     'half_chain': half_chain,
@@ -293,13 +336,9 @@ class BurnIn(object):
         if fp.niterations < self.min_iterations:
             return numpy.repeat(self.min_iterations, fp.nwalkers), \
                    numpy.zeros(fp.nwalkers, dtype=bool)
-        # if the file already has burn in iterations saved, use those as a
-        # base
-        try:
-            burnidx = fp['burn_in_iterations'][:]
-        except KeyError:
-            # just use the minimum
-            burnidx = numpy.repeat(self.min_iterations, fp.nwalkers)
+        
+        # start assuming the minimum
+        burnidx = numpy.repeat(self.min_iterations, fp.nwalkers)
         # start by assuming is burned in; the &= below will make this false
         # if any test yields false
         is_burned_in = numpy.ones(fp.nwalkers, dtype=bool)
