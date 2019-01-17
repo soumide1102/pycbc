@@ -369,6 +369,8 @@ def data_from_cli(opts):
     length_dict = {}
     delta_f_dict = {}
     low_frequency_cutoff_dict = low_frequency_cutoff_from_cli(opts)
+    print("In option_utils")
+    print("low_frequency_cutoff_dict", low_frequency_cutoff_dict)
     for ifo in opts.instruments:
         stilde_dict[ifo] = strain_dict[ifo].to_frequencyseries()
         length_dict[ifo] = len(stilde_dict[ifo])

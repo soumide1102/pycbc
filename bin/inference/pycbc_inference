@@ -198,8 +198,13 @@ fft.from_cli(opts)
 # get the data and psd
 if 'data' in likelihood_class.required_kwargs:
     logging.info("Loading data")
+    opts.low_frequency_cutoff = {'H1': 30.0, 'L1': 20.0}
+    print("In pycbc_inference")
+    print(opts)
     strain_dict, stilde_dict, psd_dict = option_utils.data_from_cli(opts)
     low_frequency_cutoff_dict = option_utils.low_frequency_cutoff_from_cli(opts)
+    print("In pycbc_inference")
+    print("low_frequency_cutoff_dict", low_frequency_cutoff_dict)
     likelihood_args['f_lower'] = low_frequency_cutoff_dict
     likelihood_args['psds'] = psd_dict
 else:
