@@ -68,7 +68,7 @@ parser.add_argument("--samples-file", default=None,
 # add data options
 parser.add_argument("--instruments", type=str, nargs="+",
                     help="IFOs, eg. H1 L1.")
-option_utils.add_low_frequency_cutoff_opt(parser)
+#option_utils.add_low_frequency_cutoff_opt(parser)
 parser.add_argument("--psd-start-time", type=float, default=None,
                     help="Start time to use for PSD estimation if different "
                          "from analysis.")
@@ -118,20 +118,42 @@ fft.from_cli(opts)
 # Set up model arguments
 model_args = {}
 
+# soumi : move this to in with ctx
 # get the data and psd
-strain_dict, stilde_dict, psd_dict = option_utils.data_from_cli(opts)
-low_frequency_cutoff_dict = option_utils.low_frequency_cutoff_from_cli(opts)
-if stilde_dict:
-    model_args['data'] = stilde_dict
-    model_args['f_lower'] = low_frequency_cutoff_dict.values()[0]
-    model_args['delta_f'] = stilde_dict.values()[0].delta_f
-    model_args['delta_t'] = strain_dict.values()[0].delta_t
-    model_args['psds'] = psd_dict
+#strain_dict, stilde_dict, psd_dict = option_utils.data_from_cli(opts)
+#low_frequency_cutoff_dict = option_utils.low_frequency_cutoff_from_cli(opts)
+#if stilde_dict:
+#    model_args['data'] = stilde_dict
+    #model_args['f_lower'] = low_frequency_cutoff_dict.values()[0]
+#    model_args['delta_f'] = stilde_dict.values()[0].delta_f
+#    model_args['delta_t'] = strain_dict.values()[0].delta_t
+#    model_args['psds'] = psd_dict
 
 with ctx:
 
     # read configuration file
     cp = option_utils.config_parser_from_cli(opts)
+
+    # get the data and psd
+    #low_frequency_cutoff_dict = option_utils.low_frequency_cutoff_from_config(cp)
+    #try:
+    #    low_frequency_cutoff_dict = cp.get('model', 'low_frequency_cutoff')
+    #except:
+    #    low_frequency_cutoff_dict = None
+    if cp.has_option_tag("model", "low_frequency_cutoff", ""):
+        low_frequency_cutoff_dict = cp.get('model', 'low_frequency_cutoff')
+    else:
+        low_frequency_cutoff_dict = None
+    print("In pycbc_inference")
+    print("low_frequency_cutoff_dict", low_frequency_cutoff_dict)
+    opts.low_frequency_cutoff = low_frequency_cutoff_dict
+    strain_dict, stilde_dict, psd_dict = option_utils.data_from_cli(opts)
+    if stilde_dict:
+        model_args['data'] = stilde_dict
+        model_args['low_frequency_cutoff'] = low_frequency_cutoff_dict
+        model_args['delta_f'] = stilde_dict.values()[0].delta_f
+        model_args['delta_t'] = strain_dict.values()[0].delta_t
+        model_args['psds'] = psd_dict
 
     # get ifo-specific instances of calibration model
     if cp.has_section('calibration'):
