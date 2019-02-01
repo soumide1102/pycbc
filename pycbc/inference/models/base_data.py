@@ -79,6 +79,8 @@ class BaseDataModel(BaseModel):
         self.data = data
         self.recalibration = recalibration
         self.gates = gates
+        print("In base_data.py")
+        print("**kwargs", kwargs)
         super(BaseDataModel, self).__init__(variable_params, **kwargs)
 
     @property
@@ -145,7 +147,7 @@ class BaseDataModel(BaseModel):
     def detectors(self):
         """Returns the detectors used."""
         return self._data.keys()
-
+    
     def write_metadata(self, fp):
         """Adds data to the metadata that's written.
 

@@ -168,6 +168,8 @@ def read_from_config(cp, **kwargs):
     """
     # use the name to get the distribution
     name = cp.get("model", "name")
+    print("In __init__.py")
+    print("**kwargs", kwargs)
     return models[name].from_config(cp, **kwargs)
 
 
