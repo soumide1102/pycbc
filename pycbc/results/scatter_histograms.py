@@ -89,7 +89,8 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if ndim < 3:
         fsize = (8, 7)
     else:
-        fsize = (ndim*3 - 1, ndim*3 - 2)
+        #fsize = (ndim*3 - 1, ndim*3 - 2)
+        fsize = (ndim*3, ndim*3 - 1)
     fig = pyplot.figure(figsize=fsize)
     # create the axis grid
     gs = gridspec.GridSpec(ndim, ndim, width_ratios=width_ratios,
@@ -428,12 +429,14 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
     if rotated:
         yscale = 1.0
     elif len(ax.get_figure().axes) > 1:
-        yscale = 1.15
+        #yscale = 1.15
+        yscale = 1.6
     else:
-        yscale = 1.05
+        #yscale = 1.05
+        yscale = 1.6
 
     # get class that packs text boxes vertical or horizonitally
-    packer_class = offsetbox.VPacker if rotated else offsetbox.HPacker
+    packer_class = offsetbox.VPacker #if rotated else offsetbox.HPacker
 
     # if no title exists
     if not hasattr(ax, "title_boxes"):
