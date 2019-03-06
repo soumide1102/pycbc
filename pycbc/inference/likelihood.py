@@ -912,6 +912,8 @@ class GaussianLikelihood(BaseLikelihoodEvaluator):
                 # if the waveform terminates before the filtering low frequency
                 # cutoff, there is nothing to filter, so just go onto the next
                 continue
+            #print("I am in likelihood saving {}".format(det))
+            #numpy.savetxt('data' + str(det) + '.txt', numpy.c_[self.data[det].samples_frequencies[self._kmin[det]:kmax], self.data[det][self._kmin[det]:kmax]])
             h[self._kmin[det]:kmax] *= self._weight[det][self._kmin[det]:kmax]
             lr += (
                 # <h, d>
@@ -1071,6 +1073,8 @@ class MarginalizedPhaseGaussianLikelihood(GaussianLikelihood):
                 # if the waveform terminates before the filtering low frequency
                 # cutoff, there is nothing to filter, so just go onto the next
                 continue
+            print("I am in likelihood saving {}".format(det))
+            numpy.savetxt('data' + str(det) + '.txt', numpy.c_[abs(self.data[det].sample_frequencies)[self._kmin[det]:kmax], abs(self.data[det])[self._kmin[det]:kmax]])
             h[self._kmin[det]:kmax] *= self._weight[det][self._kmin[det]:kmax]
             hh += h[self._kmin[det]:kmax].inner(h[self._kmin[det]:kmax]).real
             hd += self.data[det][self._kmin[det]:kmax].inner(

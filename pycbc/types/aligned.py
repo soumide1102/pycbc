@@ -54,6 +54,9 @@ class ArrayWithAligned(_np.ndarray):
 def zeros(n, dtype):
     d = _np.dtype(dtype)
     nbytes = (d.itemsize)*int(n)
+    #print("d.itemsize", d.itemsize)
+    #print("n", n)
+    #print("PYCBC_ALIGNMENT", PYCBC_ALIGNMENT)
     tmp = _np.zeros(nbytes+PYCBC_ALIGNMENT, dtype=_np.uint8)
     address = tmp.__array_interface__['data'][0]
     offset = (PYCBC_ALIGNMENT - address%PYCBC_ALIGNMENT)%PYCBC_ALIGNMENT

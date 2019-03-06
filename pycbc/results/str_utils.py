@@ -68,7 +68,8 @@ def get_signum(val, err, max_sig=numpy.inf):
         if round(float(coeff)) == 10.:
             pwr -= 1
         pwr = min(pwr, max_sig)
-        tmplt = '%.' + str(pwr) + 'f'
+        #tmplt = '%.' + str(pwr) + 'f'
+        tmplt = '%.' + str(pwr+1) + 'f'
         return tmplt % val
     else:
         pwr = int(pwr[1:])
@@ -77,13 +78,15 @@ def get_signum(val, err, max_sig=numpy.inf):
         # if the error is large, we can sometimes get 0;
         # adjust the round until we don't get 0 (assuming the actual
         # value isn't 0)
-        return_val = round(val, -pwr)
+        #return_val = round(val, -pwr)
+        return_val = round(val, -pwr+1)
         if val != 0.:
             loop_count = 0
             max_recursion = 100
             while return_val == 0.:
                 pwr -= 1
-                return_val = round(val, -pwr)
+                #return_val = round(val, -pwr)
+                return_val = round(val, -pwr+1)
                 loop_count += 1
                 if loop_count > max_recursion:
                     raise ValueError("Maximum recursion depth hit! Input " +\

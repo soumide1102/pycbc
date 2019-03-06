@@ -155,6 +155,7 @@ if os.path.exists(opts.output_file) and not opts.force:
     raise OSError("output-file already exists; use --force if you wish to "
                   "overwrite it.")
 
+print("opts", opts)
 # check for how many iterations to run
 max_iterations = opts.niterations
 if opts.niterations is not None and opts.n_independent_samples is not None:
@@ -263,6 +264,9 @@ with ctx:
     if 'waveform_generator' in likelihood_class.required_kwargs:
         generator_function = generator.select_waveform_generator(
             static_args["approximant"])
+
+        for d in stilde_dict.values():
+            print("d.epoch", d.epoch)
 
         # construct class that will generate waveforms
         waveform_generator = generator.FDomainDetFrameGenerator(

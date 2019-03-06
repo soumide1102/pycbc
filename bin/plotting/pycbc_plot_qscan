@@ -33,9 +33,6 @@ from matplotlib.colors import LogNorm
 import pycbc.strain
 import pycbc.version
 import pycbc.results
-from pycbc import waveform
-from pycbc.waveform import get_td_waveform
-from pycbc.detector import Detector
 
 # https://stackoverflow.com/questions/9978880/python-argument-parser-list-of-list-or-tuple-of-tuples
 def t_window(s):
@@ -98,57 +95,6 @@ logging.basicConfig(format='%(asctime)s %(message)s', level=logging.INFO)
 #opts.low_frequency_cutoff = opts.f_low
 strain = pycbc.strain.from_cli(opts, pycbc.DYN_RANGE_FAC)
 
-print(opts)
-
-
-#apx = 'IMRPhenomPv2'
-# NOTE: Inclination runs from 0 to pi, with poles at 0 and pi
-#       coa_phase runs from 0 to 2 pi.
-#hp, hc = get_td_waveform(approximant=apx,
-#                         mass1=3.00990180361873,
-#                         mass2=3.009420163765797,
-#                         spin1x=0.0006443085013513579,
-#                         spin1y=0.000243297230969565,
-#                         spin1z=-0.000725207741029641,
-#                         spin2x=-0.33194459855044706,
-#                         spin2y=0.8660742215739932,
-#                         spin2z=-0.1806791820319507,
-#                         inclination=3.0997017748088034,
-#                         delta_t=1.0/4096,
-#                         f_lower=20.0)
-
-#det_h1 = Detector('H1')
-
-# Choose a GPS end time, sky location, and polarization phase for the merger
-# NOTE: Right ascension and polarization phase runs from 0 to 2pi
-#       Declination runs from pi/2. to -pi/2 with the poles at pi/2. and -pi/2.
-#end_time = 1180922494.391114
-#declination = 0.3570300803497643
-#right_ascension = 1.8636095442334946
-#polarization = 4.286237468309967
-
-##hp.start_time += end_time
-##hc.start_time += end_time
-
-##signal_h1 = det_h1.project_wave(hp, hc,  right_ascension, declination, polarization)
-
-#hp, hc = hp.trim_zeros(), hc.trim_zeros()
-#f = waveform.utils.frequency_from_polarizations(hp, hc)
-##f.sample_times += end_time
-
-
-import pycbc
-
-tc = 1180922494.391114
-center_time = 1180922494
-track_t_badsig, track_f_badsig = pycbc.pnutils.get_inspiral_tf(
-            tc - center_time, 3.0099018036187, 3.009420163765797,
-            -0.000725207741029641, -0.1806791820319507,20.0,approximant="SEOBNRv4_ROM")
-
-track_t_goodsig, track_f_goodsig = pycbc.pnutils.get_inspiral_tf(
-            tc - center_time, 10.17798305364355, 9.315998354446952,
-            0.04959056025571386, -0.06430049745701376 ,20.0,approximant="SEOBNRv4_ROM")
-
 if opts.center_time is None:
     center_time = (opts.gps_start_time + opts.gps_end_time) / 2.
 else:
@@ -172,7 +118,10 @@ if (center_time - strain.start_time) < 2 or (strain.end_time - center_time) < 2:
 strain = strain.whiten(4, 4, remove_corrupted=rem_corrupted)
 
 wins = opts.time_windows
-fig, axes = plt.subplots(len(wins),1)
+if len(wins) == 1:
+    fig, axes = plt.subplots(len(wins),1, figsize=(10,5))
+else:
+    fig, axes = plt.subplots(len(wins),1)
 times_all = []
 freqs_all = []
 qvals_all = []
@@ -199,7 +148,10 @@ for curr_idx in range(len(wins)):
 max_qval = max([qvals.max() for qvals in qvals_all])
 
 for curr_idx in range(len(wins)):
-    ax = axes[curr_idx]
+    if len(wins) == 1:
+        ax = axes
+    else:
+        ax = axes[curr_idx]
     times = times_all[curr_idx]
     freqs = freqs_all[curr_idx]
     qvals = qvals_all[curr_idx]
@@ -208,24 +160,8 @@ for curr_idx in range(len(wins)):
     norm=None
     if opts.log_colorbar:
         norm=LogNorm(vmin=1, vmax=max_qval)
-    #print("numpy.amin(times)", numpy.amin(times))
-    #print("numpy.amax(times)", numpy.amax(times))
-    #print("numpy.amin(freqs)", numpy.amin(freqs))
-    #print("numpy.amax(freqs)", numpy.amax(freqs))
-    #print("times", times)
-    #print("freqs", freqs)
-    ##print("f", f[:])
-    ##print("f.sample_times",f.sample_times[:])
-    ##print("numpy.amin(f.sample_times)", numpy.amin(abs(f.sample_times)))
-    ##print("numpy.amax(f.sample_times)", numpy.amax(abs(f.sample_times)))
-    ##print("numpy.amin(f)", numpy.amin(abs(f)))
-    ##print("numpy.amax(f)", numpy.amax(abs(f)))
-    #numpy.savetxt('h1_imr.txt', numpy.c_[f.sample_times, f])
+
     im = ax.pcolormesh(times - opts.center_time, freqs, qvals, norm=norm)
-    
-    ax.plot(track_t_badsig, track_f_badsig, '-', color="red", lw=1)
-    ax.plot(track_t_goodsig, track_f_goodsig, '-', color="orange", lw=1)
-    #ax.plot(f.sample_times, f, color="red", lw="2")
     ax.set_xlim(-curr_win[0], curr_win[1])
     ax.set_ylim(curr_frange[0], curr_frange[1])
     if opts.log_y:
@@ -240,7 +176,10 @@ plt.xlabel('Time from {:.3f} (s)'.format(opts.center_time))
 plt.ylabel('Frequency (Hz)')
 
 # https://stackoverflow.com/questions/13784201/matplotlib-2-subplots-1-colorbar
-cb = fig.colorbar(im, ax=axes.ravel().tolist())
+if len(wins) == 1:
+    cb = fig.colorbar(im, ax=axes)
+else:
+    cb = fig.colorbar(im, ax=axes.ravel().tolist())
 cb.set_label('Normalized power')
 
 if opts.plot_title is None:

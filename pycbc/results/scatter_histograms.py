@@ -43,6 +43,7 @@ from matplotlib import pyplot
 import matplotlib.gridspec as gridspec
 from pycbc.results import str_utils
 from pycbc.io import FieldArray
+import matplotlib.ticker as ticker
 
 def create_axes_grid(parameters, labels=None, height_ratios=None,
         width_ratios=None, no_diagonals=False):
@@ -84,7 +85,7 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if ndim < 3:
         fsize = (8, 7)
     else:
-        fsize = (ndim*3 - 1, ndim*3 - 2)
+        fsize = (ndim*3, ndim*3 - 1)
     fig = pyplot.figure(figsize=fsize)
     # create the axis grid
     gs = gridspec.GridSpec(ndim, ndim, width_ratios=width_ratios,
@@ -114,12 +115,26 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
                 axis_dict[px, py] = (ax, nrow, ncolumn)
                 # x labels only on bottom
                 if nrow + 1 == ndim:
-                    ax.set_xlabel('{}'.format(labels[px]), fontsize=18)
+                    ax.set_xlabel('{}'.format(labels[px]), fontsize=22)
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(18)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(18)
+                    ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
+                    ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
+                    ax.xaxis.labelpad = 8
                 else:
                     pyplot.setp(ax.get_xticklabels(), visible=False)
                 # y labels only on left
                 if ncolumn == 0:
-                    ax.set_ylabel('{}'.format(labels[py]), fontsize=18)
+                    ax.set_ylabel('{}'.format(labels[py]), fontsize=22)
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(18)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(18)
+                    #ax.xaxis.set_major_locator(ticker.MaxNLocator(5))
+                    #ax.yaxis.set_major_locator(ticker.MaxNLocator(5))
+                    ax.yaxis.labelpad = 8
                 else:
                     pyplot.setp(ax.get_yticklabels(), visible=False)
             else:
@@ -353,8 +368,10 @@ def create_marginalized_hist(ax, values, label, percentiles=None,
         values_max = values.max()
         negerror = values_med - values_min
         poserror = values_max - values_med
-        fmt = '$' + str_utils.format_value(values_med, negerror,
-              plus_error=poserror, ndecs=2) + '$'
+        #fmt = '$' + str_utils.format_value(values_med, negerror,
+        #      plus_error=poserror, ndecs=4) + '$'
+        fmt = '${0}$'.format(str_utils.format_value(
+            values_med, negerror, plus_error=poserror))
 
         if rotated:
             ax.yaxis.set_label_position("right")
@@ -418,12 +435,14 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
     if rotated:
         yscale = 1.0
     elif len(ax.get_figure().axes) > 1:
-        yscale = 1.15
+        #yscale = 1.15
+        yscale = 1.55
     else:
-        yscale = 1.05
+        #yscale = 1.05
+        yscale = 1.55
 
     # get class that packs text boxes vertical or horizonitally
-    packer_class = offsetbox.VPacker if rotated else offsetbox.HPacker
+    packer_class = offsetbox.VPacker #if rotated else offsetbox.HPacker
 
     # if no title exists
     if not hasattr(ax, "title_boxes"):
@@ -432,7 +451,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
         title = "{} = {}".format(label, fmt)
         tbox1 = offsetbox.TextArea(
                    title,
-                   textprops=dict(color=color, size=15, rotation=rotation,
+                   textprops=dict(color=color, size=17, rotation=rotation,
                                   ha='left', va='bottom'))
 
         # save a list of text boxes as attribute for later
@@ -451,7 +470,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
         # add new text box to list
         tbox1 = offsetbox.TextArea(
                    " {}".format(fmt),
-                   textprops=dict(color=color, size=15, rotation=rotation,
+                   textprops=dict(color=color, size=17, rotation=rotation,
                                   ha='left', va='bottom'))
         ax.title_boxes = ax.title_boxes + [tbox1]
 
