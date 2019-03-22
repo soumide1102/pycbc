@@ -19,7 +19,7 @@ This modules provides classes for evaluating uniform distributions.
 import numpy
 from pycbc.distributions import bounded
 
-class SigmoidSumm(bounded.BoundedDist):
+class SigmoidSum(bounded.BoundedDist):
     """
     A uniform distribution on the given parameters. The parameters are
     independent of each other. Instances of this class can be called like
@@ -92,7 +92,7 @@ class SigmoidSumm(bounded.BoundedDist):
     """
     name = 'sigmoid_sum'
     def __init__(self, steppos=None, **params):
-        super(SigmoidSumm, self).__init__(**params)
+        super(SigmoidSum, self).__init__(**params)
         # compute the norm and save
         # temporarily suppress numpy divide by 0 warning
         numpy.seterr(divide='ignore')

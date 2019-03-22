@@ -25,6 +25,7 @@ from pycbc import VARARGS_DELIM as _VARARGS_DELIM
 from pycbc.distributions.angular import UniformAngle, SinAngle, CosAngle, \
                                         UniformSolidAngle
 from pycbc.distributions.arbitrary import Arbitrary, FromFile
+from pycbc.distributions.sigmoid_sum import *
 from pycbc.distributions.gaussian import Gaussian
 from pycbc.distributions.power_law import UniformPowerLaw, UniformRadius
 from pycbc.distributions.sky_location import UniformSky
@@ -41,6 +42,7 @@ distribs = {
     IndependentChiPChiEff.name : IndependentChiPChiEff,
     Arbitrary.name : Arbitrary,
     FromFile.name : FromFile,
+    SigmoidSum : SigmoidSum,
     Gaussian.name : Gaussian,
     UniformPowerLaw.name : UniformPowerLaw,
     UniformRadius.name : UniformRadius,
