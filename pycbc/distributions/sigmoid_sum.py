@@ -53,16 +53,16 @@ class SigmoidSum(bounded.BoundedDist):
     --------
     Create a 2 dimensional uniform distribution:
 
-    >>> dist = prior.Uniform(mass1=(10.,50.), mass2=(10.,50.))
+    >>> dist = prior.SigmoidSum(lambda_s=(0.,1000.), steppos=100.)
 
     Get the log of the pdf at a particular value:
 
-    >>> dist.logpdf(mass1=25., mass2=10.)
+    >>> dist.logpdf(lambda_s=10)
         -7.3777589082278725
 
     Do the same by calling the distribution:
 
-    >>> dist(mass1=25., mass2=10.)
+    >>> dist(lambda_s=10)
         -7.3777589082278725
 
     Generate some random values:
@@ -76,12 +76,12 @@ class SigmoidSum(bounded.BoundedDist):
     Initialize a uniform distribution using a boundaries.Bounds instance,
     with cyclic bounds:
 
-    >>> dist = distributions.Uniform(phi=Bounds(10, 50, cyclic=True))
+    >>> dist = distributions.SigmoidSum(phi=Bounds(10, 50, cyclic=True))
 
     Apply boundary conditions to a value:
 
     >>> dist.apply_boundary_conditions(phi=60.)
-        {'mass1': array(20.0)}
+        {'lambda_s': array(20.0)}
 
     The boundary conditions are applied to the value before evaluating the pdf;
     note that the following returns a non-zero pdf. If the bounds were not
@@ -96,16 +96,18 @@ class SigmoidSum(bounded.BoundedDist):
         # compute the norm and save
         # temporarily suppress numpy divide by 0 warning
         numpy.seterr(divide='ignore')
+        self.steppos=steppos
         self._lognorm = 0.0
         self._norm = 1.0
         numpy.seterr(divide='warn')
 
         for bnds in self._bounds.values():
-        a,b = self._bounds.bounds.values()
-        invnorm = numpy.log(2.71828**b + 1.0) - 0.5*numpy.log(2.71828**b + 2.68812*10**43) \
-                    - numpy.log(2.71828**a + 1.0) - 0.5*numpy.log(2.71828**a + 2.68812*10**43)
-        self._norm = 1./invnorm
-        self._lognorm = numpy.log(self._norm)
+            print(self._bounds)
+            a,b = bnds
+            invnorm = numpy.log(numpy.power(2.71828,b) + 1.0) - 0.5*numpy.log(numpy.power(2.71828,b) + 2.68812*numpy.power(10,43)) \
+                    - numpy.log(numpy.power(2.71828,a) + 1.0) - 0.5*numpy.log(numpy.power(2.71828,a) + 2.68812*numpy.power(10,43))
+            self._norm = 1./invnorm
+            self._lognorm = numpy.log(self._norm)
 
     @property
     def norm(self):
@@ -167,8 +169,8 @@ class SigmoidSum(bounded.BoundedDist):
             dtype = [(p, float) for p in self.params]
         arr = numpy.zeros(size, dtype=dtype)
         for (p,_) in dtype:
-            a,b = self._bounds
-            #a,b = self._bounds[p]
+            #a,b = self._bounds
+            a,b = self._bounds[p]
             x = numpy.linspace(a,b,1000)
             pdf_param = self._norm*self.get_sigmoidsum_pdf(x, self.steppos)
             pdf = pdf_param/pdf_param.sum()
