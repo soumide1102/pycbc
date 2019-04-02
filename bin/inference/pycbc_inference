@@ -195,6 +195,9 @@ numpy.seterr(divide='ignore', invalid='ignore')
 ctx = scheme.from_cli(opts)
 fft.from_cli(opts)
 
+print(opts)
+print(opts.sample_rate)
+print(opts.injection_file)
 # get the data and psd
 if 'data' in likelihood_class.required_kwargs:
     logging.info("Loading data")
