@@ -440,6 +440,9 @@ def from_cli_multi_ifos(opt, ifos, **kwargs):
     """
     strain = {}
     for ifo in ifos:
+        print("In strain.py")
+        print(opt)
+        print(ifo)
         strain[ifo] = from_cli_single_ifo(opt, ifo, **kwargs)
     return strain
 

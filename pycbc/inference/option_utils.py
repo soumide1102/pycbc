@@ -85,6 +85,9 @@ def data_from_cli(opts):
 
     # get strain time series
     instruments = opts.instruments if opts.instruments is not None else []
+    #print(opts)
+    #print("opts.strain_high_pass", opts.strain_high_pass)
+    #print("opts.sample_rate", opts.sample_rate)
     strain_dict = strain_from_cli_multi_ifos(opts, instruments,
                                              precision="double")
     # apply gates if not waiting to overwhiten

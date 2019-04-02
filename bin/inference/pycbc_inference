@@ -93,6 +93,10 @@ strain.add_gate_option_group(parser)
 # parse command line
 opts = parser.parse_args()
 
+#print(opts)
+#print("opts.strain_high_pass", opts.strain_high_pass)
+#print("opts.sample_rate", opts.sample_rate)
+
 # setup log
 # If we're running in MPI mode, only allow the parent to print
 if opts.use_mpi:
@@ -123,6 +127,10 @@ fft.from_cli(opts)
 
 # Set up model arguments
 model_args = {}
+
+#print(opts)
+#print("opts.strain_high_pass", opts.strain_high_pass)
+#print("opts.sample_rate", opts.sample_rate)
 
 # get the data and psd
 strain_dict, stilde_dict, psd_dict = option_utils.data_from_cli(opts)
