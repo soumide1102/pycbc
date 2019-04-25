@@ -403,6 +403,24 @@ def lambda_tilde(mass1, mass2, lambda1, lambda2):
     p2 = (1 - 4 * eta)**0.5 * (1 + 9 * eta - 11 * eta ** 2.0) * (ldiff)
     return formatreturn(8.0 / 13.0 * (p1 + p2), input_is_array)
 
+
+def lambda_from_mass_eos_file(mass, eos_file):
+    mass_array = ensurearray(mass)
+    data = numpy.loadtxt(eos_file)
+    mass_from_file = data[:, 0]
+    lambda_from_file = data[:, 1]
+    lambda_array = numpy.zeros(len(mass_array))
+    for ii in range(len(mass_array)):
+        idx1 = numpy.where(mass_from_file < mass_array[ii])[-1]
+        idx2 = numpy.where(mass_from_file > mass_array[ii])[0]
+        mass_bounds = [mass_from_file[idx1], mass_from_file[idx2]]
+        lambda_bounds = [lambda_from_file[idx1], lambda_from_file[idx2]]
+        print(mass_bounds)
+        print(lambda_bounds)
+        lambda_array[ii] = numpy.interp(mass_array[ii], mass_bounds, lambda_bounds)
+    return formatreturn(lambda_array, input_is_array)
+    
+
 #
 # =============================================================================
 #
@@ -484,7 +502,8 @@ def secondary_spin(mass1, mass2, spin1, spin2):
     ss = copy.copy(spin2)
     mask = mass1 < mass2
     ss[mask] = spin1[mask]
-    return formatreturn(ss, input_is_array)
+    return 
+    formatreturn(ss, input_is_array)
 
 
 def primary_xi(mass1, mass2, spin1x, spin1y, spin2x, spin2y):
