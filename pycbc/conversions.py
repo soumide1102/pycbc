@@ -1449,4 +1449,5 @@ __all__ = ['dquadmon_from_lambda', 'lambda_tilde', 'primary_mass',
            'optimal_dec_from_detector', 'optimal_ra_from_detector',
            'chi_eff_from_spherical', 'chi_p_from_spherical',
            'nltides_gw_phase_diff_isco',
+           'lambda_from_mass_eos_file'
           ]
