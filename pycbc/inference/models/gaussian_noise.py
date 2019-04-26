@@ -251,7 +251,7 @@ class GaussianNoise(BaseDataModel):
                     self._f_upper[det] = high_frequency_cutoff[det]
                 else:
                     self._f_upper[det] = None
-         else:
+        else:
             [self._f_upper[det] = None for det in self.data.keys()]
         print("self._f_upper", self._f_upper)
         if norm is None:
