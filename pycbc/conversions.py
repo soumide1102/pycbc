@@ -404,22 +404,51 @@ def lambda_tilde(mass1, mass2, lambda1, lambda2):
     return formatreturn(8.0 / 13.0 * (p1 + p2), input_is_array)
 
 
+#def lambda_from_mass_eos_file(mass, eos_file):
+#    print("mass.type", mass.type)
+#    mass_array, input_is_array = ensurearray(mass)
+#    print("mass_array",mass_array)
+#    data = numpy.loadtxt(eos_file)
+#    mass_from_file = data[:, 0]
+#    lambda_from_file = data[:, 1]
+#    if mass_array.size == 1:
+#       mass_array = numpy.atleast_1d(mass_array)
+#    print("mass_array", mass_array)
+#    lambda_array = numpy.zeros(mass_array.size)
+#    for ii in range(mass_array.size):
+#        print("ii", ii, mass_array[ii])
+#        print(numpy.where(mass_from_file < mass_array[ii])[0])
+#        print(numpy.where(mass_from_file > mass_array[ii]))
+#        idxs_below = numpy.where(mass_from_file < mass_array[ii])
+#        idxs_above = numpy.where(mass_from_file > mass_array[ii])
+#        mass_bounds = [mass_from_file[idxs_below][-1], mass_from_file[idxs_above][0]]
+#        lambda_bounds = [lambda_from_file[idxs_below][-1], lambda_from_file[idxs_above][0]]
+#        print(mass_bounds)
+#        print(lambda_bounds)
+#        lambda_array[ii] = numpy.interp(mass_array[ii], mass_bounds, lambda_bounds)
+#    return formatreturn(lambda_array, input_is_array)
+    
 def lambda_from_mass_eos_file(mass, eos_file):
-    mass_array = ensurearray(mass)
+    #print("mass", mass)
     data = numpy.loadtxt(eos_file)
     mass_from_file = data[:, 0]
     lambda_from_file = data[:, 1]
-    lambda_array = numpy.zeros(len(mass_array))
-    for ii in range(len(mass_array)):
-        idx1 = numpy.where(mass_from_file < mass_array[ii])[-1]
-        idx2 = numpy.where(mass_from_file > mass_array[ii])[0]
-        mass_bounds = [mass_from_file[idx1], mass_from_file[idx2]]
-        lambda_bounds = [lambda_from_file[idx1], lambda_from_file[idx2]]
-        print(mass_bounds)
-        print(lambda_bounds)
-        lambda_array[ii] = numpy.interp(mass_array[ii], mass_bounds, lambda_bounds)
-    return formatreturn(lambda_array, input_is_array)
-    
+    if numpy.isscalar(mass):
+       mass = numpy.atleast_1d(mass)
+    #print("mass", mass)
+    lambdav = numpy.zeros(len(mass))
+    for ii in range(len(mass)):
+        #print("ii", ii, mass[ii])
+        #print(numpy.where(mass_from_file < mass[ii])[0])
+        #print(numpy.where(mass_from_file > mass[ii]))
+        idxs_below = numpy.where(mass_from_file < mass[ii])
+        idxs_above = numpy.where(mass_from_file > mass[ii])
+        mass_bounds = [mass_from_file[idxs_below][-1], mass_from_file[idxs_above][0]]
+        lambda_bounds = [lambda_from_file[idxs_below][-1], lambda_from_file[idxs_above][0]]
+        #print(mass_bounds)
+        #print(lambda_bounds)
+        lambdav[ii] = numpy.interp(mass[ii], mass_bounds, lambda_bounds)
+    return lambdav
 
 #
 # =============================================================================
