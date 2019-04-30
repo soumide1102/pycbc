@@ -1009,6 +1009,7 @@ class LambdaFromTOVFile(BaseTransform):
         float
             The Lambda corresponding to the mass `m' interpolating from the Lambda-M data.
         """
+        m_src = m/(1.0 + cosmology.redshift(abs(d)))
         lambdav = numpy.interp(m_src, mass_data, lambda_data)
         return lambdav
 
