@@ -931,6 +931,191 @@ class CartesianSpinToChiP(BaseTransform):
         return self.format_output(maps, out)
 
 
+class LambdaFromTOVFile(BaseTransform):
+    """Applies a logit transform from an `inputvar` parameter to an `outputvar`
+    parameter. This is the inverse of the logistic transform.
+    Typically, the input of the logit function is assumed to have domain
+    :math:`\in (0, 1)`. However, the `domain` argument can be used to expand
+    this to any finite real interval.
+    Parameters
+    ----------
+    inputvar : str
+        The name of the parameter to transform.
+    outputvar : str
+        The name of the transformed parameter.
+    domain : tuple or distributions.bounds.Bounds, optional
+        The domain of the input parameter. Can be any finite
+        interval. Default is (0., 1.).
+    """
+    name = 'lambda_from_tov_file'
+
+    #def __init__(self, mass_param, lambda_param, lambda_m_file, distance=None, det_to_source=True):
+    def __init__(self, mass_param, lambda_param, lambda_m_file, distance=None):
+        self._lambda_m_file = lambda_m_file
+        self._mass_param = mass_param
+        self._lambda_param = lambda_param
+        self._distance = distance
+        self._inputs = [mass_param, 'distance']
+        self._outputs = [lambda_param]
+        print("Loading data file")
+        data = numpy.loadtxt(self._lambda_m_file)
+        self._mass_data = data[:,0]
+        self._lambda_data = data[:,1]
+        super(LambdaFromTOVFile, self).__init__()
+
+    @property
+    def mass_param(self):
+        """Returns the input parameter."""
+        return self._mass_param
+
+    @property
+    def lambda_param(self):
+        """Returns the output parameter."""
+        return self._lambda_param
+
+    @property
+    def mass_data(self):
+        """Returns the mass data read from the mass-Lambda data file for an EOS.
+        """
+        return self._mass_data
+
+    @property
+    def lambda_data(self):
+        """Returns the lambda data read from the mass-Lambda data file for an EOS.
+        """
+        return self._lambda_data
+
+    @property
+    def distance(self):
+        """Returns the fixed distance to transform mass samples from detector to source
+        frame if one is specified.
+        """
+        return self._distance
+
+    @staticmethod
+    def lambda_from_tov_file(m, d, mass_data, lambda_data):
+        r"""
+        Parameters
+        ----------
+        m : float
+            Value of the mass.
+        mass_data : array
+            Mass array from the Lambda-M curve of an EOS.
+        lambda_data : array
+            Lambda array from the Lambda-M curve of an EOS.
+        Returns
+        -------
+        float
+            The Lambda corresponding to the mass `m' interpolating from the Lambda-M data.
+        """
+        #print("len(m)", len(m))
+        print("m", m)
+        print("d", d)
+        m_src = m/(1.0 + cosmology.redshift(abs(d)))
+        #if numpy.isscalar(m):
+        #    m = numpy.atleast_1d(m)
+        #lambdav = numpy.zeros(len(m))
+        #for ii in range(len(m)):
+        #    idxs_below = numpy.where(mass_data < m[ii])
+        #    idxs_above = numpy.where(mass_data > m[ii])
+        #    mass_bounds = [mass_data[idxs_below][-1], mass_data[idxs_above][0]]
+        #    lambda_bounds = [lambda_data[idxs_below][-1], lambda_data[idxs_above][0]]
+        #    lambdav[ii] = numpy.interp(m[ii], mass_bounds, lambda_bounds)
+        #    print(lambdav[ii], type(lambdav[ii]))
+        #return lambdav
+        #try:
+        #    idxs_below = numpy.where(mass_data < m_src)
+        #    idxs_above = numpy.where(mass_data > m_src)
+        #    print("In lambda_from_tov_file idxs_below", idxs_below)
+        #    print("In lambda_from_tov_file idxs_above", idxs_above)
+        #except IndexError:
+        #    print("Mass drawn is not within the range of mass data in the file")
+        #mass_bounds = [mass_data[idxs_below][-1], mass_data[idxs_above][0]]
+        #lambda_bounds = [lambda_data[idxs_below][-1], lambda_data[idxs_above][0]]
+        #lambdav = numpy.interp(m_src, mass_bounds, lambda_bounds)
+        lambdav = numpy.interp(m_src, mass_data, lambda_data)
+        print(lambdav, type(lambdav))
+        return lambdav
+
+
+    def transform(self, maps):
+        r"""
+        Parameters
+        ----------
+        maps : dict or FieldArray
+            A dictionary or FieldArray which provides a map between the
+            parameter name of the variable to transform and its value(s).
+        Returns
+        -------
+        out : dict or FieldArray
+            A map between the transformed variable name and value(s), along
+            with the original variable name and value(s).
+        """
+        print("In transform: self._mass_param", self._mass_param)
+        #m = maps[self._mass_param]
+        #d = maps[parameters.distance]
+        #mass_param, distance_param = self._inputs
+        m = maps[self._mass_param]
+        if self._distance is not None:
+            d = self._distance
+        else:
+            d = maps['distance']
+        print("In transform m", m)
+        print("In transform d", d)
+        print("In transform self._mass_data", self._mass_data)
+        print("In transform self._lambda_data", self._lambda_data)
+        out = {self._lambda_param : self.lambda_from_tov_file(m, d, self._mass_data, self._lambda_data)}
+        return self.format_output(maps, out)
+
+    @classmethod
+    def from_config(cls, cp, section, outputs, skip_opts=None,
+                    additional_opts=None):
+        """Initializes a Lambda-m transform from the given section. The input file
+        containing the Lambda-m data is taken in from an input data file.
+        Example:
+        .. code-block:: ini
+            [{section}-lambda1]
+            name = lambda_from_tov_file
+            mass_param = mass1
+            lambda_param = lambda1
+            diatance = 40
+            lambda_m_file = filepath
+        Parameters
+        ----------
+        cp : pycbc.workflow.WorkflowConfigParser
+            A parsed configuration file that contains the transform options.
+        section : str
+            Name of the section in the configuration file.
+        outputs : str
+            The names of the parameters that are output by this transformation,
+            separated by `VARARGS_DELIM`. These must appear in the "tag" part
+            of the section header.
+        skip_opts : list, optional
+            Do not read options in the given list.
+        additional_opts : dict, optional
+            Any additional arguments to pass to the class. If an option is
+            provided that also exists in the config file, the value provided
+            will be used instead of being read from the file.
+        Returns
+        -------
+        cls
+            An instance of the class.
+        """
+        # pull out the minimum, maximum values of the input variable
+        s = '-'.join([section, outputs])
+        if skip_opts is None:
+            skip_opts = []
+        if additional_opts is None:
+            additional_opts = {}
+        else:
+            additional_opts = additional_opts.copy()
+        if 'lambda_m_file' in cp.options(s):
+            lambda_m_file = cp.get(s, 'lambda_m_file')
+        additional_opts.update({'lambda_m_file': lambda_m_file})
+        return super(LambdaFromTOVFile, cls).from_config(cp, section, outputs, skip_opts,
+                                             additional_opts)
+
+
 class Logit(BaseTransform):
     """Applies a logit transform from an `inputvar` parameter to an `outputvar`
     parameter. This is the inverse of the logistic transform.
@@ -1496,6 +1681,7 @@ transforms = {
     CartesianSpinToChiP.name : CartesianSpinToChiP,
     Logit.name : Logit,
     Logistic.name : Logistic,
+    LambdaFromTOVFile.name : LambdaFromTOVFile
 }
 
 # standard CBC transforms: these are transforms that do not require input
