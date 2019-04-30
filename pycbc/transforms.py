@@ -957,7 +957,6 @@ class LambdaFromTOVFile(BaseTransform):
         self._distance = distance
         self._inputs = [mass_param, 'distance']
         self._outputs = [lambda_param]
-        print("Loading data file")
         data = numpy.loadtxt(self._lambda_m_file)
         self._mass_data = data[:,0]
         self._lambda_data = data[:,1]
@@ -999,6 +998,8 @@ class LambdaFromTOVFile(BaseTransform):
         ----------
         m : float
             Value of the mass.
+        d : float
+            Value of distance.
         mass_data : array
             Mass array from the Lambda-M curve of an EOS.
         lambda_data : array
@@ -1008,33 +1009,7 @@ class LambdaFromTOVFile(BaseTransform):
         float
             The Lambda corresponding to the mass `m' interpolating from the Lambda-M data.
         """
-        #print("len(m)", len(m))
-        print("m", m)
-        print("d", d)
-        m_src = m/(1.0 + cosmology.redshift(abs(d)))
-        #if numpy.isscalar(m):
-        #    m = numpy.atleast_1d(m)
-        #lambdav = numpy.zeros(len(m))
-        #for ii in range(len(m)):
-        #    idxs_below = numpy.where(mass_data < m[ii])
-        #    idxs_above = numpy.where(mass_data > m[ii])
-        #    mass_bounds = [mass_data[idxs_below][-1], mass_data[idxs_above][0]]
-        #    lambda_bounds = [lambda_data[idxs_below][-1], lambda_data[idxs_above][0]]
-        #    lambdav[ii] = numpy.interp(m[ii], mass_bounds, lambda_bounds)
-        #    print(lambdav[ii], type(lambdav[ii]))
-        #return lambdav
-        #try:
-        #    idxs_below = numpy.where(mass_data < m_src)
-        #    idxs_above = numpy.where(mass_data > m_src)
-        #    print("In lambda_from_tov_file idxs_below", idxs_below)
-        #    print("In lambda_from_tov_file idxs_above", idxs_above)
-        #except IndexError:
-        #    print("Mass drawn is not within the range of mass data in the file")
-        #mass_bounds = [mass_data[idxs_below][-1], mass_data[idxs_above][0]]
-        #lambda_bounds = [lambda_data[idxs_below][-1], lambda_data[idxs_above][0]]
-        #lambdav = numpy.interp(m_src, mass_bounds, lambda_bounds)
         lambdav = numpy.interp(m_src, mass_data, lambda_data)
-        print(lambdav, type(lambdav))
         return lambdav
 
 
@@ -1051,19 +1026,11 @@ class LambdaFromTOVFile(BaseTransform):
             A map between the transformed variable name and value(s), along
             with the original variable name and value(s).
         """
-        print("In transform: self._mass_param", self._mass_param)
-        #m = maps[self._mass_param]
-        #d = maps[parameters.distance]
-        #mass_param, distance_param = self._inputs
         m = maps[self._mass_param]
         if self._distance is not None:
             d = self._distance
         else:
             d = maps['distance']
-        print("In transform m", m)
-        print("In transform d", d)
-        print("In transform self._mass_data", self._mass_data)
-        print("In transform self._lambda_data", self._lambda_data)
         out = {self._lambda_param : self.lambda_from_tov_file(m, d, self._mass_data, self._lambda_data)}
         return self.format_output(maps, out)
 

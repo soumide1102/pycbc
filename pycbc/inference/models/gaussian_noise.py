@@ -328,7 +328,6 @@ class GaussianNoise(BaseDataModel):
         """
         params = self.current_params
         try:
-            print("Generating waveform with", params)
             wfs = self._waveform_generator.generate(**params)
         except NoWaveformError:
             return self._nowaveform_loglr()

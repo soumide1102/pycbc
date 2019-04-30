@@ -628,8 +628,6 @@ class BaseModel(object):
             params = transforms.apply_transforms(params,
                                                  self.waveform_transforms,
                                                  inverse=False)
-            print("In models/base.py")
-            print("params.keys()", params.keys())
         # apply boundary conditions
         params = self.prior_distribution.apply_boundary_conditions(**params)
         return params

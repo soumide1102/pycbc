@@ -128,8 +128,6 @@ class MultiTemperedMCMCIO(object):
                    for p in samples.values()), (
                "all samples must have the same shape")
         group = self.samples_group + '/{name}'
-        print("In base_multitemper")
-        print("samples.keys()", samples.keys())
         if parameters is None:
             parameters = samples.keys()
         # thin the samples
