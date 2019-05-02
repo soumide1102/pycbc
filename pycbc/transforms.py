@@ -16,6 +16,7 @@
 This modules provides classes and functions for transforming parameters.
 """
 
+from ConfigParser import NoSectionError, NoOptionError
 import copy
 import logging
 import numpy
@@ -932,32 +933,36 @@ class CartesianSpinToChiP(BaseTransform):
 
 
 class LambdaFromTOVFile(BaseTransform):
-    """Applies a logit transform from an `inputvar` parameter to an `outputvar`
-    parameter. This is the inverse of the logistic transform.
-    Typically, the input of the logit function is assumed to have domain
-    :math:`\in (0, 1)`. However, the `domain` argument can be used to expand
-    this to any finite real interval.
+    """Transforms mass values to corresponding Lambda values for a given EOS
+    interpolating from the mass-Lambda data for that EOS read in from an external
+    ASCII file. The interpolation of the mass-Lambda data is a one-dimensional
+    piecewise linear interpolation. The mass values to be transformed are assumed
+    to be detector frame masses, so a distance should be provided along with the
+    mass for transformation to the source frame mass before the Lambda values are
+    extracted from the interpolation. If the mass value inputted is in the source
+    frame, then provide distance=0.
+
     Parameters
     ----------
-    inputvar : str
-        The name of the parameter to transform.
-    outputvar : str
-        The name of the transformed parameter.
-    domain : tuple or distributions.bounds.Bounds, optional
-        The domain of the input parameter. Can be any finite
-        interval. Default is (0., 1.).
+    mass_param : str
+        The name of the mass parameter to transform.
+    lambda_param : str
+        The name of the tidal deformability parameter that mass_param is to
+        be converted to interpolating from the data in the mass-Lambda file.
+    m_lambda_file : str
+        Path of the mass-Lambda data file
+    distance : float, optional
     """
     name = 'lambda_from_tov_file'
 
-    #def __init__(self, mass_param, lambda_param, lambda_m_file, distance=None, det_to_source=True):
-    def __init__(self, mass_param, lambda_param, lambda_m_file, distance=None):
-        self._lambda_m_file = lambda_m_file
+    def __init__(self, mass_param, lambda_param, m_lambda_file, distance=None):
+        self._m_lambda_file = m_lambda_file
         self._mass_param = mass_param
         self._lambda_param = lambda_param
         self._distance = distance
         self._inputs = [mass_param, 'distance']
         self._outputs = [lambda_param]
-        data = numpy.loadtxt(self._lambda_m_file)
+        data = numpy.loadtxt(self._m_lambda_file)
         self._mass_data = data[:,0]
         self._lambda_data = data[:,1]
         super(LambdaFromTOVFile, self).__init__()
@@ -974,13 +979,15 @@ class LambdaFromTOVFile(BaseTransform):
 
     @property
     def mass_data(self):
-        """Returns the mass data read from the mass-Lambda data file for an EOS.
+        """Returns the mass data read from the mass-Lambda data file for
+        an EOS.
         """
         return self._mass_data
 
     @property
     def lambda_data(self):
-        """Returns the lambda data read from the mass-Lambda data file for an EOS.
+        """Returns the Lambda data read from the mass-Lambda data file for
+        an EOS.
         """
         return self._lambda_data
 
@@ -992,8 +999,9 @@ class LambdaFromTOVFile(BaseTransform):
         return self._distance
 
     @staticmethod
-    def lambda_from_tov_file(m, d, mass_data, lambda_data):
-        r"""
+    def lambda_from_tov_data(m, d, mass_data, lambda_data):
+        r"""Returns Lambda corresponding to a given mass interpolating from the
+        TOV data.
         Parameters
         ----------
         m : float
@@ -1006,16 +1014,15 @@ class LambdaFromTOVFile(BaseTransform):
             Lambda array from the Lambda-M curve of an EOS.
         Returns
         -------
-        float
-            The Lambda corresponding to the mass `m' interpolating from the Lambda-M data.
+        lambdav : float
+            The Lambda corresponding to the mass `m` for the EOS considered.
         """
         m_src = m/(1.0 + cosmology.redshift(abs(d)))
         lambdav = numpy.interp(m_src, mass_data, lambda_data)
         return lambdav
 
-
     def transform(self, maps):
-        r"""
+        r"""Computes the transformation of mass to Lambda.
         Parameters
         ----------
         maps : dict or FieldArray
@@ -1032,22 +1039,38 @@ class LambdaFromTOVFile(BaseTransform):
             d = self._distance
         else:
             d = maps['distance']
-        out = {self._lambda_param : self.lambda_from_tov_file(m, d, self._mass_data, self._lambda_data)}
+        out = {self._lambda_param : self.lambda_from_tov_data(m, d, self._mass_data, self._lambda_data)}
         return self.format_output(maps, out)
 
     @classmethod
     def from_config(cls, cp, section, outputs, skip_opts=None,
                     additional_opts=None):
-        """Initializes a Lambda-m transform from the given section. The input file
-        containing the Lambda-m data is taken in from an input data file.
+        """Initializes a mass-Lambda transform from the given section. The
+        section must specify the names of the input mass parameter and the
+        output Lambda parameter. Also, read in as input is a file containing
+        the mass-Lambda data for an EOS. There is also an option to read in
+        the value of the distance to the source that will be used to transform
+        the detector frame mass to source frame before interpolating from the
+        mass-Lambda data.
         Example:
         .. code-block:: ini
             [{section}-lambda1]
             name = lambda_from_tov_file
             mass_param = mass1
             lambda_param = lambda1
-            diatance = 40
-            lambda_m_file = filepath
+            distance = 40
+            m_lambda_file = filepath
+        
+        If this transform is used in a parameter estimation analysis where
+        distance is a variable parameter, the distance to be used will vary
+        with each draw. In that case, the example code block will be:
+        .. code-block:: ini
+            [{section}-lambda1]
+            name = lambda_from_tov_file
+            mass_param = mass1
+            lambda_param = lambda1
+            m_lambda_file = filepath
+
         Parameters
         ----------
         cp : pycbc.workflow.WorkflowConfigParser
@@ -1069,19 +1092,22 @@ class LambdaFromTOVFile(BaseTransform):
         cls
             An instance of the class.
         """
-        # pull out the minimum, maximum values of the input variable
         s = '-'.join([section, outputs])
-        if skip_opts is None:
-            skip_opts = []
         if additional_opts is None:
             additional_opts = {}
         else:
             additional_opts = additional_opts.copy()
-        if 'lambda_m_file' in cp.options(s):
-            lambda_m_file = cp.get(s, 'lambda_m_file')
-        additional_opts.update({'lambda_m_file': lambda_m_file})
-        return super(LambdaFromTOVFile, cls).from_config(cp, section, outputs, skip_opts,
-                                             additional_opts)
+        try:
+            m_lambda_file = cp.get(s, 'm_lambda_file')
+        except (NoOptionError, NoSectionError) as e:
+            logging.warning("The filepath for an ASCII file containing the "
+                            "mass-Lambda data for a EOS needs to be provided "
+                            "in config file under section %s.", s)
+            raise e
+        additional_opts.update({'m_lambda_file': m_lambda_file})
+        return super(LambdaFromTOVFile, cls).from_config(
+                                           cp, section, outputs, skip_opts,
+                                           additional_opts=additional_opts)
 
 
 class Logit(BaseTransform):
