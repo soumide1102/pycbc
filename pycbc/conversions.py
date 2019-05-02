@@ -404,7 +404,6 @@ def lambda_tilde(mass1, mass2, lambda1, lambda2):
     return formatreturn(8.0 / 13.0 * (p1 + p2), input_is_array)
 
 
-#def lambda_from_mass_tov_file(mass, tov_file):
 def lambda_from_mass_tov_file(mass, tov_file, distance=0.):
     r"""Return the lambda parameter(s) corresponding to the inputted mass(es)
     interpolating from the mass-Lambda data for a particular EOS read in from
@@ -414,7 +413,6 @@ def lambda_from_mass_tov_file(mass, tov_file, distance=0.):
     lambda_from_file = data[:, 1]
     mass_src = mass/(1.0 + pycbc.cosmology.redshift(distance))
     lambdav = numpy.interp(mass_src, mass_from_file, lambda_from_file)
-    #lambdav = numpy.interp(mass, mass_from_file, lambda_from_file)
     return lambdav
 
 #

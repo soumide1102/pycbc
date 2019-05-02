@@ -933,14 +933,34 @@ class CartesianSpinToChiP(BaseTransform):
 
 
 class LambdaFromTOVFile(BaseTransform):
-    """Transforms mass values to corresponding Lambda values for a given EOS
-    interpolating from the mass-Lambda data for that EOS read in from an external
-    ASCII file. The interpolation of the mass-Lambda data is a one-dimensional
-    piecewise linear interpolation. The mass values to be transformed are assumed
-    to be detector frame masses, so a distance should be provided along with the
-    mass for transformation to the source frame mass before the Lambda values are
-    extracted from the interpolation. If the mass value inputted is in the source
-    frame, then provide distance=0.
+    """Transforms mass values corresponding to Lambda values for a given EOS
+    interpolating from the mass-Lambda data for that EOS read in from an
+    external ASCII file. The interpolation of the mass-Lambda data is a
+    one-dimensional piecewise linear interpolation. The mass values to be
+    transformed are assumed to be detector frame masses, so a distance should
+    be provided along with the mass for transformation to the source frame
+    mass before the Lambda values are extracted from the interpolation. If
+    the mass value inputted is in the source frame, then provide distance=0.
+
+    If the transform is read in from a config file, an example code block
+    would be
+    .. code-block:: ini
+        [{section}-lambda1]
+        name = lambda_from_tov_file
+        mass_param = mass1
+        lambda_param = lambda1
+        distance = 40
+        mass_lambda_file = {filepath}
+        
+    If this transform is used in a parameter estimation analysis where
+    distance is a variable parameter, the distance to be used will vary
+    with each draw. In that case, the example code block will be:
+    .. code-block:: ini
+        [{section}-lambda1]
+        name = lambda_from_tov_file
+        mass_param = mass1
+        lambda_param = lambda1
+        mass_lambda_file = filepath
 
     Parameters
     ----------
@@ -949,22 +969,22 @@ class LambdaFromTOVFile(BaseTransform):
     lambda_param : str
         The name of the tidal deformability parameter that mass_param is to
         be converted to interpolating from the data in the mass-Lambda file.
-    m_lambda_file : str
+    mass_lambda_file : str
         Path of the mass-Lambda data file
     distance : float, optional
     """
     name = 'lambda_from_tov_file'
 
-    def __init__(self, mass_param, lambda_param, m_lambda_file, distance=None):
-        self._m_lambda_file = m_lambda_file
+    def __init__(self, mass_param, lambda_param, mass_lambda_file, distance=None):
+        self._mass_lambda_file = mass_lambda_file
         self._mass_param = mass_param
         self._lambda_param = lambda_param
         self._distance = distance
         self._inputs = [mass_param, 'distance']
         self._outputs = [lambda_param]
         logging.info("Loading mass-Lambda data from %s for computing %s",
-                     self._m_lambda_file, self._lambda_param)
-        data = numpy.loadtxt(self._m_lambda_file)
+                     self._mass_lambda_file, self._lambda_param)
+        data = numpy.loadtxt(self._mass_lambda_file)
         self._mass_data = data[:,0]
         self._lambda_data = data[:,1]
         super(LambdaFromTOVFile, self).__init__()
@@ -1040,77 +1060,17 @@ class LambdaFromTOVFile(BaseTransform):
         if self._distance is not None:
             d = self._distance
         else:
-            d = maps['distance']
+            try:
+                d = maps['distance']
+            except KeyError as e:
+                logging.warning("Either provide `distance` samples in the "
+                                "list of samples to be transformed, or provide "
+                                "a fixed `distance` value as input when "
+                                "initializing `LambdaFromTOVFile`.")
+                raise e
         out = {self._lambda_param : self.lambda_from_tov_data(
             m, d, self._mass_data, self._lambda_data)}
         return self.format_output(maps, out)
-
-    @classmethod
-    def from_config(cls, cp, section, outputs, skip_opts=None,
-                    additional_opts=None):
-        """Initializes a mass-Lambda transform from the given section. The
-        section must specify the names of the input mass parameter and the
-        output Lambda parameter. Also, read in as input is a file containing
-        the mass-Lambda data for an EOS. There is also an option to read in
-        the value of the distance to the source that will be used to transform
-        the detector frame mass to source frame before interpolating from the
-        mass-Lambda data.
-        Example:
-        .. code-block:: ini
-            [{section}-lambda1]
-            name = lambda_from_tov_file
-            mass_param = mass1
-            lambda_param = lambda1
-            distance = 40
-            m_lambda_file = filepath
-        
-        If this transform is used in a parameter estimation analysis where
-        distance is a variable parameter, the distance to be used will vary
-        with each draw. In that case, the example code block will be:
-        .. code-block:: ini
-            [{section}-lambda1]
-            name = lambda_from_tov_file
-            mass_param = mass1
-            lambda_param = lambda1
-            m_lambda_file = filepath
-
-        Parameters
-        ----------
-        cp : pycbc.workflow.WorkflowConfigParser
-            A parsed configuration file that contains the transform options.
-        section : str
-            Name of the section in the configuration file.
-        outputs : str
-            The names of the parameters that are output by this transformation,
-            separated by `VARARGS_DELIM`. These must appear in the "tag" part
-            of the section header.
-        skip_opts : list, optional
-            Do not read options in the given list.
-        additional_opts : dict, optional
-            Any additional arguments to pass to the class. If an option is
-            provided that also exists in the config file, the value provided
-            will be used instead of being read from the file.
-        Returns
-        -------
-        cls
-            An instance of the class.
-        """
-        s = '-'.join([section, outputs])
-        if additional_opts is None:
-            additional_opts = {}
-        else:
-            additional_opts = additional_opts.copy()
-        try:
-            m_lambda_file = cp.get(s, 'm_lambda_file')
-        except (NoOptionError, NoSectionError) as e:
-            logging.warning("The filepath for an ASCII file containing the "
-                            "mass-Lambda data for a EOS needs to be provided "
-                            "in config file under section %s.", s)
-            raise e
-        additional_opts.update({'m_lambda_file': m_lambda_file})
-        return super(LambdaFromTOVFile, cls).from_config(
-                                           cp, section, outputs, skip_opts,
-                                           additional_opts=additional_opts)
 
 
 class Logit(BaseTransform):
