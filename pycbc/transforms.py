@@ -962,6 +962,8 @@ class LambdaFromTOVFile(BaseTransform):
         self._distance = distance
         self._inputs = [mass_param, 'distance']
         self._outputs = [lambda_param]
+        logging.info("Loading mass-Lambda data from %s for computing %s",
+                     self._m_lambda_file, self._lambda_param)
         data = numpy.loadtxt(self._m_lambda_file)
         self._mass_data = data[:,0]
         self._lambda_data = data[:,1]
@@ -1039,7 +1041,8 @@ class LambdaFromTOVFile(BaseTransform):
             d = self._distance
         else:
             d = maps['distance']
-        out = {self._lambda_param : self.lambda_from_tov_data(m, d, self._mass_data, self._lambda_data)}
+        out = {self._lambda_param : self.lambda_from_tov_data(
+            m, d, self._mass_data, self._lambda_data)}
         return self.format_output(maps, out)
 
     @classmethod
