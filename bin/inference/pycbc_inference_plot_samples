@@ -23,6 +23,8 @@ import logging
 from matplotlib import use
 use('agg')
 from matplotlib import pyplot as plt
+from matplotlib import rc
+import numpy
 import pycbc
 from pycbc import (results, transforms)
 from pycbc import __version__
@@ -40,7 +42,7 @@ parser.add_argument("--walkers", nargs='+', default=None,
                          "plot. Options are 'all' or one or more walker "
                          "indices. Default is to plot the average of all "
                          "walkers from the coldest temperature for the input "
-                         "`--parameters`."
+                         "`--parameters`.")
 parser.add_argument("--output-file", type=str, required=True,
                     help="Path to output plot.")
 
@@ -50,6 +52,9 @@ opts = parser.parse_args()
 # setup log
 pycbc.init_logging(opts.verbose)
 
+#rc('font',**{'family':'serif','serif':['Times']})
+rc('text', usetex=True)
+
 # load the results
 fp, parameters, labels, _ = io.results_from_cli(opts,
                                                 load_samples=False,
@@ -58,18 +63,16 @@ fp, parameters, labels, _ = io.results_from_cli(opts,
 # get number of dimensions
 ndim = len(parameters)
 
-print(opts.walkers)
-
 # get walker indices
 if opts.walkers == ['all'] or opts.walkers == None:
     walkers = range(fp.nwalkers)
 else:
-    walkers = opts.walkers
+    walkers = list(map(int, opts.walkers))
 
 # plot samples
 # plot each parameter as a different subplot
 logging.info("Plotting samples")
-fig, axs = plt.subplots(ndim, sharex=True)
+fig, axs = plt.subplots(ndim, figsize=(10,8), sharex=True)
 plt.xlabel("Iteration")
 
 # loop over parameters
@@ -77,29 +80,48 @@ axs = [axs] if not hasattr(axs, "__iter__") else axs
 
 file_parameters, cs = transforms.get_common_cbc_transforms(
                                             parameters, fp.variable_params)
+if opts.thin_start is not None:
+    xmin = opts.thin_start
+else:
+    xmin = fp.attrs['thin_start']
+
+if opts.thin_end is not None:
+    xmax = opts.thin_end
+else:
+    try:
+        xmax = fp.attrs['thin_end']
+    except KeyError:
+        xmax = fp.niterations
+
+if opts.thin_interval is not None:
+    xint = opts.thin_interval
+else:
+    xint = fp.attrs['thin_interval']
+
+if xmin > xmax:
+    raise ValueError("Start iteration {} provided for reading samples is "
+                     "higher than the end iteration {}.".format(xmin, xmax))
+xvals = numpy.arange(xmin, xmax, xint)
+
 for i, arg in enumerate(parameters):
-    #if opts.walkers is not None:
-    #    y_dict_walkers = {}
-    chains = []
+    chains_arg = []
     for widx in walkers:
-        # plot each walker as a different line on the subplot
         chain = fp.read_samples(file_parameters, temps=opts.temps,
                                 walkers=widx, thin_start=opts.thin_start,
                                 thin_interval=opts.thin_interval,
                                 thin_end=opts.thin_end)
         chain = transforms.apply_transforms(chain, cs)
-        print(chain)
-        chains.append(chain)
+        chains_arg.append(chain[arg])
     if opts.walkers is not None:
-        for chain in chains:
-            axs[i].plot(chain, alpha=0.25)
+        for chain in chains_arg:
+            # plot each walker as a different line on the subplot
+            axs[i].plot(xvals, chain, alpha=0.6)
     else:
-        chains = numpy.array(chains)
+        # plot the average of all walkers for the parameter on the subplot
+        chains_arg = numpy.array(chains_arg)
         avg_chain = \
-            [chains[:, i].sum()/fp.nwalkers for i in range(len(chains[0]))]
-        axs[i].plot(avg_chain)
-    #if opts.walkers is None:
-    #axs[i].plot(y[arg], alpha=0.25)
+            [chains_arg[:, j].sum()/fp.nwalkers for j in range(len(chains_arg[0]))]
+        axs[i].plot(xvals, avg_chain)
     # Set y labels
     axs[i].set_ylabel(labels[arg])
 fp.close()
