@@ -175,28 +175,32 @@ colors = itertools.cycle(["black"] + ["C{}".format(i) for i in range(10)])
 # plot each input file
 logging.info("Plotting")
 hist_colors = []
-for (i, s) in enumerate(samples):
-
+#for (i, s) in enumerate(samples):
+print("parameters", parameters)
+print("samples", samples)
+for i, (s, c) in enumerate(zip(samples, opts.contour_color)):
     # on first iteration create figure otherwise update old figure
     if i == 0:
         fig = None
         axis_dict = None
 
     # loop over some contour colors
-    contour_color = next(colors) if not opts.contour_color \
-        else opts.contour_color
+    #contour_color = next(colors) if not opts.contour_color \
+    #    else opts.contour_color
+    contour_color = c
 
     # make histograms filled if only one input file to plot
     fill_color = "gray" if len(opts.input_file) == 1 else None
 
     # make histogram black lines if only one
-    hist_color = "black" if len(opts.input_file) == 1 else contour_color
+    hist_color = "black" if len(opts.input_file) == 1 else c #contour_color
     hist_colors.append(hist_color)
 
     # pick a new color for each input file
-    linecolor = "navy" if len(opts.input_file) == 1 else contour_color
+    linecolor = "navy" if len(opts.input_file) == 1 else c #contour_color
 
     # plot
+    #parameters, s, labels=labels, fig=fig, axis_dict=axis_dict,
     fig, axis_dict = create_multidim_plot(
                     parameters, s, labels=labels, fig=fig, axis_dict=axis_dict,
                     plot_marginal=opts.plot_marginal,
@@ -241,8 +245,8 @@ if len(opts.input_file) > 1:
         label = opts.input_file_labels[fn]
         handles.append(patches.Patch(color=color, label=label))
         labels.append(label)
-    fig.legend(loc="upper right", handles=handles,
-               labels=labels)
+    #fig.legend(loc="upper right", handles=handles,
+    #           labels=labels)
 
 # set DPI
 fig.set_dpi(opts.dpi)

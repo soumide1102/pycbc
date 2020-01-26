@@ -494,6 +494,7 @@ class ResultsArgumentParser(argparse.ArgumentParser):
         # parse the sampler-specific options and check for any unknowns
         unknown = []
         for fn in opts.input_file:
+            print("fn=", fn)
             fp = loadfile(fn, 'r')
             sampler_parser, _ = fp.extra_args_parser(skip_args=self.skip_args)
             if sampler_parser is not None:

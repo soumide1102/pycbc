@@ -47,7 +47,7 @@ from matplotlib import (offsetbox, pyplot, gridspec)
 
 from pycbc.results import str_utils
 from pycbc.io import FieldArray
-
+import matplotlib.ticker as ticker
 
 def create_axes_grid(parameters, labels=None, height_ratios=None,
                      width_ratios=None, no_diagonals=False):
@@ -87,7 +87,7 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
     if no_diagonals:
         ndim -= 1
     if ndim < 3:
-        fsize = (8, 7)
+        fsize = (8.5, 7)
     else:
         fsize = (ndim*3 - 1, ndim*3 - 2)
     fig = pyplot.figure(figsize=fsize)
@@ -121,11 +121,27 @@ def create_axes_grid(parameters, labels=None, height_ratios=None,
                 # x labels only on bottom
                 if nrow + 1 == ndim:
                     ax.set_xlabel('{}'.format(labels[px]), fontsize=18)
+                    # SOUMI added
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(14)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(14)
+                    ax.xaxis.set_major_locator(ticker.MaxNLocator(6))
+                    ax.yaxis.set_major_locator(ticker.MaxNLocator(6))
+                    ax.xaxis.labelpad = 8
+                    #
                 else:
                     pyplot.setp(ax.get_xticklabels(), visible=False)
                 # y labels only on left
                 if ncolumn == 0:
                     ax.set_ylabel('{}'.format(labels[py]), fontsize=18)
+                    for tick in ax.xaxis.get_major_ticks():
+                        tick.label.set_fontsize(14)
+                    for tick in ax.yaxis.get_major_ticks():
+                        tick.label.set_fontsize(14)
+                    ax.xaxis.set_major_locator(ticker.MaxNLocator(6))
+                    ax.yaxis.set_major_locator(ticker.MaxNLocator(6))
+                    ax.yaxis.labelpad = 8
                 else:
                     pyplot.setp(ax.get_yticklabels(), visible=False)
             else:
@@ -282,12 +298,12 @@ def create_density_plot(xparam, yparam, samples, plot_density=True,
         else:
             lw = 2
         ct = ax.contour(X, Y, Z, s, colors=contour_color, linewidths=lw,
-                        zorder=3)
+                        zorder=10)
         # label contours
         lbls = ['{p}%'.format(p=int(p)) for p in (100. - percentiles)]
         fmt = dict(zip(ct.levels, lbls))
         fs = 12
-        ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
+        #ax.clabel(ct, ct.levels, inline=True, fmt=fmt, fontsize=fs)
 
     return fig, ax
 
@@ -347,10 +363,11 @@ def create_marginalized_hist(ax, values, label, percentiles=None,
         orientation = 'horizontal'
     else:
         orientation = 'vertical'
-    ax.hist(values, bins=50, histtype=htype, orientation=orientation,
+    ax.hist(values, bins=30, histtype=htype, orientation=orientation,
             facecolor=fillcolor, edgecolor=color, ls=linestyle, lw=2,
             density=True)
     if percentiles is None:
+        #percentiles = [5., 95.]
         percentiles = [5., 50., 95.]
     if len(percentiles) > 0:
         plotp = numpy.percentile(values, percentiles)
@@ -358,15 +375,15 @@ def create_marginalized_hist(ax, values, label, percentiles=None,
         plotp = []
     for val in plotp:
         if rotated:
-            ax.axhline(y=val, ls='dashed', color=linecolor, lw=2, zorder=3)
+            ax.axhline(y=val, ls='dashed', color=linecolor, lw=1.3, zorder=3)
         else:
-            ax.axvline(x=val, ls='dashed', color=linecolor, lw=2, zorder=3)
+            ax.axvline(x=val, ls='dashed', color=linecolor, lw=1.3, zorder=3)
     # plot expected
     if expected_value is not None:
         if rotated:
-            ax.axhline(expected_value, color=expected_color, lw=1.5, zorder=2)
+            ax.axhline(expected_value, color=expected_color, lw=1.5, zorder=-2)
         else:
-            ax.axvline(expected_value, color=expected_color, lw=1.5, zorder=2)
+            ax.axvline(expected_value, color=expected_color, lw=1.5, zorder=-2)
     if title:
         if len(percentiles) > 0:
             minp = min(percentiles)
@@ -443,28 +460,45 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
     # get how much to displace title on axes
     xscale = 1.05 if rotated else 0.0
     if rotated:
-        yscale = 1.0
+        yscale = 1.1
     elif len(ax.get_figure().axes) > 1:
-        yscale = 1.15
+        yscale = 1.22 #1.15 #1.55
     else:
-        yscale = 1.05
+        yscale = 1.05 #1.55
 
     # get class that packs text boxes vertical or horizonitally
     packer_class = offsetbox.VPacker if rotated else offsetbox.HPacker
 
+    print("fmt", fmt)
+    print("label", label)
+    print("color", color)
+    #color = 'black'
     # if no title exists
     if not hasattr(ax, "title_boxes"):
 
         # create a text box
-        title = "{} = {}".format(label, fmt)
-        tbox1 = offsetbox.TextArea(
+        title = "{} =".format(label)
+        tbox = offsetbox.TextArea(
                    title,
-                   textprops=dict(color=color, size=15, rotation=rotation,
+                   textprops=dict(color='black', size=16, rotation=rotation,
                                   ha='left', va='bottom'))
 
-        # save a list of text boxes as attribute for later
-        ax.title_boxes = [tbox1]
+        tbox0 = offsetbox.TextArea(
+                   " {}".format(fmt),
+                   textprops=dict(color=color, size=16, rotation=rotation,
+                                  ha='left', va='bottom'))
 
+        ax.title_boxes = [tbox] + [tbox0]
+
+        #title = "{} = {}".format(label, fmt)
+        #tbox1 = offsetbox.TextArea(
+        #           title,
+        #           textprops=dict(color=color, size=18, rotation=rotation,
+        #                          ha='left', va='bottom'))
+
+        # save a list of text boxes as attribute for later
+        #ax.title_boxes = [tbox1]
+        
         # pack text boxes
         ybox = packer_class(children=ax.title_boxes,
                             align="bottom", pad=0, sep=5)
@@ -478,7 +512,7 @@ def set_marginal_histogram_title(ax, fmt, color, label=None, rotated=False):
         # add new text box to list
         tbox1 = offsetbox.TextArea(
                    " {}".format(fmt),
-                   textprops=dict(color=color, size=15, rotation=rotation,
+                   textprops=dict(color=color, size=16, rotation=rotation,
                                   ha='left', va='bottom'))
         ax.title_boxes = ax.title_boxes + [tbox1]
 
