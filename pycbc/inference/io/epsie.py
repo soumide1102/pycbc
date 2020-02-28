@@ -19,7 +19,7 @@
 from __future__ import (absolute_import, division)
 
 from pickle import UnpicklingError
-from epsie import load_state
+#from epsie import load_state
 
 from .base_sampler import BaseSamplerFile
 from .base_multitemper import (MultiTemperedMCMCIO, MultiTemperedMetadataIO)
