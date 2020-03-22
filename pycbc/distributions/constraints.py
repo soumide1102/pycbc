@@ -18,6 +18,7 @@ This modules provides classes for evaluating multi-dimensional constraints.
 
 from pycbc import transforms
 from pycbc.io import record
+import numpy
 
 class Constraint(object):
     """ Creates a constraint that evaluates to True if parameters obey
@@ -58,6 +59,27 @@ class Constraint(object):
         """ Evaluates constraint function.
         """
         return params[self.constraint_arg]
+
+
+class LambdaMin(Constraint):
+    """ Pre-defined constraint that checks if lambda values are greater than
+    a minimum lambda value defined by the masses.
+    """
+    name = "lambda_mins_from_masses"
+    required_parameters = ["srcmass1", "srcmass2", "lambdasym"]
+
+    def _constraint(self, params):
+        """ Evaluates constraint function.
+        """
+        mask = []
+        for ii in range(len(params["lambdasym"])):
+            if (params["lambdasym"][ii]/((params["srcmass1"][ii]/params["srcmass2"][ii])**3) > numpy.exp(13.42 - 23.01*(params["srcmass1"][ii]/2.0) + 20.53*(params["srcmass1"][ii]/2.0)**(2.) - 9.599*(params["srcmass1"][ii]/2.0)**(3.))) and (params["lambdasym"][ii]/((params["srcmass2"][ii]/params["srcmass1"][ii])**3) > numpy.exp(13.42 - 23.01*(params["srcmass2"][ii]/2.0) + 20.53*(params["srcmass2"][ii]/2.0)**(2.) - 9.599*(params["srcmass2"][ii]/2.0)**(3.))):
+                lim_val = True
+            else:
+                lim_val = False
+            mask.append(lim_val)
+        return mask
+
 
 class MtotalLT(Constraint):
     """ Pre-defined constraint that check if total mass is less than a value.
