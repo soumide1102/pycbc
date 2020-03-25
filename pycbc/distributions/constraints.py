@@ -149,6 +149,7 @@ class EffectiveSpinSpace(Constraint):
 constraints = {
     Constraint.name : Constraint,
     MtotalLT.name : MtotalLT,
+    LambdaMin.name : LambdaMin,
     CartesianSpinSpace.name : CartesianSpinSpace,
     EffectiveSpinSpace.name : EffectiveSpinSpace,
 }
